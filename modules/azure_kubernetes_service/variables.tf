@@ -67,8 +67,8 @@ variable "environment" {
     error_message = "Environment must be 4 characters or less (e.g., 'dev', 'prod') to avoid exceeding Azure resource name limits."
   }
   validation {
-    condition     = can(regex("^[a-z0-9]+$", var.environment))
-    error_message = "Environment must contain only lowercase letters and numbers (required for storage account naming)."
+    condition     = can(regex("^[a-z0-9-]+$", var.environment))
+    error_message = "Environment must contain only lowercase letters, numbers, and hyphens."
   }
 }
 
@@ -133,9 +133,9 @@ variable "node_pool_configs" {
   }
   validation {
     condition = alltrue([
-      for k, v in var.node_pool_configs : v.min_count >= 1
+      for k, v in var.node_pool_configs : v.min_count >= 0
     ])
-    error_message = "min_count must be at least 1 for all pools."
+    error_message = "min_count must be at least 0 for all pools."
   }
   validation {
     condition = alltrue([
@@ -163,8 +163,8 @@ variable "prefix" {
     error_message = "Prefix must be 8 characters or less to avoid exceeding Azure storage account name limits (24 char max)."
   }
   validation {
-    condition     = can(regex("^[a-z0-9]+$", var.prefix))
-    error_message = "Prefix must contain only lowercase letters and numbers (required for storage account naming)."
+    condition     = can(regex("^[a-z0-9-]+$", var.prefix))
+    error_message = "Prefix must contain only lowercase letters, numbers, and hyphens."
   }
 }
 

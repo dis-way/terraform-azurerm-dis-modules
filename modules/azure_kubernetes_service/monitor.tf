@@ -14,7 +14,7 @@ resource "random_id" "aks_log" {
 }
 
 resource "azurerm_storage_account" "aks_log" {
-  name                            = var.azurerm_storage_account_aks_name != "" ? var.azurerm_storage_account_aks_name : "${var.prefix}${var.environment}akslog${random_id.aks_log.hex}"
+  name                            = var.azurerm_storage_account_aks_name != "" ? var.azurerm_storage_account_aks_name : "${replace(var.prefix, "-", "")}${replace(var.environment, "-", "")}akslog${random_id.aks_log.hex}"
   resource_group_name             = azurerm_resource_group.monitor.name
   location                        = azurerm_resource_group.monitor.location
   account_tier                    = "Standard"
