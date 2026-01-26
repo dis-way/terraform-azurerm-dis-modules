@@ -31,8 +31,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
     max_count                    = var.system_pool_config.max_count
     zones                        = ["1", "2", "3"]
     orchestrator_version         = var.kubernetes_version
-    os_disk_type                 = var.ephemeral_os_disk_enabled ? "Ephemeral" : "Managed"
-    os_disk_size_gb              = var.ephemeral_os_disk_enabled ? null : 128
+    os_disk_type                 = var.system_pool_config.ephemeral_os_disk ? "Ephemeral" : "Managed"
+    os_disk_size_gb              = var.system_pool_config.ephemeral_os_disk ? null : 128
 
     upgrade_settings {
       max_surge = "10%"

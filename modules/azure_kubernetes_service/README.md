@@ -16,31 +16,34 @@ module "aks" {
 
   # System pool
   system_pool_config = {
-    vm_size              = "Standard_D2s_v3"
+    vm_size              = "Standard_D4ads_v6"
     auto_scaling_enabled = true
     node_count           = 2
     min_count            = 2
     max_count            = 3
+    ephemeral_os_disk    = true
   }
   system_pool_subnet_prefixes = ["10.0.0.0/24", "fd00:0:0:1::/64"]
 
   # Node pools
   node_pool_configs = {
     workpool = {
-      vm_size              = "Standard_D4s_v3"
+      vm_size              = "Standard_D8ads_v6"
       auto_scaling_enabled = true
       node_count           = 2
       min_count            = 1
       max_count            = 10
+      ephemeral_os_disk    = true
     }
     daemonpool = {
-      vm_size              = "Standard_D2s_v3"
+      vm_size              = "Standard_D4ads_v6"
       auto_scaling_enabled = false
       node_count           = 3
       min_count            = 3
       max_count            = 3
       node_taints          = ["dedicated=daemonset:NoSchedule"]
       node_labels          = { "workload" = "daemonset" }
+      ephemeral_os_disk    = true
     }
   }
   node_pool_subnet_prefixes = {
@@ -121,14 +124,13 @@ module "aks" {
 | <a name="input_azurerm_virtual_public_ip_pip6_name"></a> [azurerm\_virtual\_public\_ip\_pip6\_name](#input\_azurerm\_virtual\_public\_ip\_pip6\_name) | Optional explicit name of the public ipv6 | `string` | `""` | no |
 | <a name="input_enable_multi_tenancy"></a> [enable\_multi\_tenancy](#input\_enable\_multi\_tenancy) | Enable multi tenancy in the cluster | `bool` | `false` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment for resources (required, max 4 characters). Combined with prefix, must not exceed 12 characters for storage account naming. | `string` | n/a | yes |
-| <a name="input_ephemeral_os_disk_enabled"></a> [ephemeral\_os\_disk\_enabled](#input\_ephemeral\_os\_disk\_enabled) | Enable ephemeral OS disk for AKS nodes.<br/>- When false: Uses managed OS disk with 128 GiB<br/>- When true: Uses ephemeral OS disk placed on VM cache (max size based on SKU)<br/><br/>Note: VM SKU must have sufficient cache size for ephemeral disk.<br/>Recommended SKUs: Standard\_D*s\_v3, Standard\_E*s\_v3, Standard\_D*s\_v4, Standard\_D*s\_v5, etc.<br/>SKUs with small/no cache (e.g., Standard\_B*) are not compatible. | `bool` | `false` | no |
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes version | `string` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | Default region for resources | `string` | `"norwayeast"` | no |
-| <a name="input_node_pool_configs"></a> [node\_pool\_configs](#input\_node\_pool\_configs) | Configuration for additional node pools. Each key becomes the node pool name (max 12 chars, lowercase alphanumeric). | <pre>map(object({<br/>    vm_size              = string<br/>    auto_scaling_enabled = bool<br/>    node_count           = number<br/>    min_count            = number<br/>    max_count            = number<br/>    os_sku               = optional(string, "AzureLinux")<br/>    max_pods             = optional(number, 200)<br/>    zones                = optional(list(string), ["1", "2", "3"])<br/>    node_labels          = optional(map(string), {})<br/>    node_taints          = optional(list(string), [])<br/>  }))</pre> | `{}` | no |
+| <a name="input_node_pool_configs"></a> [node\_pool\_configs](#input\_node\_pool\_configs) | Configuration for additional node pools. Each key becomes the node pool name (max 12 chars, lowercase alphanumeric). Set ephemeral\_os\_disk=true for VMs with sufficient cache/NVMe storage. | <pre>map(object({<br/>    vm_size              = string<br/>    auto_scaling_enabled = bool<br/>    node_count           = number<br/>    min_count            = number<br/>    max_count            = number<br/>    os_sku               = optional(string, "AzureLinux")<br/>    max_pods             = optional(number, 200)<br/>    zones                = optional(list(string), ["1", "2", "3"])<br/>    node_labels          = optional(map(string), {})<br/>    node_taints          = optional(list(string), [])<br/>    ephemeral_os_disk    = optional(bool, false)<br/>  }))</pre> | `{}` | no |
 | <a name="input_node_pool_subnet_prefixes"></a> [node\_pool\_subnet\_prefixes](#input\_node\_pool\_subnet\_prefixes) | Map of node pool names to their subnet address prefixes. Keys must match node\_pool\_configs keys. | `map(list(string))` | `{}` | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | Prefix for resource names (required, max 8 characters). Combined with environment, must not exceed 12 characters for storage account naming. | `string` | n/a | yes |
 | <a name="input_subnet_service_endpoints"></a> [subnet\_service\_endpoints](#input\_subnet\_service\_endpoints) | List of service endpoints to associate with the AKS subnets | `list(string)` | `[]` | no |
-| <a name="input_system_pool_config"></a> [system\_pool\_config](#input\_system\_pool\_config) | Configuration for the system node pool | <pre>object({<br/>    vm_size              = string<br/>    auto_scaling_enabled = bool<br/>    node_count           = number<br/>    min_count            = number<br/>    max_count            = number<br/>  })</pre> | n/a | yes |
+| <a name="input_system_pool_config"></a> [system\_pool\_config](#input\_system\_pool\_config) | Configuration for the system node pool. Set ephemeral\_os\_disk=true for VMs with sufficient cache/NVMe storage. | <pre>object({<br/>    vm_size              = string<br/>    auto_scaling_enabled = bool<br/>    node_count           = number<br/>    min_count            = number<br/>    max_count            = number<br/>    ephemeral_os_disk    = optional(bool, false)<br/>  })</pre> | n/a | yes |
 | <a name="input_system_pool_subnet_prefixes"></a> [system\_pool\_subnet\_prefixes](#input\_system\_pool\_subnet\_prefixes) | Address prefixes for the system pool subnet (IPv4 and IPv6) | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to all resources | `map(string)` | `{}` | no |
 | <a name="input_vnet_address_space"></a> [vnet\_address\_space](#input\_vnet\_address\_space) | VNet address space | `list(string)` | n/a | yes |

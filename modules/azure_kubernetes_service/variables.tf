@@ -64,20 +64,6 @@ variable "enable_multi_tenancy" {
   description = "Enable multi tenancy in the cluster"
 }
 
-variable "ephemeral_os_disk_enabled" {
-  type        = bool
-  default     = false
-  description = <<-EOT
-    Enable ephemeral OS disk for AKS nodes.
-    - When false: Uses managed OS disk with 128 GiB
-    - When true: Uses ephemeral OS disk placed on VM cache (max size based on SKU)
-
-    Note: VM SKU must have sufficient cache size for ephemeral disk.
-    Recommended SKUs: Standard_D*s_v3, Standard_E*s_v3, Standard_D*s_v4, Standard_D*s_v5, etc.
-    SKUs with small/no cache (e.g., Standard_B*) are not compatible.
-  EOT
-}
-
 variable "environment" {
   type        = string
   description = "Environment for resources (required, max 4 characters). Combined with prefix, must not exceed 12 characters for storage account naming."
@@ -117,8 +103,9 @@ variable "system_pool_config" {
     node_count           = number
     min_count            = number
     max_count            = number
+    ephemeral_os_disk    = optional(bool, false)
   })
-  description = "Configuration for the system node pool"
+  description = "Configuration for the system node pool. Set ephemeral_os_disk=true for VMs with sufficient cache/NVMe storage."
   validation {
     condition     = var.system_pool_config.min_count >= 1
     error_message = "min_count must be at least 1 for system pool."
@@ -145,9 +132,10 @@ variable "node_pool_configs" {
     zones                = optional(list(string), ["1", "2", "3"])
     node_labels          = optional(map(string), {})
     node_taints          = optional(list(string), [])
+    ephemeral_os_disk    = optional(bool, false)
   }))
   default     = {}
-  description = "Configuration for additional node pools. Each key becomes the node pool name (max 12 chars, lowercase alphanumeric)."
+  description = "Configuration for additional node pools. Each key becomes the node pool name (max 12 chars, lowercase alphanumeric). Set ephemeral_os_disk=true for VMs with sufficient cache/NVMe storage."
   validation {
     condition = alltrue([
       for k, v in var.node_pool_configs : length(k) <= 12 && can(regex("^[a-z][a-z0-9]*$", k))

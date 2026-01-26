@@ -16,31 +16,34 @@ module "aks" {
 
   # System pool
   system_pool_config = {
-    vm_size              = "Standard_D2s_v3"
+    vm_size              = "Standard_D4ads_v6"
     auto_scaling_enabled = true
     node_count           = 2
     min_count            = 2
     max_count            = 3
+    ephemeral_os_disk    = true
   }
   system_pool_subnet_prefixes = ["10.0.0.0/24", "fd00:0:0:1::/64"]
 
   # Node pools
   node_pool_configs = {
     workpool = {
-      vm_size              = "Standard_D4s_v3"
+      vm_size              = "Standard_D8ads_v6"
       auto_scaling_enabled = true
       node_count           = 2
       min_count            = 1
       max_count            = 10
+      ephemeral_os_disk    = true
     }
     daemonpool = {
-      vm_size              = "Standard_D2s_v3"
+      vm_size              = "Standard_D4ads_v6"
       auto_scaling_enabled = false
       node_count           = 3
       min_count            = 3
       max_count            = 3
       node_taints          = ["dedicated=daemonset:NoSchedule"]
       node_labels          = { "workload" = "daemonset" }
+      ephemeral_os_disk    = true
     }
   }
   node_pool_subnet_prefixes = {
