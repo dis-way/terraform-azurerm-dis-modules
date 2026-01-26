@@ -34,7 +34,16 @@ variable "api_server_authorized_ip_ranges" {
     ipv4 = []
     ipv6 = []
   }
-  description = "Authorized IP ranges (CIDR notation) that can access the Kubernetes API server. Provide both IPv4 and IPv6 ranges. Leave empty to allow all IPs (not recommended for production)."
+  description = <<-EOT
+    Authorized IP ranges (CIDR notation) that can access the Kubernetes API server.
+
+    WARNING: If left empty, API server is publicly accessible.
+    For production, always specify authorized ranges.
+
+    Example:
+      ipv4 = ["10.0.0.0/8", "203.0.113.0/24"]
+      ipv6 = ["2001:db8::/32"]
+  EOT
   validation {
     condition = alltrue([
       for cidr in var.api_server_authorized_ip_ranges.ipv4 : can(cidrhost(cidr, 0))
@@ -58,7 +67,15 @@ variable "enable_multi_tenancy" {
 variable "ephemeral_os_disk_enabled" {
   type        = bool
   default     = false
-  description = "Enable ephemeral OS disk for AKS nodes. When enabled, uses the VM's cache disk for OS (max size based on SKU). When disabled, uses managed disk with 128 GiB."
+  description = <<-EOT
+    Enable ephemeral OS disk for AKS nodes.
+    - When false: Uses managed OS disk with 128 GiB
+    - When true: Uses ephemeral OS disk placed on VM cache (max size based on SKU)
+
+    Note: VM SKU must have sufficient cache size for ephemeral disk.
+    Recommended SKUs: Standard_D*s_v3, Standard_E*s_v3, Standard_D*s_v4, Standard_D*s_v5, etc.
+    SKUs with small/no cache (e.g., Standard_B*) are not compatible.
+  EOT
 }
 
 variable "environment" {
