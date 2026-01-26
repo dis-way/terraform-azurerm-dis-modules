@@ -55,6 +55,12 @@ variable "enable_multi_tenancy" {
   description = "Enable multi tenancy in the cluster"
 }
 
+variable "ephemeral_os_disk_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable ephemeral OS disk for AKS nodes. When enabled, uses the VM's cache disk for OS (max size based on SKU). When disabled, uses managed disk with 128 GiB."
+}
+
 variable "environment" {
   type        = string
   description = "Environment for resources (required, max 4 characters). Combined with prefix, must not exceed 12 characters for storage account naming."

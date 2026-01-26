@@ -21,6 +21,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "pools" {
   orchestrator_version  = var.kubernetes_version
   node_labels           = each.value.node_labels
   node_taints           = each.value.node_taints
+  os_disk_type          = var.ephemeral_os_disk_enabled ? "Ephemeral" : "Managed"
+  os_disk_size_gb       = var.ephemeral_os_disk_enabled ? null : 128
 
   upgrade_settings {
     max_surge = "10%"
