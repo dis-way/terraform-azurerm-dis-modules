@@ -30,8 +30,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
     auto_scaling_enabled         = var.system_pool_config.auto_scaling_enabled
     node_count                   = var.system_pool_config.node_count
     vm_size                      = var.system_pool_config.vm_size
-    min_count                    = var.system_pool_config.min_count
-    max_count                    = var.system_pool_config.max_count
+    min_count                    = var.system_pool_config.auto_scaling_enabled ? var.system_pool_config.min_count : null
+    max_count                    = var.system_pool_config.auto_scaling_enabled ? var.system_pool_config.max_count : null
     zones                        = ["1", "2", "3"]
     orchestrator_version         = var.kubernetes_version
     os_disk_type                 = var.system_pool_config.ephemeral_os_disk ? "Ephemeral" : "Managed"
