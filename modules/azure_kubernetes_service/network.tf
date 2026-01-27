@@ -52,7 +52,7 @@ resource "azurerm_public_ip_prefix" "prefix4" {
   resource_group_name = azurerm_resource_group.aks.name
   location            = azurerm_resource_group.aks.location
   ip_version          = "IPv4"
-  prefix_length       = "27"
+  prefix_length       = 28
   zones               = ["1", "2", "3"]
   tags                = var.tags
 }
@@ -62,7 +62,7 @@ resource "azurerm_public_ip_prefix" "prefix6" {
   resource_group_name = azurerm_resource_group.aks.name
   location            = azurerm_resource_group.aks.location
   ip_version          = "IPv6"
-  prefix_length       = "64"
+  prefix_length       = 124
   zones               = ["1", "2", "3"]
   tags                = var.tags
 }
