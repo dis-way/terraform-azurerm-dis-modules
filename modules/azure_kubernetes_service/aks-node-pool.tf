@@ -9,7 +9,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "pools" {
   os_sku                = each.value.os_sku
   max_pods              = each.value.max_pods
   auto_scaling_enabled  = each.value.auto_scaling_enabled
-  node_count            = each.value.node_count
+  node_count            = each.value.auto_scaling_enabled ? null : each.value.node_count
   vm_size               = each.value.vm_size
   min_count             = each.value.auto_scaling_enabled ? each.value.min_count : null
   max_count             = each.value.auto_scaling_enabled ? each.value.max_count : null
