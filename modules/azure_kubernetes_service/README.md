@@ -122,6 +122,7 @@ module "aks" {
 | <a name="input_azurerm_virtual_network_aks_name"></a> [azurerm\_virtual\_network\_aks\_name](#input\_azurerm\_virtual\_network\_aks\_name) | Optional explicit name of the AKS virtual network | `string` | `""` | no |
 | <a name="input_azurerm_virtual_public_ip_pip4_name"></a> [azurerm\_virtual\_public\_ip\_pip4\_name](#input\_azurerm\_virtual\_public\_ip\_pip4\_name) | Optional explicit name of the public ipv4 | `string` | `""` | no |
 | <a name="input_azurerm_virtual_public_ip_pip6_name"></a> [azurerm\_virtual\_public\_ip\_pip6\_name](#input\_azurerm\_virtual\_public\_ip\_pip6\_name) | Optional explicit name of the public ipv6 | `string` | `""` | no |
+| <a name="input_enable_keda"></a> [enable\_keda](#input\_enable\_keda) | Enable KEDA (Kubernetes Event-driven Autoscaling) for workload autoscaling | `bool` | `false` | no |
 | <a name="input_enable_multi_tenancy"></a> [enable\_multi\_tenancy](#input\_enable\_multi\_tenancy) | Enable multi tenancy in the cluster | `bool` | `false` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment for resources (required, max 4 characters). Combined with prefix, must not exceed 12 characters for storage account naming. | `string` | n/a | yes |
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes version | `string` | n/a | yes |
