@@ -1,11 +1,7 @@
 resource "azurerm_kubernetes_cluster_node_pool" "pools" {
   for_each = var.node_pool_configs
 
-  lifecycle {
-    ignore_changes = [
-      node_count,
-    ]
-  }
+
 
   name                  = each.key
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
