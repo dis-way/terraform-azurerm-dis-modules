@@ -58,6 +58,12 @@ variable "api_server_authorized_ip_ranges" {
   }
 }
 
+variable "enable_keda" {
+  type        = bool
+  default     = false
+  description = "Enable KEDA (Kubernetes Event-driven Autoscaling) for workload autoscaling"
+}
+
 variable "enable_multi_tenancy" {
   type        = bool
   default     = false

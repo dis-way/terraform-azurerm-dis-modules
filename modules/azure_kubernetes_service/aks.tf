@@ -1,7 +1,6 @@
 resource "azurerm_kubernetes_cluster" "aks" {
   lifecycle {
     ignore_changes = [
-      workload_autoscaler_profile,
       default_node_pool[0].node_count,
       windows_profile,
     ]
@@ -16,6 +15,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
   node_os_upgrade_channel   = "NodeImage"
   oidc_issuer_enabled       = true
   workload_identity_enabled = true
+
+  workload_autoscaler_profile {
+    keda_enabled = var.enable_keda
+  }
 
   default_node_pool {
     name                         = "syspool"
