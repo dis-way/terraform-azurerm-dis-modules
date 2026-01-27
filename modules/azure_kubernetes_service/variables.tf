@@ -106,12 +106,16 @@ variable "system_pool_config" {
   type = object({
     vm_size              = string
     auto_scaling_enabled = bool
-    node_count           = number
+    node_count           = optional(number)
     min_count            = optional(number)
     max_count            = optional(number)
     ephemeral_os_disk    = optional(bool, false)
   })
-  description = "Configuration for the system node pool. Set ephemeral_os_disk=true for VMs with sufficient cache/NVMe storage. min_count and max_count are required when auto_scaling_enabled=true."
+  description = "Configuration for the system node pool. Set ephemeral_os_disk=true for VMs with sufficient cache/NVMe storage. When auto_scaling_enabled=true, node_count is optional (initial count), and min_count/max_count are required. When auto_scaling_enabled=false, node_count is required."
+  validation {
+    condition     = var.system_pool_config.auto_scaling_enabled || var.system_pool_config.node_count != null
+    error_message = "node_count is required when auto_scaling_enabled is false."
+  }
   validation {
     condition     = !var.system_pool_config.auto_scaling_enabled || (var.system_pool_config.min_count != null && var.system_pool_config.min_count >= 1)
     error_message = "min_count must be set and at least 1 for system pool when auto_scaling_enabled is true."
@@ -121,8 +125,8 @@ variable "system_pool_config" {
     error_message = "max_count must be set and greater than or equal to min_count when auto_scaling_enabled is true."
   }
   validation {
-    condition     = !var.system_pool_config.auto_scaling_enabled || (var.system_pool_config.node_count >= var.system_pool_config.min_count && var.system_pool_config.node_count <= var.system_pool_config.max_count)
-    error_message = "node_count must be between min_count and max_count when auto_scaling_enabled is true."
+    condition     = var.system_pool_config.node_count == null || !var.system_pool_config.auto_scaling_enabled || (var.system_pool_config.node_count >= var.system_pool_config.min_count && var.system_pool_config.node_count <= var.system_pool_config.max_count)
+    error_message = "node_count must be between min_count and max_count when both are specified and auto_scaling_enabled is true."
   }
 }
 
@@ -130,7 +134,7 @@ variable "node_pool_configs" {
   type = map(object({
     vm_size              = string
     auto_scaling_enabled = bool
-    node_count           = number
+    node_count           = optional(number)
     min_count            = optional(number)
     max_count            = optional(number)
     os_sku               = optional(string, "AzureLinux")
@@ -141,12 +145,18 @@ variable "node_pool_configs" {
     ephemeral_os_disk    = optional(bool, false)
   }))
   default     = {}
-  description = "Configuration for additional node pools. Each key becomes the node pool name (max 12 chars, lowercase alphanumeric). Set ephemeral_os_disk=true for VMs with sufficient cache/NVMe storage. min_count and max_count are required when auto_scaling_enabled=true."
+  description = "Configuration for additional node pools. Each key becomes the node pool name (max 12 chars, lowercase alphanumeric). Set ephemeral_os_disk=true for VMs with sufficient cache/NVMe storage. When auto_scaling_enabled=true, node_count is optional (initial count), and min_count/max_count are required. When auto_scaling_enabled=false, node_count is required."
   validation {
     condition = alltrue([
       for k, v in var.node_pool_configs : length(k) <= 12 && can(regex("^[a-z][a-z0-9]*$", k))
     ])
     error_message = "Node pool names must be max 12 characters, start with a letter, and contain only lowercase alphanumeric characters."
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.node_pool_configs : v.auto_scaling_enabled || v.node_count != null
+    ])
+    error_message = "node_count is required when auto_scaling_enabled is false."
   }
   validation {
     condition = alltrue([
@@ -162,9 +172,9 @@ variable "node_pool_configs" {
   }
   validation {
     condition = alltrue([
-      for k, v in var.node_pool_configs : !v.auto_scaling_enabled || (v.node_count >= v.min_count && v.node_count <= v.max_count)
+      for k, v in var.node_pool_configs : v.node_count == null || !v.auto_scaling_enabled || (v.node_count >= v.min_count && v.node_count <= v.max_count)
     ])
-    error_message = "node_count must be between min_count and max_count when auto_scaling_enabled is true."
+    error_message = "node_count must be between min_count and max_count when both are specified and auto_scaling_enabled is true."
   }
 }
 

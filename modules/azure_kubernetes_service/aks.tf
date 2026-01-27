@@ -1,7 +1,6 @@
 resource "azurerm_kubernetes_cluster" "aks" {
   lifecycle {
     ignore_changes = [
-      default_node_pool[0].node_count,
       windows_profile,
     ]
   }
@@ -28,7 +27,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     temporary_name_for_rotation  = "syspool99"
     max_pods                     = 200
     auto_scaling_enabled         = var.system_pool_config.auto_scaling_enabled
-    node_count                   = var.system_pool_config.node_count
+    node_count                   = var.system_pool_config.auto_scaling_enabled ? null : var.system_pool_config.node_count
     vm_size                      = var.system_pool_config.vm_size
     min_count                    = var.system_pool_config.auto_scaling_enabled ? var.system_pool_config.min_count : null
     max_count                    = var.system_pool_config.auto_scaling_enabled ? var.system_pool_config.max_count : null
