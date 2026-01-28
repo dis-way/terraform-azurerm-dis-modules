@@ -14,6 +14,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   node_os_upgrade_channel   = "NodeImage"
   oidc_issuer_enabled       = true
   workload_identity_enabled = true
+  local_account_disabled    = var.aks_local_account_disabled
 
   workload_autoscaler_profile {
     keda_enabled = var.enable_keda
