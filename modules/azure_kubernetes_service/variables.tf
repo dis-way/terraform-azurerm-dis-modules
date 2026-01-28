@@ -64,6 +64,12 @@ variable "enable_keda" {
   description = "Enable KEDA (Kubernetes Event-driven Autoscaling) for workload autoscaling"
 }
 
+variable "aks_local_account_disabled" {
+  type        = bool
+  default     = true
+  description = "Disable local account for the AKS cluster. When true, only Azure AD authentication is allowed."
+}
+
 variable "enable_multi_tenancy" {
   type        = bool
   default     = false
