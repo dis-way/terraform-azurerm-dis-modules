@@ -7,7 +7,7 @@ resource "azapi_resource" "cert_manager" {
       kustomizations = {
         cert-manager = {
           force                  = false
-          path                   = "./"
+          path                   = "./multitenancy"
           prune                  = false
           retryIntervalInSeconds = 300
           syncIntervalInSeconds  = 300
@@ -25,7 +25,7 @@ resource "azapi_resource" "cert_manager" {
         url                   = "oci://altinncr.azurecr.io/manifests/infra/cert-manager"
         useWorkloadIdentity   = true
       }
-      namespace                  = "flux-system"
+      namespace                  = "platform-system"
       reconciliationWaitDuration = "PT5M"
       waitForReconciliation      = true
       sourceKind                 = "OCIRepository"
