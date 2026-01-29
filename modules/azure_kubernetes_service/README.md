@@ -105,6 +105,7 @@ module "aks" {
 |------|-------------|------|---------|:--------:|
 | <a name="input_admin_group_object_ids"></a> [admin\_group\_object\_ids](#input\_admin\_group\_object\_ids) | List of group object IDs to get admin access to the cluster | `list(string)` | n/a | yes |
 | <a name="input_aks_acrpull_scopes"></a> [aks\_acrpull\_scopes](#input\_aks\_acrpull\_scopes) | List of AKS ACR pull scopes | `list(string)` | `[]` | no |
+| <a name="input_aks_local_account_disabled"></a> [aks\_local\_account\_disabled](#input\_aks\_local\_account\_disabled) | Disable local account for the AKS cluster. When true, only Azure AD authentication is allowed. | `bool` | `true` | no |
 | <a name="input_aks_sku_tier"></a> [aks\_sku\_tier](#input\_aks\_sku\_tier) | Kubernetes SKU | `string` | `"Free"` | no |
 | <a name="input_aks_user_role_scopes"></a> [aks\_user\_role\_scopes](#input\_aks\_user\_role\_scopes) | List of groups to get user role scopes for AKS | `list(string)` | `[]` | no |
 | <a name="input_api_server_authorized_ip_ranges"></a> [api\_server\_authorized\_ip\_ranges](#input\_api\_server\_authorized\_ip\_ranges) | Authorized IP ranges (CIDR notation) that can access the Kubernetes API server.<br/><br/>WARNING: If left empty, API server is publicly accessible.<br/>For production, always specify authorized ranges.<br/><br/>Example:<br/>  ipv4 = ["10.0.0.0/8", "203.0.113.0/24"]<br/>  ipv6 = ["2001:db8::/32"] | <pre>object({<br/>    ipv4 = list(string)<br/>    ipv6 = list(string)<br/>  })</pre> | <pre>{<br/>  "ipv4": [],<br/>  "ipv6": []<br/>}</pre> | no |
