@@ -1,7 +1,7 @@
 variable "linkerd_default_inbound_policy" {
   description = "Default inbound policy for Linkerd"
   type        = string
-  default     = "all-unauthenticated"
+  default     = "deny"
   validation {
     condition     = contains(["all-unauthenticated", "all-authenticated", "cluster-authenticated", "deny"], var.linkerd_default_inbound_policy)
     error_message = "linkerd_default_inbound_policy must be one of: all-unauthenticated, all-authenticated, cluster-authenticated, deny."
