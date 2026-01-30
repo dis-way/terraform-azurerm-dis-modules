@@ -1,11 +1,12 @@
-resource "azapi_resource" "external_secrets_operator" {
-  type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
-  name      = "external-secrets-operator"
-  parent_id = var.azurerm_kubernetes_cluster_id
+resource "azapi_resource" "kyverno_policies" {
+  depends_on = [azapi_resource.kyverno]
+  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
+  name       = "kyverno-policies"
+  parent_id  = var.azurerm_kubernetes_cluster_id
   body = {
     properties = {
       kustomizations = {
-        external-secrets-operator = {
+        kyverno-policies = {
           force                  = false
           path                   = "./multitenancy/"
           prune                  = false
@@ -22,7 +23,7 @@ resource "azapi_resource" "external_secrets_operator" {
         }
         syncIntervalInSeconds = 300
         timeoutInSeconds      = 300
-        url                   = "oci://altinncr.azurecr.io/manifests/infra/external-secrets-operator"
+        url                   = "oci://altinncr.azurecr.io/manifests/infra/kyverno-policies"
         useWorkloadIdentity   = true
       }
       namespace                  = "platform-system"
