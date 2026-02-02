@@ -1,15 +1,3 @@
-output "log_analytics_workspace_id" {
-  value = local.law.id
-}
-
-output "monitor_workspace_id" {
-  value = local.amw.id
-}
-
-output "application_insights_id" {
-  value = local.ai.id
-}
-
 output "key_vault_uri" {
   value     = azurerm_key_vault.obs_kv.vault_uri
   sensitive = true
