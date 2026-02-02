@@ -151,12 +151,12 @@ variable "node_pool_configs" {
     ephemeral_os_disk    = optional(bool, false)
   }))
   default     = {}
-  description = "Configuration for additional node pools. Each key becomes the node pool name (max 12 chars, lowercase alphanumeric). Set ephemeral_os_disk=true for VMs with sufficient cache/NVMe storage. When auto_scaling_enabled=true, node_count is optional (initial count), and min_count/max_count are required. When auto_scaling_enabled=false, node_count is required."
+  description = "Configuration for additional node pools. Each key becomes the node pool name (max 10 chars, lowercase alphanumeric). Set ephemeral_os_disk=true for VMs with sufficient cache/NVMe storage. When auto_scaling_enabled=true, node_count is optional (initial count), and min_count/max_count are required. When auto_scaling_enabled=false, node_count is required."
   validation {
     condition = alltrue([
-      for k, v in var.node_pool_configs : length(k) <= 12 && can(regex("^[a-z][a-z0-9]*$", k))
+      for k, v in var.node_pool_configs : length(k) <= 10 && can(regex("^[a-z][a-z0-9]*$", k))
     ])
-    error_message = "Node pool names must be max 12 characters, start with a letter, and contain only lowercase alphanumeric characters."
+    error_message = "Node pool names must be max 10 characters (to allow for temporary rotation name suffix), start with a letter, and contain only lowercase alphanumeric characters."
   }
   validation {
     condition = alltrue([
