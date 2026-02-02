@@ -1,33 +1,3 @@
-### Minimal usage example
-This module provisions the Azure resources needed for running Azure Service Operator (ASO) in AKS using workload identity, and configures ASO deployment via an AKS Flux configuration (OCI source).
-
-```hcl
-module "dis_azure_service_operator" {
-  source = "./modules/dis_azure_service_operator"
-
-  # Required identifiers
-  prefix      = "myapp"
-  environment = "dev"
-
-  # Azure / AKS
-  azurerm_subscription_id                  = data.azurerm_client_config.current.subscription_id
-  azurerm_kubernetes_cluster_id            = module.aks.azurerm_kubernetes_cluster_id
-  azurerm_kubernetes_cluster_oidc_issuer_url = module.aks.aks_oidc_issuer_url
-  azurerm_kubernetes_workpool_vnet_id      = module.aks.aks_workpool_vnet_id
-
-  # Resource group where ASO-managed resources should be created
-  dis_resource_group_id = module.aks.dis_resource_group_id
-
-  # Optional
-  location         = "norwayeast"
-  flux_release_tag = "latest"
-  tags = {
-    Environment = "dev"
-    ManagedBy   = "terraform"
-  }
-}
-```
-
 ## Requirements
 
 | Name | Version |
@@ -68,7 +38,7 @@ module "dis_azure_service_operator" {
 | <a name="input_azurerm_resource_group_aso_name"></a> [azurerm\_resource\_group\_aso\_name](#input\_azurerm\_resource\_group\_aso\_name) | The name of the Azure Service Operators Resource Group. | `string` | `""` | no |
 | <a name="input_azurerm_subscription_id"></a> [azurerm\_subscription\_id](#input\_azurerm\_subscription\_id) | The Azure Subscription ID where the Azure Service Operators User Assigned Managed Identity will be created. | `string` | n/a | yes |
 | <a name="input_azurerm_user_assigned_identity_name"></a> [azurerm\_user\_assigned\_identity\_name](#input\_azurerm\_user\_assigned\_identity\_name) | The name of the Azure Service Operators User Assigned Managed Identity. | `string` | `""` | no |
-| <a name="input_dis_resource_group_id"></a> [dis\_resource\_group\_id](#input\_dis\_resource\_group\_id) | The resource group ID where the Azure Service Operator resources will be created. | `string` | `""` | yes |
+| <a name="input_dis_resource_group_id"></a> [dis\_resource\_group\_id](#input\_dis\_resource\_group\_id) | The resource group ID where the Azure Service Operator resources will be created. | `string` | `""` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment for which the Azure Service Operators User Assigned Managed Identity is being created. | `string` | n/a | yes |
 | <a name="input_flux_release_tag"></a> [flux\_release\_tag](#input\_flux\_release\_tag) | The release tag for the Flux configuration. | `string` | `"latest"` | no |
 | <a name="input_location"></a> [location](#input\_location) | The Azure region where the resources will be created. | `string` | `"norwayeast"` | no |
@@ -80,4 +50,3 @@ module "dis_azure_service_operator" {
 | Name | Description |
 |------|-------------|
 | <a name="output_azurerm_user_assigned_identity_principal_id"></a> [azurerm\_user\_assigned\_identity\_principal\_id](#output\_azurerm\_user\_assigned\_identity\_principal\_id) | The principal ID of the Azure Service Operator User Assigned Managed Identity. |
-
