@@ -33,7 +33,7 @@ resource "azapi_resource" "otel_collector" {
         url                   = "oci://altinncr.azurecr.io/manifests/infra/otel-collector"
         useWorkloadIdentity   = true
       }
-      namespace                  = "flux-system"
+      namespace                  = "platform-system"
       reconciliationWaitDuration = "PT5M"
       waitForReconciliation      = true
       sourceKind                 = "OCIRepository"
