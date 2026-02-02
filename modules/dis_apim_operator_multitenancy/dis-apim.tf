@@ -36,7 +36,7 @@ resource "azapi_resource" "dis_apim_operator" {
         url                   = "oci://altinncr.azurecr.io/manifests/infra/dis-apim"
         useWorkloadIdentity   = true
       }
-      namespace                  = "flux-system"
+      namespace                  = "platform-system"
       reconciliationWaitDuration = "PT5M"
       waitForReconciliation      = true
       sourceKind                 = "OCIRepository"
