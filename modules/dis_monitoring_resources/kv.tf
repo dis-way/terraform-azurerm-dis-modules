@@ -23,7 +23,7 @@ resource "azurerm_key_vault" "obs_kv" {
 resource "azurerm_role_assignment" "obs_kv_reader" {
   scope                            = azurerm_key_vault.obs_kv.id
   role_definition_name             = "Key Vault Secrets User"
-  principal_id                     = azuread_service_principal.sp.object_id
+  principal_id                     = azurerm_user_assigned_identity.otel_collector.principal_id
   skip_service_principal_aad_check = true
 }
 

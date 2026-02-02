@@ -17,7 +17,7 @@ resource "azurerm_federated_identity_credential" "lakmus" {
 
 # Gives key vault reader to the whole subscription
 resource "azurerm_role_assignment" "kv_reader_lakmus" {
-  count = var.enable_lakmus ? 1 : 0
+  count                            = var.enable_lakmus ? 1 : 0
   scope                            = "/subscriptions/${var.subscription_id}"
   role_definition_name             = "Key Vault Reader"
   principal_id                     = azurerm_user_assigned_identity.lakmus[0].principal_id

@@ -16,13 +16,13 @@ output "key_vault_uri" {
 }
 
 output "obs_client_id" {
-  value     = azuread_application.app.client_id
+  value     = azurerm_user_assigned_identity.otel_collector.client_id
   sensitive = true
 }
 
 output "lakmus_client_id" {
-  value     = var.enable_lakmus ? azurerm_user_assigned_identity.lakmus[0].client_id : ""
-  sensitive = true
+  value       = var.enable_lakmus ? azurerm_user_assigned_identity.lakmus[0].client_id : ""
+  sensitive   = true
   description = "The client ID of the user assigned identity used by lakmus."
 }
 
