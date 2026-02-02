@@ -10,10 +10,10 @@ resource "azapi_resource" "otel_collector" {
           path  = "./multitenancy"
           postBuild = {
             substitute = {
-              KV_URI : "${var.obs_kv_uri}"
-              CLIENT_ID : "${var.obs_client_id}"
-              TENANT_ID : "${var.obs_tenant_id}"
-              AMW_WRITE_ENDPOINT : "${var.obs_amw_write_endpoint}"
+              KV_URI : "${var.otel_kv_uri}"
+              CLIENT_ID : "${var.otel_client_id}"
+              TENANT_ID : "${var.otel_tenant_id}"
+              AMW_WRITE_ENDPOINT : "${var.otel_amw_write_endpoint}"
             }
           }
           prune                  = false

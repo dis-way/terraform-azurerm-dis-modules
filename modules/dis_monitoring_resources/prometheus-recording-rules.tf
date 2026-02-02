@@ -3,12 +3,12 @@
 resource "azurerm_monitor_alert_prometheus_rule_group" "node_recording_rules_linux" {
   name                = "NodeRecordingRulesRuleGroup-linux"
   location            = var.location
-  resource_group_name = local.rg.name
+  resource_group_name = var.azurerm_resource_group_obs_name
   cluster_name        = local.cluster_name
   description         = "Node Exporter recording rules for Prometheus - Linux"
   rule_group_enabled  = true
   interval            = "PT1M"
-  scopes              = [local.amw.id, var.azurerm_kubernetes_cluster_id]
+  scopes              = [var.monitor_workspace_id, var.azurerm_kubernetes_cluster_id]
 
   tags = merge(var.localtags, {
     submodule = "observability"
@@ -133,12 +133,12 @@ resource "azurerm_monitor_alert_prometheus_rule_group" "node_recording_rules_lin
 resource "azurerm_monitor_alert_prometheus_rule_group" "kubernetes_recording_rules_linux" {
   name                = "KubernetesRecordingRulesRuleGroup-linux"
   location            = var.location
-  resource_group_name = local.rg.name
+  resource_group_name = var.azurerm_resource_group_obs_name
   cluster_name        = local.cluster_name
   description         = "Kubernetes recording rules for Prometheus - Linux"
   rule_group_enabled  = true
   interval            = "PT1M"
-  scopes              = [local.amw.id, var.azurerm_kubernetes_cluster_id]
+  scopes              = [var.monitor_workspace_id, var.azurerm_kubernetes_cluster_id]
 
   tags = merge(var.localtags, {
     submodule = "observability"
@@ -415,12 +415,12 @@ resource "azurerm_monitor_alert_prometheus_rule_group" "kubernetes_recording_rul
 resource "azurerm_monitor_alert_prometheus_rule_group" "ux_recording_rules_linux" {
   name                = "UXRecordingRulesRuleGroup-linux"
   location            = var.location
-  resource_group_name = local.rg.name
+  resource_group_name = var.azurerm_resource_group_obs_name
   cluster_name        = local.cluster_name
   description         = "UX Recording Rules for Linux - Enables Azure Portal monitoring blade"
   rule_group_enabled  = true
   interval            = "PT1M"
-  scopes              = [local.amw.id, var.azurerm_kubernetes_cluster_id]
+  scopes              = [var.monitor_workspace_id, var.azurerm_kubernetes_cluster_id]
 
   tags = merge(var.localtags, {
     submodule = "observability"
