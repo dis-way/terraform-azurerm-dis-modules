@@ -1,25 +1,25 @@
-resource "azuread_application" "lakmus_app" {
-  display_name     = "${var.prefix}-${var.environment}-lakmus"
-  sign_in_audience = "AzureADMyOrg"
+resource "azurerm_user_assigned_identity" "lakmus" {
+  count               = var.enable_lakmus ? 1 : 0
+  name                = "${var.prefix}-${var.environment}-lakmus"
+  resource_group_name = var.azurerm_resource_group_obs_name
+  location            = var.location
 }
 
-resource "azuread_service_principal" "lakmus_sp" {
-  client_id = azuread_application.lakmus_app.client_id
-}
-
-resource "azuread_application_federated_identity_credential" "lakmus_fed_identity" {
-  application_id = azuread_application.lakmus_app.id
-  display_name   = "fed-identity-${var.prefix}-${var.environment}-lakmus"
-  description    = "The federated identity used to federate K8s with Azure AD for ${var.prefix}-${var.environment}-lakmus"
-  audiences      = ["api://AzureADTokenExchange"]
-  issuer         = var.oidc_issuer_url
-  subject        = "system:serviceaccount:monitoring:lakmus"
+resource "azurerm_federated_identity_credential" "lakmus" {
+  count               = var.enable_lakmus ? 1 : 0
+  name                = "${var.prefix}-${var.environment}-lakmus"
+  audience            = ["api://AzureADTokenExchange"]
+  issuer              = var.oidc_issuer_url
+  subject             = "system:serviceaccount:monitoring:lakmus"
+  resource_group_name = var.azurerm_resource_group_obs_name
+  parent_id           = azurerm_user_assigned_identity.lakmus[0].id
 }
 
 # Gives key vault reader to the whole subscription
 resource "azurerm_role_assignment" "kv_reader_lakmus" {
+  count = var.enable_lakmus ? 1 : 0
   scope                            = "/subscriptions/${var.subscription_id}"
   role_definition_name             = "Key Vault Reader"
-  principal_id                     = azuread_service_principal.lakmus_sp.object_id
+  principal_id                     = azurerm_user_assigned_identity.lakmus[0].principal_id
   skip_service_principal_aad_check = true
 }

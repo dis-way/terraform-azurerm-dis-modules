@@ -74,3 +74,30 @@ output "pip6_ip_address" {
   value       = azurerm_public_ip.pip6.ip_address
   description = "The IPv6 address value that was allocated"
 }
+
+output "products_monitor_resource_group_name" {
+  value       = azurerm_resource_group.monitor.name
+  description = "Name of the resource group where monitoring resources are deployed"
+}
+
+output "products_app_insights_connection_string" {
+  value       = var.enable_products_azure_monitoring_resources ? azurerm_application_insights.products[0].connection_string : ""
+  sensitive   = true
+  description = "Connection string of an Application Insights where logs and traces are sent."
+}
+
+output "products_log_analytics_workspace_id" {
+  value       = var.enable_products_azure_monitoring_resources ? azurerm_log_analytics_workspace.products[0].id : ""
+  description = "ID of the log analytics workspace used by products. If enable_products_azure_monitoring_resources is false this will be an empty string"
+}
+
+output "products_azure_monitor_workspace_id" {
+  value       = var.enable_products_azure_monitoring_resources ? azurerm_monitor_workspace.products[0].id : ""
+  description = "ID of the Azure Monitor Workspace used by products. If enable_products_azure_monitoring_resources is false, this will be an empty string"
+}
+
+output "products_azure_monitor_workspace_name" {
+  value       = var.enable_products_azure_monitoring_resources ? azurerm_monitor_workspace.products[0].name : ""
+  description = "Name of the Azure Monitor Workspace used by products. If enable_products_azure_monitoring_resources is false, this will be an empty string"
+}
+

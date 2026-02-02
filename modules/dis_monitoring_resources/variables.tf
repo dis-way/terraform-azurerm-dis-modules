@@ -114,3 +114,9 @@ variable "tenant_id" {
     error_message = "You must provide a value for tenant_id."
   }
 }
+
+variable "enable_lakmus" {
+  type        = bool
+  default     = true
+  description = "Deploy the resources needed by lakmus"
+}

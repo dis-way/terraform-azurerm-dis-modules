@@ -21,8 +21,9 @@ output "obs_client_id" {
 }
 
 output "lakmus_client_id" {
-  value     = azuread_application.lakmus_app.client_id
+  value     = var.enable_lakmus ? azurerm_user_assigned_identity.lakmus[0].client_id : ""
   sensitive = true
+  description = "The client ID of the user assigned identity used by lakmus."
 }
 
 output "monitor_workspace_write_endpoint" {
