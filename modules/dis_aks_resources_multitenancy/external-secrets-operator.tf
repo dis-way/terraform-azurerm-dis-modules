@@ -8,6 +8,11 @@ resource "azapi_resource" "external_secrets_operator" {
         external-secrets-operator = {
           force                  = false
           path                   = "./multitenancy/"
+          postBuild = {
+            substitute = {
+              DUMMY: "DUMMY"
+            }
+          }
           prune                  = false
           retryIntervalInSeconds = 300
           syncIntervalInSeconds  = 300
