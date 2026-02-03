@@ -1,6 +1,7 @@
 resource "azuread_application" "cert_manager_app" {
   display_name     = "${var.prefix}-${var.environment}-cert-manager"
   sign_in_audience = "AzureADMyOrg"
+  owners           = [var.current_user_object_id]
 }
 
 resource "azuread_service_principal" "cert_manager_sp" {
