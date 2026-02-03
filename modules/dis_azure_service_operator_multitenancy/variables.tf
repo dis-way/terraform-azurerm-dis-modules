@@ -86,3 +86,13 @@ variable "dis_resource_group_id" {
     error_message = "You must provide a value for dis_resource_group_id."
   }
 }
+
+variable "aks_vnet_ipv4_cidr" {
+  type        = string
+  description = "AKS VNet IPv4 CIDR"
+}
+
+variable "aks_vnet_ipv6_cidr" {
+  type        = string
+  description = "AKS VNet IPv6 CIDR"
+}
