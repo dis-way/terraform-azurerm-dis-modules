@@ -9,7 +9,9 @@ resource "azapi_resource" "kyverno" {
           force                  = false
           path                   = "./multitenancy/"
           postBuild = {
-            substitute = {}
+            substitute = {
+              OTEL_PORT: "4317"
+            }
           }
           prune                  = false
           retryIntervalInSeconds = 300
