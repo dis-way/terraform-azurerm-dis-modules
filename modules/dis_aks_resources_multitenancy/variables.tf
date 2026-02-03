@@ -12,3 +12,13 @@ variable "flux_release_tag" {
   type        = string
   description = "OCI image that Flux should watch and reconcile"
 }
+
+variable "aks_vnet_ipv4_cidr" {
+  type        = string
+  description = "AKS VNet IPv4 CIDR"
+}
+
+variable "aks_vnet_ipv6_cidr" {
+  type        = string
+  description = "AKS VNet IPv6 CIDR"
+}

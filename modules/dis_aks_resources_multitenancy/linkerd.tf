@@ -13,6 +13,8 @@ resource "azapi_resource" "linkerd" {
             substitute = {
               DISABLE_IPV6 : "${var.linkerd_disable_ipv6}"
               DEFAULT_INBOUND_POLICY : "${var.linkerd_default_inbound_policy}"
+              AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
+              AKS_VNET_IPV6_CIDR : "${var.aks_vnet_ipv6_cidr}"
             }
           }
           prune                  = false
