@@ -6,11 +6,12 @@ resource "azapi_resource" "external_secrets_operator" {
     properties = {
       kustomizations = {
         external-secrets-operator = {
-          force                  = false
-          path                   = "./multitenancy/"
+          force = false
+          path  = "./multitenancy/"
           postBuild = {
             substitute = {
-              DUMMY: "DUMMY"
+              AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
+              AKS_VNET_IPV6_CIDR : "${var.aks_vnet_ipv6_cidr}"
             }
           }
           prune                  = false

@@ -19,6 +19,8 @@ resource "azapi_resource" "aso" {
               AZURE_CLIENT_ID : "${azurerm_user_assigned_identity.aso_identity.client_id}"
               AZURE_SUBSCRIPTION_ID : "${var.azurerm_subscription_id}"
               CRD_PATTERN : "${var.aso_crd_pattern}"
+              AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
+              AKS_VNET_IPV6_CIDR : "${var.aks_vnet_ipv6_cidr}"
             }
           }
         }
