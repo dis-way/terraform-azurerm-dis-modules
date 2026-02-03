@@ -8,6 +8,9 @@ resource "azapi_resource" "kyverno" {
         kyverno = {
           force                  = false
           path                   = "./multitenancy/"
+          postBuild = {
+            substitute = {}
+          }
           prune                  = false
           retryIntervalInSeconds = 300
           syncIntervalInSeconds  = 300
