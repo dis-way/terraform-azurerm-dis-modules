@@ -61,3 +61,8 @@ variable "parent_dns_zone_rg" {
   description = "Resource group for parent dns zone"
   default     = "DNS"
 }
+
+variable "current_user_object_id" {
+  type        = string
+  description = "Object ID of current user to set as owner of Azure AD applications"
+}
