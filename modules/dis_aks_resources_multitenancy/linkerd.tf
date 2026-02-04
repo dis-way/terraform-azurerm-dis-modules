@@ -13,8 +13,6 @@ resource "azapi_resource" "linkerd" {
             substitute = {
               DISABLE_IPV6 : "${var.linkerd_disable_ipv6}"
               DEFAULT_INBOUND_POLICY : "${var.linkerd_default_inbound_policy}"
-              AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
-              AKS_VNET_IPV6_CIDR : "${var.aks_vnet_ipv6_cidr}"
             }
           }
           prune                  = false
@@ -23,9 +21,27 @@ resource "azapi_resource" "linkerd" {
           timeoutInSeconds       = 600
           wait                   = true
         },
-        linkerd-post-deploy = {
+        linkerd-policies = {
           dependsOn = [
             "linkerd"
+          ]
+          force = false
+          path  = "./policies/"
+          postBuild = {
+            substitute = {
+              AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
+              AKS_VNET_IPV6_CIDR : "${var.aks_vnet_ipv6_cidr}"
+            }
+          }
+          prune                  = true
+          retryIntervalInSeconds = 300
+          syncIntervalInSeconds  = 300
+          timeoutInSeconds       = 300
+          wait                   = true
+        },
+        linkerd-post-deploy = {
+          dependsOn = [
+            "linkerd-policies"
           ]
           force                  = true
           path                   = "./post-deploy/"
