@@ -38,8 +38,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     os_disk_size_gb              = var.system_pool_config.ephemeral_os_disk ? (can(regex("Standard_D2[a-z]*s_v[0-9]+", var.system_pool_config.vm_size)) ? 110 : null) : 128
 
     upgrade_settings {
-      max_surge                 = "10%"
-      undrainable_node_behavior = "Schedule"
+      max_surge = "10%"
     }
   }
 
