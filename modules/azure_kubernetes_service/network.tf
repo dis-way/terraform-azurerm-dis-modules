@@ -7,7 +7,7 @@ resource "azurerm_virtual_network" "aks" {
 }
 
 resource "azurerm_subnet" "system_pool" {
-  name                 = "syspool"
+  name                 = "aks_syspool"
   resource_group_name  = azurerm_resource_group.aks.name
   virtual_network_name = azurerm_virtual_network.aks.name
   address_prefixes     = var.system_pool_subnet_prefixes
@@ -16,7 +16,7 @@ resource "azurerm_subnet" "system_pool" {
 
 resource "azurerm_subnet" "node_pools" {
   for_each             = var.node_pool_subnet_prefixes
-  name                 = each.key
+  name                 = "aks_${each.key}"
   resource_group_name  = azurerm_resource_group.aks.name
   virtual_network_name = azurerm_virtual_network.aks.name
   address_prefixes     = each.value
