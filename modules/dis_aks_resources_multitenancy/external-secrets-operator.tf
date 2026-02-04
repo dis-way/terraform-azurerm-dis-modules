@@ -1,7 +1,8 @@
 resource "azapi_resource" "external_secrets_operator" {
-  type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
-  name      = "external-secrets-operator"
-  parent_id = var.azurerm_kubernetes_cluster_id
+  depends_on = [azapi_resource.linkerd]
+  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
+  name       = "external-secrets-operator"
+  parent_id  = var.azurerm_kubernetes_cluster_id
   body = {
     properties = {
       kustomizations = {
