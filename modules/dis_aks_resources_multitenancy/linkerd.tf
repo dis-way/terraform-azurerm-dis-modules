@@ -41,7 +41,7 @@ resource "azapi_resource" "linkerd" {
         },
         linkerd-post-deploy = {
           dependsOn = [
-            "linkerd"
+            "linkerd-policies"
           ]
           force                  = true
           path                   = "./post-deploy/"
