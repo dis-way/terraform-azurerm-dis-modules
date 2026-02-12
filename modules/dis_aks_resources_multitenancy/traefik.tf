@@ -1,4 +1,4 @@
-resource "azapi_resource" "cert_manager" {
+resource "azapi_resource" "traefik" {
   type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
   name      = "traefik"
   parent_id = var.azurerm_kubernetes_cluster_id
@@ -6,8 +6,8 @@ resource "azapi_resource" "cert_manager" {
     properties = {
       kustomizations = {
         traefik = {
-          force                  = false
-          path                   = "./multitenancy/"
+          force = false
+          path  = "./multitenancy/"
           postBuild = {
             substitute = {
               AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
