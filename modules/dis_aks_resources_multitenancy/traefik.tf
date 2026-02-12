@@ -12,7 +12,7 @@ resource "azapi_resource" "traefik" {
             substitute = {
               AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
               AKS_VNET_IPV6_CIDR : "${var.aks_vnet_ipv6_cidr}"
-              DEFAULT_GATEWAY_HOSTNAME : "${var.default_gateway_hostname}}"
+              DEFAULT_GATEWAY_HOSTNAME : "${var.default_gateway_hostname}"
               AKS_NODE_RG : "${var.aks_node_resource_group}"
               PUBLIC_IP_V4 : "${var.aks_public_ipv4_address}"
               PUBLIC_IP_V6 : "${var.aks_public_ipv6_address}"
