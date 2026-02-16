@@ -22,7 +22,7 @@ resource "azapi_resource" "lets_encrypt_tls_issuer" {
           retryIntervalInSeconds = 300
           syncIntervalInSeconds  = 300
           timeoutInSeconds       = 300
-          wait                   = true
+          wait                   = false
         }
       }
       ociRepository = {
