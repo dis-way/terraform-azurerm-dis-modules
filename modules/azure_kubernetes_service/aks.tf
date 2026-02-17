@@ -35,10 +35,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
     zones                        = ["1", "2", "3"]
     orchestrator_version         = var.kubernetes_version
     os_disk_type                 = var.system_pool_config.ephemeral_os_disk ? "Ephemeral" : "Managed"
-    os_disk_size_gb              = var.system_pool_config.ephemeral_os_disk ? (can(regex("Standard_D2[a-z]*s_v[0-9]+", var.system_pool_config.vm_size)) ? 110 : null) : 128
+    os_disk_size_gb              = var.system_pool_config.ephemeral_os_disk ? (can(regex("Standard_[DE]2[a-z]*s_v[0-9]+", var.system_pool_config.vm_size)) ? 110 : null) : 128
 
     upgrade_settings {
-      max_surge = "10%"
+      max_surge                 = "10%"
+      undrainable_node_behavior = "Schedule"
     }
   }
 
