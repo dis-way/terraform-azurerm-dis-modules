@@ -9,7 +9,7 @@ resource "azapi_resource" "cert_manager_issuer" {
       kustomizations = {
         tls-issuer = {
           force = false
-          path  = "./"
+          path  = "./base/"
           postBuild = {
             substitute = {
               AZURE_DNS_ZONE_NAME   = "${var.tls_cert_manager_zone_name}"

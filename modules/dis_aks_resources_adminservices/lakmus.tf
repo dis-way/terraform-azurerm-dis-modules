@@ -5,7 +5,7 @@ resource "azapi_resource" "lakmus" {
   body = {
     properties = {
       kustomizations = {
-        lakmus-azapi = {
+        lakmus = {
           force = false
           path  = "./"
           postBuild = {

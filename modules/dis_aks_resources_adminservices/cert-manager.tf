@@ -7,7 +7,7 @@ resource "azapi_resource" "cert_manager" {
       kustomizations = {
         cert-manager = {
           force                  = false
-          path                   = "./"
+          path                   = "./base/"
           prune                  = false
           retryIntervalInSeconds = 300
           syncIntervalInSeconds  = 300
