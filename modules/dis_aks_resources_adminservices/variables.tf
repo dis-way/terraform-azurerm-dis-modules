@@ -229,12 +229,3 @@ variable "developer_entra_id_group" {
   type        = string
 }
 
-variable "aks_workpool_vnet_name" {
-  type        = string
-  description = "Name of the vnets where the workpool nodes are located"
-}
-
-variable "dis_resource_group_name" {
-  type        = string
-  description = "Name of the resource group for DIS resources"
-}
