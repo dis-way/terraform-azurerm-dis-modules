@@ -7,7 +7,7 @@ resource "azapi_resource" "eso" {
       kustomizations = {
         external-secrets-operator = {
           force                  = false
-          path                   = "./"
+          path                   = "./base/"
           prune                  = false
           retryIntervalInSeconds = 300
           syncIntervalInSeconds  = 300

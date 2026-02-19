@@ -7,7 +7,7 @@ resource "azapi_resource" "otel_operator" {
       kustomizations = {
         otel-operator = {
           force                  = false
-          path                   = "./"
+          path                   = "./base/"
           prune                  = false
           retryIntervalInSeconds = 300
           syncIntervalInSeconds  = 300
@@ -42,7 +42,7 @@ resource "azapi_resource" "otel_collector" {
       kustomizations = {
         otel-collector = {
           force = false
-          path  = "./"
+          path  = "./adminservices/"
           postBuild = {
             substitute = {
               KV_URI : "${var.obs_kv_uri}"

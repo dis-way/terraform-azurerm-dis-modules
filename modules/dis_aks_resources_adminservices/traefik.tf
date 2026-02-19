@@ -8,17 +8,14 @@ resource "azapi_resource" "traefik" {
       kustomizations = {
         traefik = {
           force = false
-          path  = "./"
+          path  = "./adminservices/"
           postBuild = {
             substitute = {
-              AKS_SYSP00L_IP_PREFIX_0 : "${var.subnet_address_prefixes.aks_syspool[0]}"
-              AKS_SYSP00L_IP_PREFIX_1 : "${var.subnet_address_prefixes.aks_syspool[1]}"
-              AKS_WORKPOOL_IP_PREFIX_0 : "${var.subnet_address_prefixes.aks_workpool[0]}"
-              AKS_WORKPOOL_IP_PREFIX_1 : "${var.subnet_address_prefixes.aks_workpool[1]}"
+              AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
+              AKS_VNET_IPV6_CIDR : "${var.aks_vnet_ipv6_cidr}"
               AKS_NODE_RG : "${var.aks_node_resource_group}"
               PUBLIC_IP_V4 : "${var.pip4_ip_address}"
               PUBLIC_IP_V6 : "${var.pip6_ip_address}"
-              # EXTERNAL_TRAFFIC_POLICY: Cluster (Local is default in traefik oci)
             }
           }
           prune                  = false

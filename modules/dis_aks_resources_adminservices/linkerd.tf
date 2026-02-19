@@ -8,7 +8,7 @@ resource "azapi_resource" "linkerd" {
       kustomizations = {
         linkerd = {
           force = false
-          path  = "./"
+          path  = "./base/"
           postBuild = {
             substitute = {
               DISABLE_IPV6 : "${var.linkerd_disable_ipv6}"
