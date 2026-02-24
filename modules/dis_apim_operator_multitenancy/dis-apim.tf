@@ -9,19 +9,15 @@ resource "azapi_resource" "dis_apim_operator" {
           force = false
           path  = "./multitenancy/"
           postBuild = {
-            substitute = merge(
-              {
-                DISAPIM_SUBSCRIPTION_ID             = "${var.apim_subscription_id}"
-                DISAPIM_RESOURCE_GROUP              = "${var.apim_resource_group_name}"
-                DISAPIM_APIM_SERVICE_NAME           = "${var.apim_service_name}"
-                DISAPIM_DEFAULT_LOGGER_ID           = "/subscriptions/${var.apim_subscription_id}/resourceGroups/${var.apim_resource_group_name}/providers/Microsoft.ApiManagement/service/${var.apim_service_name}/loggers/${var.default_logger_name}"
-                DISAPIM_TARGET_NAMESPACE            = "${var.target_namespace}"
-                DISAPIM_WORKLOAD_IDENTITY_CLIENT_ID = "${azurerm_user_assigned_identity.disapim_identity.client_id}"
-              },
-              trimspace(coalesce(var.namespace_suffix, "")) == "" ? {} : {
-                DISAPIM_NAMESPACE_SUFFIX = trimspace(var.namespace_suffix)
-              }
-            )
+            substitute = {
+              DISAPIM_SUBSCRIPTION_ID             = "${var.apim_subscription_id}"
+              DISAPIM_RESOURCE_GROUP              = "${var.apim_resource_group_name}"
+              DISAPIM_APIM_SERVICE_NAME           = "${var.apim_service_name}"
+              DISAPIM_DEFAULT_LOGGER_ID           = "/subscriptions/${var.apim_subscription_id}/resourceGroups/${var.apim_resource_group_name}/providers/Microsoft.ApiManagement/service/${var.apim_service_name}/loggers/${var.default_logger_name}"
+              DISAPIM_NAMESPACE_SUFFIX            = trimspace(coalesce(var.namespace_suffix, ""))
+              DISAPIM_TARGET_NAMESPACE            = "${var.target_namespace}"
+              DISAPIM_WORKLOAD_IDENTITY_CLIENT_ID = "${azurerm_user_assigned_identity.disapim_identity.client_id}"
+            }
           }
           prune                  = false
           retryIntervalInSeconds = 300
