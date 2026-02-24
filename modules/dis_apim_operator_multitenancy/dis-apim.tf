@@ -19,7 +19,7 @@ resource "azapi_resource" "dis_apim_operator" {
                 DISAPIM_WORKLOAD_IDENTITY_CLIENT_ID = "${azurerm_user_assigned_identity.disapim_identity.client_id}"
               },
               var.namespace_suffix == null || trimspace(var.namespace_suffix) == "" ? {} : {
-                DISAPIM_NAMESPACE_SUFFIX = trimspace(var.namespace_suffix)
+                DISAPIM_NAMESPACE_SUFFIX = "${var.namespace_suffix}"
               }
             )
           }
