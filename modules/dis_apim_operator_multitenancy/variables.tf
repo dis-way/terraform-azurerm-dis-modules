@@ -102,6 +102,7 @@ variable "target_namespace" {
 
 variable "namespace_suffix" {
   type        = string
+  nullable    = false
   default     = ""
   description = "Suffix of namespaces that the operator will reconcile APIM objects in. No suffix watches all namespaces."
 }
