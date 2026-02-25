@@ -20,7 +20,6 @@ module "dis_apim_operator_multitenancy" {
 
   # Operator settings
   target_namespace = "platform-system"
-  # namespace_suffix = "-tenant" # Optional: restrict reconciliation to namespaces ending with this suffix
 
   # Optional
   flux_release_tag = "latest"
@@ -30,4 +29,3 @@ module "dis_apim_operator_multitenancy" {
   }
 }
 ```
-
