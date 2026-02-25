@@ -20,7 +20,6 @@ module "dis_apim_operator_multitenancy" {
 
   # Operator settings
   target_namespace = "platform-system"
-  # namespace_suffix = "-tenant" # Optional: restrict reconciliation to namespaces ending with this suffix
 
   # Optional
   flux_release_tag = "latest"
@@ -68,7 +67,6 @@ module "dis_apim_operator_multitenancy" {
 | <a name="input_kubernetes_cluster_oidc_issuer_url"></a> [kubernetes\_cluster\_oidc\_issuer\_url](#input\_kubernetes\_cluster\_oidc\_issuer\_url) | The OIDC issuer URL of the AKS cluster. | `string` | n/a | yes |
 | <a name="input_kubernetes_node_location"></a> [kubernetes\_node\_location](#input\_kubernetes\_node\_location) | AKS node location | `string` | n/a | yes |
 | <a name="input_kubernetes_node_resource_group"></a> [kubernetes\_node\_resource\_group](#input\_kubernetes\_node\_resource\_group) | AKS node resource group name | `string` | n/a | yes |
-| <a name="input_namespace_suffix"></a> [namespace\_suffix](#input\_namespace\_suffix) | Suffix of namespaces that the operator will reconcile APIM objects in. No suffix watches all namespaces. | `string` | `""` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the Azure Service Operators User Assigned Managed Identity. | `map(string)` | `{}` | no |
 | <a name="input_target_namespace"></a> [target\_namespace](#input\_target\_namespace) | Namespace where the operator deployment will be created | `string` | n/a | yes |
 | <a name="input_user_assigned_identity_name"></a> [user\_assigned\_identity\_name](#input\_user\_assigned\_identity\_name) | User assigned identity name | `string` | `""` | no |
@@ -78,4 +76,3 @@ module "dis_apim_operator_multitenancy" {
 | Name | Description |
 |------|-------------|
 | <a name="output_dis_apim_workload_identity_client_id"></a> [dis\_apim\_workload\_identity\_client\_id](#output\_dis\_apim\_workload\_identity\_client\_id) | Client ID for the operator workload identity (sensitive). |
-
