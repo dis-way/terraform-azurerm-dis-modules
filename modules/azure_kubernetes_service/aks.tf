@@ -79,9 +79,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   dynamic "api_server_access_profile" {
-    for_each = length(var.api_server_authorized_ip_ranges.ipv4) > 0 || length(var.api_server_authorized_ip_ranges.ipv6) > 0 ? [1] : []
+    for_each = var.enable_api_server_vnet_integration || length(var.api_server_authorized_ip_ranges.ipv4) > 0 || length(var.api_server_authorized_ip_ranges.ipv6) > 0 ? [1] : []
     content {
-      authorized_ip_ranges = concat(var.api_server_authorized_ip_ranges.ipv4, var.api_server_authorized_ip_ranges.ipv6)
+      authorized_ip_ranges                = var.enable_api_server_vnet_integration ? ["0.0.0.0/32", "::/128"] : (length(var.api_server_authorized_ip_ranges.ipv4) > 0 || length(var.api_server_authorized_ip_ranges.ipv6) > 0 ? concat(var.api_server_authorized_ip_ranges.ipv4, var.api_server_authorized_ip_ranges.ipv6) : null)
+      subnet_id                           = var.enable_api_server_vnet_integration ? azurerm_subnet.api_server[0].id : null
+      virtual_network_integration_enabled = var.enable_api_server_vnet_integration
     }
   }
 

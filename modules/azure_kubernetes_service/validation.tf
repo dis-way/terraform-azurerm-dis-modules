@@ -11,6 +11,13 @@ check "node_pool_subnet_prefixes_match_configs" {
   }
 }
 
+check "api_server_subnet_prefixes_required" {
+  assert {
+    condition     = !var.enable_api_server_vnet_integration || length(var.api_server_subnet_prefixes) > 0
+    error_message = "api_server_subnet_prefixes must be provided when enable_api_server_vnet_integration is true."
+  }
+}
+
 check "node_pool_subnet_prefixes_no_extras" {
   assert {
     condition = alltrue([

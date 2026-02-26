@@ -222,6 +222,18 @@ variable "subnet_service_endpoints" {
   description = "List of service endpoints to associate with the AKS subnets"
 }
 
+variable "enable_api_server_vnet_integration" {
+  type        = bool
+  default     = true
+  description = "Enable API server VNet integration. When true, the API server endpoint is injected into a dedicated delegated subnet in the cluster VNet. api_server_subnet_prefixes must be provided."
+}
+
+variable "api_server_subnet_prefixes" {
+  type        = list(string)
+  default     = []
+  description = "Address prefixes for the API server subnet (dual-stack: one IPv4 /28 minimum and one IPv6 /124 minimum). Required when enable_api_server_vnet_integration is true."
+}
+
 variable "tags" {
   type        = map(string)
   default     = {}
