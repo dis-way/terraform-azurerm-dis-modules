@@ -6,11 +6,11 @@ resource "azapi_resource" "kyverno" {
     properties = {
       kustomizations = {
         kyverno = {
-          force                  = false
-          path                   = "./multitenancy/"
+          force = false
+          path  = "./multitenancy/"
           postBuild = {
             substitute = {
-              OTEL_PORT: "4317"
+              OTEL_PORT : "4317"
             }
           }
           prune                  = false

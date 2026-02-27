@@ -29,16 +29,16 @@ variable "aks_node_resource_group" {
 }
 
 variable "aks_public_ipv4_address" {
-  type = string
+  type        = string
   description = "The public IPv4 address of the AKS cluster"
 }
 
 variable "aks_public_ipv6_address" {
-  type = string
+  type        = string
   description = "The public IPv6 address of the AKS cluster"
 }
 
 variable "default_gateway_hostname" {
-  type = string
+  type        = string
   description = "The default gateway hostname of the AKS cluster. This will be the Hostname in the default gateway https://gateway-api.sigs.k8s.io/reference/spec/#hostname"
 }
