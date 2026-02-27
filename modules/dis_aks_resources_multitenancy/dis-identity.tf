@@ -1,7 +1,7 @@
 resource "azapi_resource" "dis_identity_operator" {
   depends_on = [azapi_resource.cert_manager]
   type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
-  name       = "dis-identity"
+  name       = "dis-identity-sync"
   parent_id  = var.azurerm_kubernetes_cluster_id
   body = {
     properties = {
@@ -13,6 +13,7 @@ resource "azapi_resource" "dis_identity_operator" {
             substitute = {
               DISID_ISSUER_URL            = "${var.azurerm_kubernetes_cluster_oidc_issuer_url}"
               DISID_TARGET_RESOURCE_GROUP = "${var.azurerm_dis_identity_resource_group_id}"
+              DISID_TARGET_TENANT_ID      = "${var.dis_identity_target_tenant_id}"
             }
           }
           prune                  = false
