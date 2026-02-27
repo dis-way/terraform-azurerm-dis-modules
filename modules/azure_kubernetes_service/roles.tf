@@ -1,8 +1,9 @@
-# Assign "Network Contributor" Role to AKS Managed Identity
+# Assign "Network Contributor" Role to AKS control-plane managed identity.
+# Must be pre-assigned before cluster creation; required for API server VNet integration.
 resource "azurerm_role_assignment" "network_contributor" {
   scope                            = azurerm_resource_group.aks.id
   role_definition_name             = "Network Contributor"
-  principal_id                     = azurerm_kubernetes_cluster.aks.identity[0].principal_id
+  principal_id                     = azurerm_user_assigned_identity.aks_control_plane.principal_id
   skip_service_principal_aad_check = true
 }
 
