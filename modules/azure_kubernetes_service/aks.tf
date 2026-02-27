@@ -1,15 +1,12 @@
 locals {
   # Build the authorized IP ranges for the public API server endpoint.
-  # If only one IP family is provided, fill the other with a block-all sentinel to avoid leaving it unrestricted.
-  # When VNet integration is on and no caller ranges are provided, default to block-all - access is through the VNet.
+  # Azure's authorized_ip_ranges only accepts IPv4 CIDRs; IPv6 is not supported by the AKS API.
+  # When VNet integration is on and no IPv4 ranges are provided, default to block-all - access is through the VNet.
   # When VNet integration is off and no caller ranges are provided, null = open to all public (not recommended).
   api_server_authorized_ip_ranges = (
-    length(var.api_server_authorized_ip_ranges.ipv4) > 0 || length(var.api_server_authorized_ip_ranges.ipv6) > 0
-    ? concat(
-        length(var.api_server_authorized_ip_ranges.ipv4) > 0 ? var.api_server_authorized_ip_ranges.ipv4 : ["0.0.0.0/32"],
-        length(var.api_server_authorized_ip_ranges.ipv6) > 0 ? var.api_server_authorized_ip_ranges.ipv6 : ["::/128"]
-      )
-    : var.enable_api_server_vnet_integration ? ["0.0.0.0/32", "::/128"] : null
+    length(var.api_server_authorized_ip_ranges.ipv4) > 0
+    ? var.api_server_authorized_ip_ranges.ipv4
+    : var.enable_api_server_vnet_integration ? ["0.0.0.0/32"] : null
   )
 }
 

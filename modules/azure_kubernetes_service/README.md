@@ -25,8 +25,10 @@ module "aks" {
   }
   system_pool_subnet_prefixes = ["10.0.0.0/24", "fd00:0:0:1::/64"]
 
-  # API server VNet integration (on by default)
-  api_server_subnet_prefixes = ["10.0.3.0/28", "fd00:0:0:4::/124"]
+  # API server VNet integration (on by default).
+  # authorized_ip_ranges is IPv4-only (Azure limitation); defaults to 0.0.0.0/32 (block-all) when VNet integration is on.
+  api_server_subnet_prefixes = ["10.0.3.0/28", "fd00:0:0:4::/64"]
+  # api_server_authorized_ip_ranges = { ipv4 = ["203.0.113.0/24"] }
 
   # Node pools
   node_pool_configs = {
@@ -116,8 +118,8 @@ module "aks" {
 | <a name="input_aks_local_account_disabled"></a> [aks\_local\_account\_disabled](#input\_aks\_local\_account\_disabled) | Disable local account for the AKS cluster. When true, only Azure AD authentication is allowed. | `bool` | `true` | no |
 | <a name="input_aks_sku_tier"></a> [aks\_sku\_tier](#input\_aks\_sku\_tier) | Kubernetes SKU | `string` | `"Free"` | no |
 | <a name="input_aks_user_role_scopes"></a> [aks\_user\_role\_scopes](#input\_aks\_user\_role\_scopes) | List of groups to get user role scopes for AKS | `list(string)` | `[]` | no |
-| <a name="input_api_server_authorized_ip_ranges"></a> [api\_server\_authorized\_ip\_ranges](#input\_api\_server\_authorized\_ip\_ranges) | Authorized IP ranges (CIDR notation) that can access the public API server endpoint.<br/>If only one IP family is provided, the other is blocked with a block-all sentinel.<br/><br/>When enable\_api\_server\_vnet\_integration is true:<br/>  - Defaults to block-all if not set - access is through the VNet.<br/>  - Can be set to allow specific ranges to also reach the public endpoint.<br/><br/>When enable\_api\_server\_vnet\_integration is false:<br/>  - If not set, the public endpoint is open to all (not recommended).<br/>  - For production, always specify authorized ranges.<br/><br/>Example:<br/>  ipv4 = ["10.0.0.0/8", "203.0.113.0/24"]<br/>  ipv6 = ["2001:db8::/32"] | <pre>object({<br/>    ipv4 = list(string)<br/>    ipv6 = list(string)<br/>  })</pre> | <pre>{<br/>  "ipv4": [],<br/>  "ipv6": []<br/>}</pre> | no |
-| <a name="input_api_server_subnet_prefixes"></a> [api\_server\_subnet\_prefixes](#input\_api\_server\_subnet\_prefixes) | Address prefixes for the API server subnet (dual-stack: one IPv4 /28 minimum and one IPv6 /124 minimum). Required when enable\_api\_server\_vnet\_integration is true. | `list(string)` | `[]` | no |
+| <a name="input_api_server_authorized_ip_ranges"></a> [api\_server\_authorized\_ip\_ranges](#input\_api\_server\_authorized\_ip\_ranges) | Authorized IPv4 ranges (CIDR notation) that can access the public API server endpoint.<br/>NOTE: Azure's authorized\_ip\_ranges only accepts IPv4 CIDRs; the ipv6 field is accepted for<br/>compatibility but is not forwarded to the AKS API and will be ignored.<br/><br/>When enable\_api\_server\_vnet\_integration is true:<br/>  - Defaults to block-all (0.0.0.0/32) if not set - access is through the VNet.<br/>  - Can be set to allow specific IPv4 ranges to also reach the public endpoint.<br/><br/>When enable\_api\_server\_vnet\_integration is false:<br/>  - If not set, the public endpoint is open to all (not recommended).<br/>  - For production, always specify authorized ranges.<br/><br/>Example:<br/>  ipv4 = ["10.0.0.0/8", "203.0.113.0/24"] | <pre>object({<br/>    ipv4 = list(string)<br/>    ipv6 = list(string)<br/>  })</pre> | <pre>{<br/>  "ipv4": [],<br/>  "ipv6": []<br/>}</pre> | no |
+| <a name="input_api_server_subnet_prefixes"></a> [api\_server\_subnet\_prefixes](#input\_api\_server\_subnet\_prefixes) | Address prefixes for the API server subnet (dual-stack: one IPv4 /28 minimum and one IPv6 /64). Required when enable\_api\_server\_vnet\_integration is true. | `list(string)` | `[]` | no |
 | <a name="input_azurerm_kubernetes_cluster_aks_dns_service_ip"></a> [azurerm\_kubernetes\_cluster\_aks\_dns\_service\_ip](#input\_azurerm\_kubernetes\_cluster\_aks\_dns\_service\_ip) | Optional explicit aks dns service ip | `string` | `""` | no |
 | <a name="input_azurerm_kubernetes_cluster_aks_name"></a> [azurerm\_kubernetes\_cluster\_aks\_name](#input\_azurerm\_kubernetes\_cluster\_aks\_name) | Optional explicit name of the AKS cluster | `string` | `""` | no |
 | <a name="input_azurerm_kubernetes_cluster_aks_pod_cidrs"></a> [azurerm\_kubernetes\_cluster\_aks\_pod\_cidrs](#input\_azurerm\_kubernetes\_cluster\_aks\_pod\_cidrs) | Optional explicit aks pod cidrs | `list(string)` | `[]` | no |
