@@ -7,6 +7,12 @@ variable "admin_group_object_ids" {
   }
 }
 
+variable "vnet_network_contributor_object_ids" {
+  type        = list(string)
+  default     = []
+  description = "List of service principal object IDs to assign the Network Contributor role on the AKS VNet."
+}
+
 variable "aks_acrpull_scopes" {
   type        = list(string)
   default     = []
