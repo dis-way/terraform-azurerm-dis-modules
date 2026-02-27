@@ -9,7 +9,7 @@ variable "azurerm_kubernetes_cluster_oidc_issuer_url" {
 }
 
 variable "dis_identity_target_tenant_id" {
-  type = string
+  type        = string
   description = "Tenant ID where dis-identity ApplicationIdentity will be created"
-  sensitive = true
+  sensitive   = true
 }
