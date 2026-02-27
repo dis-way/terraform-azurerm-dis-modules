@@ -7,3 +7,9 @@ variable "azurerm_kubernetes_cluster_oidc_issuer_url" {
   type        = string
   description = "The OIDC issuer URL of the AKS cluster."
 }
+
+variable "dis_identity_target_tenant_id" {
+  type = string
+  description = "Tenant ID where dis-identity ApplicationIdentity will be created"
+  sensitive = true
+}

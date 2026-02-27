@@ -23,3 +23,9 @@ variable "enable_dis_identity_operator" {
   default     = false
   description = "Enable the dis-identity-operator to manage User Assigned Managed Identities in the cluster."
 }
+
+variable "dis_identity_target_tenant_id" {
+  type = string
+  description = "Tenant ID where dis-identity ApplicationIdentity will be created"
+  sensitive = true
+}
