@@ -25,6 +25,9 @@ module "aks" {
   }
   system_pool_subnet_prefixes = ["10.0.0.0/24", "fd00:0:0:1::/64"]
 
+  # API server VNet integration (on by default)
+  api_server_subnet_prefixes = ["10.0.3.0/28", "fd00:0:0:4::/124"]
+
   # Node pools
   node_pool_configs = {
     workpool = {
