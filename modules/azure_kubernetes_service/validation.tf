@@ -14,7 +14,17 @@ check "node_pool_subnet_prefixes_match_configs" {
 check "api_server_subnet_prefixes_required" {
   assert {
     condition     = !var.enable_api_server_vnet_integration || length(var.api_server_subnet_prefixes) >= 2
-    error_message = "api_server_subnet_prefixes must contain at least two prefixes (one IPv4 /28 and one IPv6 /124) when enable_api_server_vnet_integration is true."
+    error_message = "api_server_subnet_prefixes must contain at least two prefixes (one IPv4 /28 and one IPv6 /64) when enable_api_server_vnet_integration is true."
+  }
+}
+
+check "api_server_subnet_ipv6_prefix_length" {
+  assert {
+    condition = alltrue([
+      for prefix in var.api_server_subnet_prefixes :
+      !can(regex(":", prefix)) || endswith(prefix, "/64")
+    ])
+    error_message = "IPv6 address prefixes in api_server_subnet_prefixes must use /64 prefix length (Azure requirement for IPv6 subnets)."
   }
 }
 

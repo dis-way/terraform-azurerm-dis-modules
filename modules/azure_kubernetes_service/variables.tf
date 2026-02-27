@@ -41,12 +41,13 @@ variable "api_server_authorized_ip_ranges" {
     ipv6 = []
   }
   description = <<-EOT
-    Authorized IP ranges (CIDR notation) that can access the public API server endpoint.
-    If only one IP family is provided, the other is blocked with a block-all sentinel.
+    Authorized IPv4 ranges (CIDR notation) that can access the public API server endpoint.
+    NOTE: Azure's authorized_ip_ranges only accepts IPv4 CIDRs; the ipv6 field is accepted for
+    compatibility but is not forwarded to the AKS API and will be ignored.
 
     When enable_api_server_vnet_integration is true:
-      - Defaults to block-all if not set - access is through the VNet.
-      - Can be set to allow specific ranges to also reach the public endpoint.
+      - Defaults to block-all (0.0.0.0/32) if not set - access is through the VNet.
+      - Can be set to allow specific IPv4 ranges to also reach the public endpoint.
 
     When enable_api_server_vnet_integration is false:
       - If not set, the public endpoint is open to all (not recommended).
@@ -54,7 +55,6 @@ variable "api_server_authorized_ip_ranges" {
 
     Example:
       ipv4 = ["10.0.0.0/8", "203.0.113.0/24"]
-      ipv6 = ["2001:db8::/32"]
   EOT
   validation {
     condition = alltrue([
@@ -243,7 +243,7 @@ variable "enable_api_server_vnet_integration" {
 variable "api_server_subnet_prefixes" {
   type        = list(string)
   default     = []
-  description = "Address prefixes for the API server subnet (dual-stack: one IPv4 /28 minimum and one IPv6 /124 minimum). Required when enable_api_server_vnet_integration is true."
+  description = "Address prefixes for the API server subnet (dual-stack: one IPv4 /28 minimum and one IPv6 /64). Required when enable_api_server_vnet_integration is true."
 }
 
 variable "tags" {
