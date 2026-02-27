@@ -99,6 +99,7 @@ module "aks" {
 | [azurerm_role_assignment.aks_acrpull](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.aks_user_role](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.network_contributor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+| [azurerm_role_assignment.vnet_network_contributor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_storage_account.aks_log](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account) | resource |
 | [azurerm_subnet.api_server](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_subnet.node_pools](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
@@ -148,6 +149,7 @@ module "aks" {
 | <a name="input_system_pool_subnet_prefixes"></a> [system\_pool\_subnet\_prefixes](#input\_system\_pool\_subnet\_prefixes) | Address prefixes for the system pool subnet (IPv4 and IPv6) | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to all resources | `map(string)` | `{}` | no |
 | <a name="input_vnet_address_space"></a> [vnet\_address\_space](#input\_vnet\_address\_space) | VNet address space | `list(string)` | n/a | yes |
+| <a name="input_vnet_network_contributor_object_ids"></a> [vnet\_network\_contributor\_object\_ids](#input\_vnet\_network\_contributor\_object\_ids) | List of service principal object IDs to assign the Network Contributor role on the AKS VNet. | `list(string)` | `[]` | no |
 
 ## Outputs
 
