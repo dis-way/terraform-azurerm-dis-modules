@@ -3,6 +3,11 @@ output "aks_identity" {
   description = "Managed Service Identity that is configured on this Kubernetes Cluster"
 }
 
+output "aks_control_plane_identity_principal_id" {
+  value       = azurerm_user_assigned_identity.aks_control_plane.principal_id
+  description = "Principal ID of the user-assigned managed identity used by the AKS control plane"
+}
+
 output "aks_kubelet_identity" {
   value       = azurerm_kubernetes_cluster.aks.kubelet_identity
   description = "Managed Identity assigned to the Kubelets"

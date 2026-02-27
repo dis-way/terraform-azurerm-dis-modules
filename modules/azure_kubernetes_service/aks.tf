@@ -10,12 +10,20 @@ locals {
   )
 }
 
+resource "azurerm_user_assigned_identity" "aks_control_plane" {
+  name                = "${var.prefix}-${var.environment}-aks-identity"
+  resource_group_name = azurerm_resource_group.aks.name
+  location            = azurerm_resource_group.aks.location
+  tags                = var.tags
+}
+
 resource "azurerm_kubernetes_cluster" "aks" {
   lifecycle {
     ignore_changes = [
       windows_profile,
     ]
   }
+  depends_on = [azurerm_role_assignment.network_contributor]
   name                      = var.azurerm_kubernetes_cluster_aks_name != "" ? var.azurerm_kubernetes_cluster_aks_name : "${var.prefix}-${var.environment}-aks"
   location                  = azurerm_resource_group.aks.location
   resource_group_name       = azurerm_resource_group.aks.name
@@ -75,7 +83,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   identity {
-    type = "SystemAssigned"
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.aks_control_plane.id]
   }
 
   monitor_metrics {}
