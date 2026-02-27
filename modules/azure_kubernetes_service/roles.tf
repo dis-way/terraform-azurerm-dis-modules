@@ -6,6 +6,16 @@ resource "azurerm_role_assignment" "network_contributor" {
   skip_service_principal_aad_check = true
 }
 
+# Assign "Network Contributor" Role on the AKS VNet to additional service principals (e.g. external managed identities)
+resource "azurerm_role_assignment" "vnet_network_contributor" {
+  for_each                         = toset(var.vnet_network_contributor_object_ids)
+  scope                            = azurerm_virtual_network.aks.id
+  role_definition_name             = "Network Contributor"
+  principal_id                     = each.value
+  principal_type                   = "ServicePrincipal"
+  skip_service_principal_aad_check = true
+}
+
 # Assign pull permission in listed ACR
 resource "azurerm_role_assignment" "aks_acrpull" {
   for_each                         = toset(var.aks_acrpull_scopes)

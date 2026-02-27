@@ -7,6 +7,12 @@ variable "admin_group_object_ids" {
   }
 }
 
+variable "vnet_network_contributor_object_ids" {
+  type        = list(string)
+  default     = []
+  description = "List of service principal object IDs to assign the Network Contributor role on the AKS VNet."
+}
+
 variable "aks_acrpull_scopes" {
   type        = list(string)
   default     = []
@@ -35,10 +41,16 @@ variable "api_server_authorized_ip_ranges" {
     ipv6 = []
   }
   description = <<-EOT
-    Authorized IP ranges (CIDR notation) that can access the Kubernetes API server.
+    Authorized IP ranges (CIDR notation) that can access the public API server endpoint.
+    If only one IP family is provided, the other is blocked with a block-all sentinel.
 
-    WARNING: If left empty, API server is publicly accessible.
-    For production, always specify authorized ranges.
+    When enable_api_server_vnet_integration is true:
+      - Defaults to block-all if not set - access is through the VNet.
+      - Can be set to allow specific ranges to also reach the public endpoint.
+
+    When enable_api_server_vnet_integration is false:
+      - If not set, the public endpoint is open to all (not recommended).
+      - For production, always specify authorized ranges.
 
     Example:
       ipv4 = ["10.0.0.0/8", "203.0.113.0/24"]
@@ -220,6 +232,18 @@ variable "subnet_service_endpoints" {
   type        = list(string)
   default     = []
   description = "List of service endpoints to associate with the AKS subnets"
+}
+
+variable "enable_api_server_vnet_integration" {
+  type        = bool
+  default     = true
+  description = "Enable API server VNet integration. When true, the API server endpoint is injected into a dedicated delegated subnet in the cluster VNet. api_server_subnet_prefixes must be provided."
+}
+
+variable "api_server_subnet_prefixes" {
+  type        = list(string)
+  default     = []
+  description = "Address prefixes for the API server subnet (dual-stack: one IPv4 /28 minimum and one IPv6 /124 minimum). Required when enable_api_server_vnet_integration is true."
 }
 
 variable "tags" {

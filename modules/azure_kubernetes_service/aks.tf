@@ -1,3 +1,18 @@
+locals {
+  # Build the authorized IP ranges for the public API server endpoint.
+  # If only one IP family is provided, fill the other with a block-all sentinel to avoid leaving it unrestricted.
+  # When VNet integration is on and no caller ranges are provided, default to block-all - access is through the VNet.
+  # When VNet integration is off and no caller ranges are provided, null = open to all public (not recommended).
+  api_server_authorized_ip_ranges = (
+    length(var.api_server_authorized_ip_ranges.ipv4) > 0 || length(var.api_server_authorized_ip_ranges.ipv6) > 0
+    ? concat(
+        length(var.api_server_authorized_ip_ranges.ipv4) > 0 ? var.api_server_authorized_ip_ranges.ipv4 : ["0.0.0.0/32"],
+        length(var.api_server_authorized_ip_ranges.ipv6) > 0 ? var.api_server_authorized_ip_ranges.ipv6 : ["::/128"]
+      )
+    : var.enable_api_server_vnet_integration ? ["0.0.0.0/32", "::/128"] : null
+  )
+}
+
 resource "azurerm_kubernetes_cluster" "aks" {
   lifecycle {
     ignore_changes = [
@@ -79,9 +94,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   dynamic "api_server_access_profile" {
-    for_each = length(var.api_server_authorized_ip_ranges.ipv4) > 0 || length(var.api_server_authorized_ip_ranges.ipv6) > 0 ? [1] : []
+    for_each = var.enable_api_server_vnet_integration || length(var.api_server_authorized_ip_ranges.ipv4) > 0 || length(var.api_server_authorized_ip_ranges.ipv6) > 0 ? [1] : []
     content {
-      authorized_ip_ranges = concat(var.api_server_authorized_ip_ranges.ipv4, var.api_server_authorized_ip_ranges.ipv6)
+      authorized_ip_ranges                = local.api_server_authorized_ip_ranges
+      subnet_id                           = var.enable_api_server_vnet_integration ? azurerm_subnet.api_server[0].id : null
+      virtual_network_integration_enabled = var.enable_api_server_vnet_integration
     }
   }
 

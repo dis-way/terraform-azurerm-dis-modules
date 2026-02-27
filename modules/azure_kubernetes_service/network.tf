@@ -23,6 +23,22 @@ resource "azurerm_subnet" "node_pools" {
   service_endpoints    = var.subnet_service_endpoints
 }
 
+resource "azurerm_subnet" "api_server" {
+  count                = var.enable_api_server_vnet_integration ? 1 : 0
+  name                 = "aks_apiserver"
+  resource_group_name  = azurerm_resource_group.aks.name
+  virtual_network_name = azurerm_virtual_network.aks.name
+  address_prefixes     = var.api_server_subnet_prefixes
+
+  delegation {
+    name = "aks-apiserver-delegation"
+    service_delegation {
+      name    = "Microsoft.ContainerService/managedClusters"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+    }
+  }
+}
+
 resource "azurerm_public_ip" "pip4" {
   name                = var.azurerm_virtual_public_ip_pip4_name != "" ? var.azurerm_virtual_public_ip_pip4_name : "${var.prefix}-${var.environment}-aks-pip4"
   location            = azurerm_resource_group.aks.location
