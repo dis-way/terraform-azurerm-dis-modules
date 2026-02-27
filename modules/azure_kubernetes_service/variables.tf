@@ -35,10 +35,16 @@ variable "api_server_authorized_ip_ranges" {
     ipv6 = []
   }
   description = <<-EOT
-    Authorized IP ranges (CIDR notation) that can access the Kubernetes API server.
+    Authorized IP ranges (CIDR notation) that can access the public API server endpoint.
+    If only one IP family is provided, the other is blocked with a block-all sentinel.
 
-    WARNING: If left empty, API server is publicly accessible.
-    For production, always specify authorized ranges.
+    When enable_api_server_vnet_integration is true:
+      - Defaults to block-all if not set - access is through the VNet.
+      - Can be set to allow specific ranges to also reach the public endpoint.
+
+    When enable_api_server_vnet_integration is false:
+      - If not set, the public endpoint is open to all (not recommended).
+      - For production, always specify authorized ranges.
 
     Example:
       ipv4 = ["10.0.0.0/8", "203.0.113.0/24"]
