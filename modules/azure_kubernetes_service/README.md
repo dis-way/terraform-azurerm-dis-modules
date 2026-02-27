@@ -62,14 +62,14 @@ module "aks" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.53.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.5 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.53.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.5 |
 
 ## Resources
@@ -97,6 +97,7 @@ module "aks" {
 | [azurerm_role_assignment.aks_user_role](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.network_contributor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_storage_account.aks_log](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account) | resource |
+| [azurerm_subnet.api_server](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_subnet.node_pools](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_subnet.system_pool](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_virtual_network.aks](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) | resource |
@@ -111,7 +112,8 @@ module "aks" {
 | <a name="input_aks_local_account_disabled"></a> [aks\_local\_account\_disabled](#input\_aks\_local\_account\_disabled) | Disable local account for the AKS cluster. When true, only Azure AD authentication is allowed. | `bool` | `true` | no |
 | <a name="input_aks_sku_tier"></a> [aks\_sku\_tier](#input\_aks\_sku\_tier) | Kubernetes SKU | `string` | `"Free"` | no |
 | <a name="input_aks_user_role_scopes"></a> [aks\_user\_role\_scopes](#input\_aks\_user\_role\_scopes) | List of groups to get user role scopes for AKS | `list(string)` | `[]` | no |
-| <a name="input_api_server_authorized_ip_ranges"></a> [api\_server\_authorized\_ip\_ranges](#input\_api\_server\_authorized\_ip\_ranges) | Authorized IP ranges (CIDR notation) that can access the Kubernetes API server.<br/><br/>WARNING: If left empty, API server is publicly accessible.<br/>For production, always specify authorized ranges.<br/><br/>Example:<br/>  ipv4 = ["10.0.0.0/8", "203.0.113.0/24"]<br/>  ipv6 = ["2001:db8::/32"] | <pre>object({<br/>    ipv4 = list(string)<br/>    ipv6 = list(string)<br/>  })</pre> | <pre>{<br/>  "ipv4": [],<br/>  "ipv6": []<br/>}</pre> | no |
+| <a name="input_api_server_authorized_ip_ranges"></a> [api\_server\_authorized\_ip\_ranges](#input\_api\_server\_authorized\_ip\_ranges) | Authorized IP ranges (CIDR notation) that can access the public API server endpoint.<br/>If only one IP family is provided, the other is blocked with a block-all sentinel.<br/><br/>When enable\_api\_server\_vnet\_integration is true:<br/>  - Defaults to block-all if not set - access is through the VNet.<br/>  - Can be set to allow specific ranges to also reach the public endpoint.<br/><br/>When enable\_api\_server\_vnet\_integration is false:<br/>  - If not set, the public endpoint is open to all (not recommended).<br/>  - For production, always specify authorized ranges.<br/><br/>Example:<br/>  ipv4 = ["10.0.0.0/8", "203.0.113.0/24"]<br/>  ipv6 = ["2001:db8::/32"] | <pre>object({<br/>    ipv4 = list(string)<br/>    ipv6 = list(string)<br/>  })</pre> | <pre>{<br/>  "ipv4": [],<br/>  "ipv6": []<br/>}</pre> | no |
+| <a name="input_api_server_subnet_prefixes"></a> [api\_server\_subnet\_prefixes](#input\_api\_server\_subnet\_prefixes) | Address prefixes for the API server subnet (dual-stack: one IPv4 /28 minimum and one IPv6 /124 minimum). Required when enable\_api\_server\_vnet\_integration is true. | `list(string)` | `[]` | no |
 | <a name="input_azurerm_kubernetes_cluster_aks_dns_service_ip"></a> [azurerm\_kubernetes\_cluster\_aks\_dns\_service\_ip](#input\_azurerm\_kubernetes\_cluster\_aks\_dns\_service\_ip) | Optional explicit aks dns service ip | `string` | `""` | no |
 | <a name="input_azurerm_kubernetes_cluster_aks_name"></a> [azurerm\_kubernetes\_cluster\_aks\_name](#input\_azurerm\_kubernetes\_cluster\_aks\_name) | Optional explicit name of the AKS cluster | `string` | `""` | no |
 | <a name="input_azurerm_kubernetes_cluster_aks_pod_cidrs"></a> [azurerm\_kubernetes\_cluster\_aks\_pod\_cidrs](#input\_azurerm\_kubernetes\_cluster\_aks\_pod\_cidrs) | Optional explicit aks pod cidrs | `list(string)` | `[]` | no |
@@ -126,6 +128,7 @@ module "aks" {
 | <a name="input_azurerm_virtual_network_aks_name"></a> [azurerm\_virtual\_network\_aks\_name](#input\_azurerm\_virtual\_network\_aks\_name) | Optional explicit name of the AKS virtual network | `string` | `""` | no |
 | <a name="input_azurerm_virtual_public_ip_pip4_name"></a> [azurerm\_virtual\_public\_ip\_pip4\_name](#input\_azurerm\_virtual\_public\_ip\_pip4\_name) | Optional explicit name of the public ipv4 | `string` | `""` | no |
 | <a name="input_azurerm_virtual_public_ip_pip6_name"></a> [azurerm\_virtual\_public\_ip\_pip6\_name](#input\_azurerm\_virtual\_public\_ip\_pip6\_name) | Optional explicit name of the public ipv6 | `string` | `""` | no |
+| <a name="input_enable_api_server_vnet_integration"></a> [enable\_api\_server\_vnet\_integration](#input\_enable\_api\_server\_vnet\_integration) | Enable API server VNet integration. When true, the API server endpoint is injected into a dedicated delegated subnet in the cluster VNet. api\_server\_subnet\_prefixes must be provided. | `bool` | `true` | no |
 | <a name="input_enable_keda"></a> [enable\_keda](#input\_enable\_keda) | Enable KEDA (Kubernetes Event-driven Autoscaling) for workload autoscaling | `bool` | `false` | no |
 | <a name="input_enable_multi_tenancy"></a> [enable\_multi\_tenancy](#input\_enable\_multi\_tenancy) | Enable multi tenancy in the cluster | `bool` | `false` | no |
 | <a name="input_enable_products_azure_monitoring_resources"></a> [enable\_products\_azure\_monitoring\_resources](#input\_enable\_products\_azure\_monitoring\_resources) | Deploy observability resources in azure. This includes AI, LAW and AMW | `bool` | `true` | no |

@@ -38,7 +38,8 @@ if [[ "${ALL}" == "yes" ]]; then
 elif [[ -n "$MODULE" ]]; then
     if [[ -d "modules/${MODULE}" ]]; then
         pushd modules/${MODULE} > /dev/null
-        make generate-docs
+        cat base.md > README.md
+        terraform-docs markdown --hide-empty table . >> README.md
         popd > /dev/null
     else
         echo "Module with name ${MODULE} not found in modules/ folder"
