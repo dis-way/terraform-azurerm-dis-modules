@@ -1,15 +1,3 @@
-locals {
-  # Build the authorized IP ranges for the public API server endpoint.
-  # Azure's authorized_ip_ranges only accepts IPv4 CIDRs; IPv6 is not supported by the AKS API.
-  # When VNet integration is on and no IPv4 ranges are provided, default to block-all - access is through the VNet.
-  # When VNet integration is off and no caller ranges are provided, null = open to all public (not recommended).
-  api_server_authorized_ip_ranges = (
-    length(var.api_server_authorized_ip_ranges.ipv4) > 0
-    ? var.api_server_authorized_ip_ranges.ipv4
-    : var.enable_api_server_vnet_integration ? ["0.0.0.0/32"] : null
-  )
-}
-
 resource "azurerm_user_assigned_identity" "aks_control_plane" {
   name                = "${var.prefix}-${var.environment}-aks-identity"
   resource_group_name = azurerm_resource_group.aks.name
@@ -23,7 +11,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
       windows_profile,
     ]
   }
-  depends_on = [azurerm_role_assignment.network_contributor]
+  depends_on                = [azurerm_role_assignment.network_contributor]
   name                      = var.azurerm_kubernetes_cluster_aks_name != "" ? var.azurerm_kubernetes_cluster_aks_name : "${var.prefix}-${var.environment}-aks"
   location                  = azurerm_resource_group.aks.location
   resource_group_name       = azurerm_resource_group.aks.name
@@ -87,6 +75,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
     identity_ids = [azurerm_user_assigned_identity.aks_control_plane.id]
   }
 
+  api_server_access_profile {
+    subnet_id                           = azurerm_subnet.api_server.id
+    virtual_network_integration_enabled = true
+  }
+
+  private_cluster_enabled             = true
+  private_cluster_public_fqdn_enabled = true
+
   monitor_metrics {}
 
   oms_agent {
@@ -97,15 +93,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
   azure_active_directory_role_based_access_control {
     admin_group_object_ids = var.admin_group_object_ids
     azure_rbac_enabled     = true
-  }
-
-  dynamic "api_server_access_profile" {
-    for_each = var.enable_api_server_vnet_integration || length(var.api_server_authorized_ip_ranges.ipv4) > 0 || length(var.api_server_authorized_ip_ranges.ipv6) > 0 ? [1] : []
-    content {
-      authorized_ip_ranges                = local.api_server_authorized_ip_ranges
-      subnet_id                           = var.enable_api_server_vnet_integration ? azurerm_subnet.api_server[0].id : null
-      virtual_network_integration_enabled = var.enable_api_server_vnet_integration
-    }
   }
 
   maintenance_window_auto_upgrade {

@@ -25,10 +25,7 @@ module "aks" {
   }
   system_pool_subnet_prefixes = ["10.0.0.0/24", "fd00:0:0:1::/64"]
 
-  # API server VNet integration (on by default).
-  # authorized_ip_ranges is IPv4-only (Azure limitation); defaults to 0.0.0.0/32 (block-all) when VNet integration is on.
   api_server_subnet_prefixes = ["10.0.3.0/28", "fd00:0:0:4::/64"]
-  # api_server_authorized_ip_ranges = { ipv4 = ["203.0.113.0/24"] }
 
   # Node pools
   node_pool_configs = {

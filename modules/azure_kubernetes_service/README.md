@@ -25,10 +25,7 @@ module "aks" {
   }
   system_pool_subnet_prefixes = ["10.0.0.0/24", "fd00:0:0:1::/64"]
 
-  # API server VNet integration (on by default).
-  # authorized_ip_ranges is IPv4-only (Azure limitation); defaults to 0.0.0.0/32 (block-all) when VNet integration is on.
   api_server_subnet_prefixes = ["10.0.3.0/28", "fd00:0:0:4::/64"]
-  # api_server_authorized_ip_ranges = { ipv4 = ["203.0.113.0/24"] }
 
   # Node pools
   node_pool_configs = {
@@ -106,6 +103,7 @@ module "aks" {
 | [azurerm_subnet.api_server](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_subnet.node_pools](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_subnet.system_pool](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
+| [azurerm_user_assigned_identity.aks_control_plane](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
 | [azurerm_virtual_network.aks](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) | resource |
 | [random_id.aks_log](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 
@@ -118,8 +116,7 @@ module "aks" {
 | <a name="input_aks_local_account_disabled"></a> [aks\_local\_account\_disabled](#input\_aks\_local\_account\_disabled) | Disable local account for the AKS cluster. When true, only Azure AD authentication is allowed. | `bool` | `true` | no |
 | <a name="input_aks_sku_tier"></a> [aks\_sku\_tier](#input\_aks\_sku\_tier) | Kubernetes SKU | `string` | `"Free"` | no |
 | <a name="input_aks_user_role_scopes"></a> [aks\_user\_role\_scopes](#input\_aks\_user\_role\_scopes) | List of groups to get user role scopes for AKS | `list(string)` | `[]` | no |
-| <a name="input_api_server_authorized_ip_ranges"></a> [api\_server\_authorized\_ip\_ranges](#input\_api\_server\_authorized\_ip\_ranges) | Authorized IPv4 ranges (CIDR notation) that can access the public API server endpoint.<br/>NOTE: Azure's authorized\_ip\_ranges only accepts IPv4 CIDRs; the ipv6 field is accepted for<br/>compatibility but is not forwarded to the AKS API and will be ignored.<br/><br/>When enable\_api\_server\_vnet\_integration is true:<br/>  - Defaults to block-all (0.0.0.0/32) if not set - access is through the VNet.<br/>  - Can be set to allow specific IPv4 ranges to also reach the public endpoint.<br/><br/>When enable\_api\_server\_vnet\_integration is false:<br/>  - If not set, the public endpoint is open to all (not recommended).<br/>  - For production, always specify authorized ranges.<br/><br/>Example:<br/>  ipv4 = ["10.0.0.0/8", "203.0.113.0/24"] | <pre>object({<br/>    ipv4 = list(string)<br/>    ipv6 = list(string)<br/>  })</pre> | <pre>{<br/>  "ipv4": [],<br/>  "ipv6": []<br/>}</pre> | no |
-| <a name="input_api_server_subnet_prefixes"></a> [api\_server\_subnet\_prefixes](#input\_api\_server\_subnet\_prefixes) | Address prefixes for the API server subnet (dual-stack: one IPv4 /28 minimum and one IPv6 /64). Required when enable\_api\_server\_vnet\_integration is true. | `list(string)` | `[]` | no |
+| <a name="input_api_server_subnet_prefixes"></a> [api\_server\_subnet\_prefixes](#input\_api\_server\_subnet\_prefixes) | Address prefixes for the API server subnet (dual-stack: one IPv4 /28 minimum and one IPv6 /64). | `list(string)` | n/a | yes |
 | <a name="input_azurerm_kubernetes_cluster_aks_dns_service_ip"></a> [azurerm\_kubernetes\_cluster\_aks\_dns\_service\_ip](#input\_azurerm\_kubernetes\_cluster\_aks\_dns\_service\_ip) | Optional explicit aks dns service ip | `string` | `""` | no |
 | <a name="input_azurerm_kubernetes_cluster_aks_name"></a> [azurerm\_kubernetes\_cluster\_aks\_name](#input\_azurerm\_kubernetes\_cluster\_aks\_name) | Optional explicit name of the AKS cluster | `string` | `""` | no |
 | <a name="input_azurerm_kubernetes_cluster_aks_pod_cidrs"></a> [azurerm\_kubernetes\_cluster\_aks\_pod\_cidrs](#input\_azurerm\_kubernetes\_cluster\_aks\_pod\_cidrs) | Optional explicit aks pod cidrs | `list(string)` | `[]` | no |
@@ -134,7 +131,6 @@ module "aks" {
 | <a name="input_azurerm_virtual_network_aks_name"></a> [azurerm\_virtual\_network\_aks\_name](#input\_azurerm\_virtual\_network\_aks\_name) | Optional explicit name of the AKS virtual network | `string` | `""` | no |
 | <a name="input_azurerm_virtual_public_ip_pip4_name"></a> [azurerm\_virtual\_public\_ip\_pip4\_name](#input\_azurerm\_virtual\_public\_ip\_pip4\_name) | Optional explicit name of the public ipv4 | `string` | `""` | no |
 | <a name="input_azurerm_virtual_public_ip_pip6_name"></a> [azurerm\_virtual\_public\_ip\_pip6\_name](#input\_azurerm\_virtual\_public\_ip\_pip6\_name) | Optional explicit name of the public ipv6 | `string` | `""` | no |
-| <a name="input_enable_api_server_vnet_integration"></a> [enable\_api\_server\_vnet\_integration](#input\_enable\_api\_server\_vnet\_integration) | Enable API server VNet integration. When true, the API server endpoint is injected into a dedicated delegated subnet in the cluster VNet. api\_server\_subnet\_prefixes must be provided. | `bool` | `true` | no |
 | <a name="input_enable_keda"></a> [enable\_keda](#input\_enable\_keda) | Enable KEDA (Kubernetes Event-driven Autoscaling) for workload autoscaling | `bool` | `false` | no |
 | <a name="input_enable_multi_tenancy"></a> [enable\_multi\_tenancy](#input\_enable\_multi\_tenancy) | Enable multi tenancy in the cluster | `bool` | `false` | no |
 | <a name="input_enable_products_azure_monitoring_resources"></a> [enable\_products\_azure\_monitoring\_resources](#input\_enable\_products\_azure\_monitoring\_resources) | Deploy observability resources in azure. This includes AI, LAW and AMW | `bool` | `true` | no |
@@ -157,6 +153,7 @@ module "aks" {
 
 | Name | Description |
 |------|-------------|
+| <a name="output_aks_control_plane_identity_principal_id"></a> [aks\_control\_plane\_identity\_principal\_id](#output\_aks\_control\_plane\_identity\_principal\_id) | Principal ID of the user-assigned managed identity used by the AKS control plane |
 | <a name="output_aks_identity"></a> [aks\_identity](#output\_aks\_identity) | Managed Service Identity that is configured on this Kubernetes Cluster |
 | <a name="output_aks_kubelet_identity"></a> [aks\_kubelet\_identity](#output\_aks\_kubelet\_identity) | Managed Identity assigned to the Kubelets |
 | <a name="output_aks_name"></a> [aks\_name](#output\_aks\_name) | The name of the managed Kubernetes Cluster |
