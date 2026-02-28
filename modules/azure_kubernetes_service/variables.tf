@@ -13,6 +13,12 @@ variable "vnet_network_contributor_object_ids" {
   description = "List of service principal object IDs to assign the Network Contributor role on the AKS VNet."
 }
 
+variable "private_dns_zone_contributor_object_ids" {
+  type        = list(string)
+  default     = []
+  description = "List of principal object IDs to assign the Private DNS Zone Contributor role on the AKS node resource group."
+}
+
 variable "aks_acrpull_scopes" {
   type        = list(string)
   default     = []

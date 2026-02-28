@@ -1,7 +1,8 @@
 # Assign "Network Contributor" Role to AKS control-plane managed identity.
+# Scoped to the VNet (not the resource group) for least-privilege.
 # Must be pre-assigned before cluster creation; required for API server VNet integration.
 resource "azurerm_role_assignment" "network_contributor" {
-  scope                            = azurerm_resource_group.aks.id
+  scope                            = azurerm_virtual_network.aks.id
   role_definition_name             = "Network Contributor"
   principal_id                     = azurerm_user_assigned_identity.aks_control_plane.principal_id
   skip_service_principal_aad_check = true
@@ -40,4 +41,13 @@ resource "azurerm_role_assignment" "aks_user_role" {
   skip_service_principal_aad_check = true
 
   depends_on = [azurerm_kubernetes_cluster.aks]
+}
+
+# Assign Private DNS Zone Contributor on the AKS node resource group (e.g. for workload identities managing private DNS)
+resource "azurerm_role_assignment" "private_dns_zone_contributor" {
+  for_each                         = toset(var.private_dns_zone_contributor_object_ids)
+  scope                            = azurerm_kubernetes_cluster.aks.node_resource_group_id
+  role_definition_name             = "Private DNS Zone Contributor"
+  principal_id                     = each.value
+  skip_service_principal_aad_check = true
 }

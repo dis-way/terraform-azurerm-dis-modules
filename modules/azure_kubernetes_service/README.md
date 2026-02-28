@@ -147,6 +147,7 @@ module "aks" {
 | <a name="input_system_pool_subnet_prefixes"></a> [system\_pool\_subnet\_prefixes](#input\_system\_pool\_subnet\_prefixes) | Address prefixes for the system pool subnet (IPv4 and IPv6) | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to all resources | `map(string)` | `{}` | no |
 | <a name="input_vnet_address_space"></a> [vnet\_address\_space](#input\_vnet\_address\_space) | VNet address space | `list(string)` | n/a | yes |
+| <a name="input_private_dns_zone_contributor_object_ids"></a> [private\_dns\_zone\_contributor\_object\_ids](#input\_private\_dns\_zone\_contributor\_object\_ids) | List of principal object IDs to assign the Private DNS Zone Contributor role on the AKS node resource group. | `list(string)` | `[]` | no |
 | <a name="input_vnet_network_contributor_object_ids"></a> [vnet\_network\_contributor\_object\_ids](#input\_vnet\_network\_contributor\_object\_ids) | List of service principal object IDs to assign the Network Contributor role on the AKS VNet. | `list(string)` | `[]` | no |
 
 ## Outputs
