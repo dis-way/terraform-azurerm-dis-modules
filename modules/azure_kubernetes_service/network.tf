@@ -24,7 +24,6 @@ resource "azurerm_subnet" "node_pools" {
 }
 
 resource "azurerm_subnet" "api_server" {
-  count                = var.enable_api_server_vnet_integration ? 1 : 0
   name                 = "aks_apiserver"
   resource_group_name  = azurerm_resource_group.aks.name
   virtual_network_name = azurerm_virtual_network.aks.name

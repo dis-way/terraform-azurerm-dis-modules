@@ -33,8 +33,7 @@ resource "azapi_resource" "dis_identity_operator" {
         url                   = "oci://altinncr.azurecr.io/manifests/infra/dis-identity"
         useWorkloadIdentity   = true
       }
-      namespace                  = "platform-system"
-      scope                      = "namespace"
+      namespace = "platform-system"
       reconciliationWaitDuration = "PT5M"
       waitForReconciliation      = true
       sourceKind                 = "OCIRepository"

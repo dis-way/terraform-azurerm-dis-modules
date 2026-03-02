@@ -13,6 +13,12 @@ variable "vnet_network_contributor_object_ids" {
   description = "List of service principal object IDs to assign the Network Contributor role on the AKS VNet."
 }
 
+variable "private_dns_zone_contributor_object_ids" {
+  type        = list(string)
+  default     = []
+  description = "List of principal object IDs to assign the Private DNS Zone Contributor role on the AKS node resource group."
+}
+
 variable "aks_acrpull_scopes" {
   type        = list(string)
   default     = []
@@ -29,45 +35,6 @@ variable "aks_user_role_scopes" {
   type        = list(string)
   default     = []
   description = "List of groups to get user role scopes for AKS"
-}
-
-variable "api_server_authorized_ip_ranges" {
-  type = object({
-    ipv4 = list(string)
-    ipv6 = list(string)
-  })
-  default = {
-    ipv4 = []
-    ipv6 = []
-  }
-  description = <<-EOT
-    Authorized IPv4 ranges (CIDR notation) that can access the public API server endpoint.
-    NOTE: Azure's authorized_ip_ranges only accepts IPv4 CIDRs; the ipv6 field is accepted for
-    compatibility but is not forwarded to the AKS API and will be ignored.
-
-    When enable_api_server_vnet_integration is true:
-      - Defaults to block-all (0.0.0.0/32) if not set - access is through the VNet.
-      - Can be set to allow specific IPv4 ranges to also reach the public endpoint.
-
-    When enable_api_server_vnet_integration is false:
-      - If not set, the public endpoint is open to all (not recommended).
-      - For production, always specify authorized ranges.
-
-    Example:
-      ipv4 = ["10.0.0.0/8", "203.0.113.0/24"]
-  EOT
-  validation {
-    condition = alltrue([
-      for cidr in var.api_server_authorized_ip_ranges.ipv4 : can(cidrhost(cidr, 0))
-    ])
-    error_message = "All IPv4 values must be valid CIDR notation (e.g., '10.0.0.0/8', '203.0.113.0/24')."
-  }
-  validation {
-    condition = alltrue([
-      for cidr in var.api_server_authorized_ip_ranges.ipv6 : can(cidrhost(cidr, 0))
-    ])
-    error_message = "All IPv6 values must be valid CIDR notation (e.g., '2001:db8::/32')."
-  }
 }
 
 variable "enable_keda" {
@@ -109,7 +76,7 @@ variable "kubernetes_version" {
   type        = string
   description = "Kubernetes version"
   validation {
-    condition     = length(var.kubernetes_version) > 0
+    condition     = can(regex("^[0-9]+\\.[0-9]+(\\.[0-9]+)?$", var.kubernetes_version))
     error_message = "You must provide kubernetes version in format x.y or x.y.z."
   }
 }
@@ -234,16 +201,20 @@ variable "subnet_service_endpoints" {
   description = "List of service endpoints to associate with the AKS subnets"
 }
 
-variable "enable_api_server_vnet_integration" {
-  type        = bool
-  default     = true
-  description = "Enable API server VNet integration. When true, the API server endpoint is injected into a dedicated delegated subnet in the cluster VNet. api_server_subnet_prefixes must be provided."
-}
-
 variable "api_server_subnet_prefixes" {
   type        = list(string)
-  default     = []
-  description = "Address prefixes for the API server subnet (dual-stack: one IPv4 /28 minimum and one IPv6 /64). Required when enable_api_server_vnet_integration is true."
+  description = "Address prefixes for the API server subnet (dual-stack: one IPv4 /28 minimum and one IPv6 /64)."
+  validation {
+    condition     = length(var.api_server_subnet_prefixes) >= 2
+    error_message = "api_server_subnet_prefixes must contain at least two prefixes (one IPv4 /28 and one IPv6 /64)."
+  }
+  validation {
+    condition = alltrue([
+      for prefix in var.api_server_subnet_prefixes :
+      !can(regex(":", prefix)) || endswith(prefix, "/64")
+    ])
+    error_message = "IPv6 address prefixes in api_server_subnet_prefixes must use /64 prefix length (Azure requirement for IPv6 subnets)."
+  }
 }
 
 variable "tags" {
