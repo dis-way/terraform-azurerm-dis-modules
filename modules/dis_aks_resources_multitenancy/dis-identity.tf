@@ -34,7 +34,6 @@ resource "azapi_resource" "dis_identity_operator" {
         useWorkloadIdentity   = true
       }
       namespace = "platform-system"
-      # scope                      = "namespace"
       reconciliationWaitDuration = "PT5M"
       waitForReconciliation      = true
       sourceKind                 = "OCIRepository"
