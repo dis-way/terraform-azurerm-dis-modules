@@ -203,17 +203,17 @@ variable "subnet_service_endpoints" {
 
 variable "api_server_subnet_prefixes" {
   type        = list(string)
-  description = "Address prefixes for the API server subnet (dual-stack: one IPv4 /28 minimum and one IPv6 /64)."
+  description = "Address prefixes for the API server subnet. Must contain at least one IPv4 prefix (/28 minimum, larger networks accepted). IPv6 prefixes are accepted for backwards compatibility but Azure does not support IPv6 on delegated API server subnets."
   validation {
-    condition     = length(var.api_server_subnet_prefixes) >= 2
-    error_message = "api_server_subnet_prefixes must contain at least two prefixes (one IPv4 /28 and one IPv6 /64)."
+    condition     = length(var.api_server_subnet_prefixes) > 0
+    error_message = "api_server_subnet_prefixes must contain at least one prefix."
   }
   validation {
     condition = alltrue([
       for prefix in var.api_server_subnet_prefixes :
-      !can(regex(":", prefix)) || endswith(prefix, "/64")
+      can(regex(":", prefix)) || tonumber(split("/", prefix)[1]) <= 28
     ])
-    error_message = "IPv6 address prefixes in api_server_subnet_prefixes must use /64 prefix length (Azure requirement for IPv6 subnets)."
+    error_message = "IPv4 prefixes in api_server_subnet_prefixes must be /28 or larger (e.g. /28, /27, /24)."
   }
 }
 
