@@ -8,6 +8,20 @@ resource "azurerm_role_assignment" "network_contributor" {
   skip_service_principal_aad_check = true
 }
 
+resource "azurerm_role_assignment" "control_plane_prefix4_join" {
+  scope                            = azurerm_public_ip_prefix.prefix4.id
+  role_definition_name             = "Network Contributor"
+  principal_id                     = azurerm_user_assigned_identity.aks_control_plane.principal_id
+  skip_service_principal_aad_check = true
+}
+
+resource "azurerm_role_assignment" "control_plane_prefix6_join" {
+  scope                            = azurerm_public_ip_prefix.prefix6.id
+  role_definition_name             = "Network Contributor"
+  principal_id                     = azurerm_user_assigned_identity.aks_control_plane.principal_id
+  skip_service_principal_aad_check = true
+}
+
 # Assign "Network Contributor" Role on the AKS VNet to additional service principals (e.g. external managed identities)
 resource "azurerm_role_assignment" "vnet_network_contributor" {
   for_each                         = toset(var.vnet_network_contributor_object_ids)
