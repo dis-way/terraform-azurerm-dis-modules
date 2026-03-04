@@ -15,7 +15,7 @@ resource "azapi_resource" "syncroot" {
           wait                   = true
         }
       }
-      namespace = var.product
+      namespace = "product-${var.product}"
       ociRepository = {
         insecure = false
         repositoryRef = {
