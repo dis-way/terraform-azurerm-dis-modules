@@ -1,19 +1,24 @@
-resource "azapi_resource" "dis_identity_operator" {
+resource "azapi_resource" "dis_pgsql_operator" {
   depends_on = [azapi_resource.cert_manager]
+  count      = var.enable_dis_pgsql_operator ? 1 : 0
   type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
-  name       = "dis-identity-sync"
+  name       = "dis-pgsql"
   parent_id  = var.azurerm_kubernetes_cluster_id
   body = {
     properties = {
       kustomizations = {
-        dis-identity = {
+        dis-pgsql = {
           force = false
           path  = "./multitenancy/"
           postBuild = {
             substitute = {
-              DISID_ISSUER_URL            = "${var.azurerm_kubernetes_cluster_oidc_issuer_url}"
-              DISID_TARGET_RESOURCE_GROUP = "${var.azurerm_dis_identity_resource_group_id}"
-              DISID_TARGET_TENANT_ID      = "${var.dis_identity_target_tenant_id}"
+              DISPG_AZURE_SUBSCRIPTION_ID       = "${var.subscription_id}"
+              DISPG_AZURE_TENANT_ID             = "${var.obs_tenant_id}"
+              DISPG_DB_RESOURCE_GROUP           = "${var.dis_resource_group_name}"
+              DISPG_DB_VNET_NAME                = "${var.dis_db_vnet_name}"
+              DISPG_AKS_VNET_NAME               = "${var.aks_workpool_vnet_name}"
+              DISPG_AKS_RESOURCE_GROUP          = "${var.aks_resource_group}"
+              DISPG_WORKLOAD_IDENTITY_CLIENT_ID = "${var.dis_pgsql_uami_client_id}"
             }
           }
           prune                  = false
@@ -30,7 +35,7 @@ resource "azapi_resource" "dis_identity_operator" {
         }
         syncIntervalInSeconds = 300
         timeoutInSeconds      = 300
-        url                   = "oci://altinncr.azurecr.io/manifests/infra/dis-identity"
+        url                   = "oci://altinncr.azurecr.io/manifests/infra/dis-pgsql"
         useWorkloadIdentity   = true
       }
       namespace                  = "platform-system"
