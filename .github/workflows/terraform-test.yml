@@ -76,9 +76,43 @@ jobs:
         run: terraform validate
         working-directory: ${{ matrix.module }}
 
+  docs:
+    name: Docs / ${{ matrix.module }}
+    needs: detect-modules
+    if: needs.detect-modules.outputs.any_changed == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module: ${{ fromJson(needs.detect-modules.outputs.modules) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install terraform-docs
+        env:
+          TFDOCS_VERSION: "0.19.0"
+        run: |
+          curl -sSLo /tmp/terraform-docs.tar.gz \
+            "https://github.com/terraform-docs/terraform-docs/releases/download/v${TFDOCS_VERSION}/terraform-docs-v${TFDOCS_VERSION}-linux-amd64.tar.gz"
+          tar -xzf /tmp/terraform-docs.tar.gz -C /tmp terraform-docs
+          sudo mv /tmp/terraform-docs /usr/local/bin/terraform-docs
+
+      - name: Regenerate README
+        working-directory: ${{ matrix.module }}
+        run: |
+          cat base.md > README.md
+          terraform-docs markdown --hide-empty table . >> README.md
+
+      - name: Check for diff
+        run: |
+          if ! git diff --exit-code ${{ matrix.module }}/README.md; then
+            echo "::error file=${{ matrix.module }}/README.md::README.md is out of date. Run generate-docs.sh --module $(basename ${{ matrix.module }}) and commit the result."
+            exit 1
+          fi
+
   summary:
     name: Summary
-    needs: [detect-modules, validate]
+    needs: [detect-modules, validate, docs]
     if: always() && needs.detect-modules.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
     permissions:
@@ -88,21 +122,22 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          echo "## Terraform Validation Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Terraform Module Check Results" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Module | Result |" >> "$GITHUB_STEP_SUMMARY"
-          echo "|--------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Module | Validate | Docs |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|----------|------|" >> "$GITHUB_STEP_SUMMARY"
 
           jobs=$(gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" --paginate)
 
-          echo "$jobs" \
-            | jq -r '.jobs[] | select(.name | startswith("Validate /")) | [.name, .conclusion] | @tsv' \
-            | sort \
-            | while IFS=$'\t' read -r name conclusion; do
-                module="${name#Validate / }"
-                if [ "$conclusion" = "success" ]; then
-                  echo "| \`$module\` | ✅ passed |" >> "$GITHUB_STEP_SUMMARY"
-                else
-                  echo "| \`$module\` | ❌ $conclusion |" >> "$GITHUB_STEP_SUMMARY"
-                fi
-              done
+          # Collect all module names from both job types
+          modules=$(echo "$jobs" \
+            | jq -r '.jobs[] | select(.name | test("^(Validate|Docs) / ")) | .name | ltrimstr("Validate / ") | ltrimstr("Docs / ")' \
+            | sort -u)
+
+          while IFS= read -r module; do
+            validate=$(echo "$jobs" | jq -r --arg m "Validate / $module" '.jobs[] | select(.name == $m) | .conclusion')
+            docs=$(echo "$jobs" | jq -r --arg m "Docs / $module" '.jobs[] | select(.name == $m) | .conclusion')
+
+            fmt_cell() { [ "$1" = "success" ] && echo "✅" || echo "❌ $1"; }
+            echo "| \`$module\` | $(fmt_cell "$validate") | $(fmt_cell "$docs") |" >> "$GITHUB_STEP_SUMMARY"
+          done <<< "$modules"
