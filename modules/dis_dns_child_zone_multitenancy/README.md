@@ -30,7 +30,6 @@ module "dis_dns_child_zone_multitenancy" {
   }
 }
 ```
-
 ## Requirements
 
 | Name | Version |
@@ -44,7 +43,7 @@ module "dis_dns_child_zone_multitenancy" {
 |------|---------|
 | <a name="provider_azuread"></a> [azuread](#provider\_azuread) | ~> 3.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.0 |
-| <a name="provider_azurerm.parent_zone"></a> [azurerm.parent_zone](#provider\_azurerm\.parent_zone) | ~> 4.0 |
+| <a name="provider_azurerm.parent_zone"></a> [azurerm.parent\_zone](#provider\_azurerm.parent\_zone) | ~> 4.0 |
 
 ## Resources
 
@@ -71,6 +70,7 @@ module "dis_dns_child_zone_multitenancy" {
 | <a name="input_child_dns_zone_rg_name"></a> [child\_dns\_zone\_rg\_name](#input\_child\_dns\_zone\_rg\_name) | Override generated name for resource group for child dns zone. | `string` | `""` | no |
 | <a name="input_cluster_ipv4_address"></a> [cluster\_ipv4\_address](#input\_cluster\_ipv4\_address) | Cluster ipv4 address | `string` | n/a | yes |
 | <a name="input_cluster_ipv6_address"></a> [cluster\_ipv6\_address](#input\_cluster\_ipv6\_address) | Cluster ipv6 address | `string` | n/a | yes |
+| <a name="input_current_user_object_id"></a> [current\_user\_object\_id](#input\_current\_user\_object\_id) | Object ID of current user to set as owner of Azure AD applications | `string` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment | `string` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | Location for resources | `string` | `"norwayeast"` | no |
 | <a name="input_oidc_issuer_url"></a> [oidc\_issuer\_url](#input\_oidc\_issuer\_url) | Oidc issuer url needed for federation | `string` | n/a | yes |
@@ -82,6 +82,6 @@ module "dis_dns_child_zone_multitenancy" {
 
 | Name | Description |
 |------|-------------|
-| <a name="output_azuread_cert_manager_client_id"></a> [azuread\_cert\_manager\_client\_id](#output\_azuread\_cert\_manager\_client\_id) | Client ID for the Entra ID application used by cert-manager (sensitive). |
+| <a name="output_azuread_cert_manager_client_id"></a> [azuread\_cert\_manager\_client\_id](#output\_azuread\_cert\_manager\_client\_id) | Client ID for the Entra ID application used by cert-manager. |
 | <a name="output_azurerm_dns_zone_name"></a> [azurerm\_dns\_zone\_name](#output\_azurerm\_dns\_zone\_name) | The DNS name of the created child zone. |
 | <a name="output_azurerm_dns_zone_resource_group_name"></a> [azurerm\_dns\_zone\_resource\_group\_name](#output\_azurerm\_dns\_zone\_resource\_group\_name) | Resource group name containing the created child zone. |

@@ -12,11 +12,11 @@ module "dis_apim_operator_multitenancy" {
   kubernetes_node_location           = "norwayeast"
 
   # APIM
-  apim_id                 = azurerm_api_management.apim.id
-  apim_subscription_id     = data.azurerm_client_config.current.subscription_id
-  apim_resource_group_name = azurerm_api_management.apim.resource_group_name
-  apim_service_name        = azurerm_api_management.apim.name
-  default_logger_name      = "apim-default-logger"
+  apim_id                  = azurerm_api_management.apim.id
+  apim_subscription_id      = data.azurerm_client_config.current.subscription_id
+  apim_resource_group_name  = azurerm_api_management.apim.resource_group_name
+  apim_service_name         = azurerm_api_management.apim.name
+  default_logger_name       = "apim-default-logger"
 
   # Operator settings
   target_namespace = "platform-system"
@@ -29,7 +29,6 @@ module "dis_apim_operator_multitenancy" {
   }
 }
 ```
-
 ## Requirements
 
 | Name | Version |
@@ -61,7 +60,7 @@ module "dis_apim_operator_multitenancy" {
 | <a name="input_apim_resource_group_name"></a> [apim\_resource\_group\_name](#input\_apim\_resource\_group\_name) | Resource group where the APIM service is located | `string` | n/a | yes |
 | <a name="input_apim_service_name"></a> [apim\_service\_name](#input\_apim\_service\_name) | APIM service name | `string` | n/a | yes |
 | <a name="input_apim_subscription_id"></a> [apim\_subscription\_id](#input\_apim\_subscription\_id) | Subscription id where the APIM service is located | `string` | n/a | yes |
-| <a name="input_default_logger_name"></a> [default\_logger\_name](#input\_default_logger\_name) | Name of the logger in the APIM service that will be used as default for APIs | `string` | n/a | yes |
+| <a name="input_default_logger_name"></a> [default\_logger\_name](#input\_default\_logger\_name) | Name of the logger in the APIM service that will be used as default for APIs | `string` | n/a | yes |
 | <a name="input_flux_release_tag"></a> [flux\_release\_tag](#input\_flux\_release\_tag) | Flux release tag | `string` | `"latest"` | no |
 | <a name="input_kubernetes_cluster_id"></a> [kubernetes\_cluster\_id](#input\_kubernetes\_cluster\_id) | AKS cluster resource id | `string` | n/a | yes |
 | <a name="input_kubernetes_cluster_oidc_issuer_url"></a> [kubernetes\_cluster\_oidc\_issuer\_url](#input\_kubernetes\_cluster\_oidc\_issuer\_url) | The OIDC issuer URL of the AKS cluster. | `string` | n/a | yes |
@@ -75,4 +74,4 @@ module "dis_apim_operator_multitenancy" {
 
 | Name | Description |
 |------|-------------|
-| <a name="output_dis_apim_workload_identity_client_id"></a> [dis\_apim\_workload\_identity\_client\_id](#output\_dis\_apim\_workload\_identity\_client\_id) | Client ID for the operator workload identity (sensitive). |
+| <a name="output_dis_apim_workload_identity_client_id"></a> [dis\_apim\_workload\_identity\_client\_id](#output\_dis\_apim\_workload\_identity\_client\_id) | n/a |

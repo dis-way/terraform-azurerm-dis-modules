@@ -1,10 +1,30 @@
-# observability-module
+# dis_monitoring_resources
 
-A lightweight Terraform module that adds the neccesary dis flawor to the Azure monitoring stack
+Sets up AKS observability infrastructure: Azure Monitor Workspace, data collection rules, OpenTelemetry collector identity, Lakmus identity, Key Vault, and Prometheus recording rules.
 
----
+## Usage
 
-<!-- BEGIN_TF_DOCS -->
+```hcl
+module "dis_monitoring_resources" {
+  source = "git::https://github.com/dis-way/terraform-azurerm-dis-modules.git//modules/dis_monitoring_resources?ref=<version>"
+
+  prefix          = var.prefix
+  environment     = var.environment
+  subscription_id = var.subscription_id
+  tenant_id       = var.tenant_id
+
+  azurerm_kubernetes_cluster_id  = module.aks.cluster_id
+  azurerm_resource_group_obs_name = var.obs_resource_group_name
+  oidc_issuer_url                = module.aks.oidc_issuer_url
+
+  monitor_workspace_id   = var.monitor_workspace_id
+  monitor_workspace_name = var.monitor_workspace_name
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  app_insights_connection_string = var.app_insights_connection_string
+  ci_service_principal_object_id = var.ci_service_principal_object_id
+}
+```
 ## Requirements
 
 | Name | Version |
@@ -19,10 +39,6 @@ A lightweight Terraform module that adds the neccesary dis flawor to the Azure m
 |------|---------|
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.42.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.7.2 |
-
-## Modules
-
-No modules.
 
 ## Resources
 
@@ -70,36 +86,10 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_application_insights_id"></a> [application\_insights\_id](#output\_application\_insights\_id) | n/a |
 | <a name="output_key_vault_uri"></a> [key\_vault\_uri](#output\_key\_vault\_uri) | n/a |
 | <a name="output_kubernetes_recording_rules_id"></a> [kubernetes\_recording\_rules\_id](#output\_kubernetes\_recording\_rules\_id) | ID of the Kubernetes Recording Rules rule group |
 | <a name="output_lakmus_client_id"></a> [lakmus\_client\_id](#output\_lakmus\_client\_id) | The client ID of the user assigned identity used by lakmus. |
-| <a name="output_log_analytics_workspace_id"></a> [log\_analytics\_workspace\_id](#output\_log\_analytics\_workspace\_id) | n/a |
-| <a name="output_monitor_workspace_id"></a> [monitor\_workspace\_id](#output\_monitor\_workspace\_id) | n/a |
 | <a name="output_monitor_workspace_write_endpoint"></a> [monitor\_workspace\_write\_endpoint](#output\_monitor\_workspace\_write\_endpoint) | Metrics ingestion endpoint url |
 | <a name="output_node_recording_rules_id"></a> [node\_recording\_rules\_id](#output\_node\_recording\_rules\_id) | ID of the Node Recording Rules rule group |
 | <a name="output_obs_client_id"></a> [obs\_client\_id](#output\_obs\_client\_id) | n/a |
 | <a name="output_ux_recording_rules_id"></a> [ux\_recording\_rules\_id](#output\_ux\_recording\_rules\_id) | ID of the UX Recording Rules rule group |
-<!-- END_TF_DOCS -->
----
-
-## Quick start
-
-```hcl
-module "mon" {
-  source = "dis_monitoring_resources"
-  app_insights_connection_string = azurerm_application_insights.products.connection_string
-  azurerm_kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
-  azurerm_resource_group_obs_name = azurerm_resource_group.monitor.name
-  ci_service_principal_object_id = ""
-  environment = var.environment
-  location = var.location
-  log_analytics_workspace_id = azurerm_log_analytics_workspace.products.id
-  monitor_workspace_id = azurerm_monitor_workspace.products.id
-  monitor_workspace_name = azurerm_monitor_workspace.products.name
-  oidc_issuer_url = azurerm_kubernetes_cluster.aks.oidc_issuer_url
-  subscription_id = var.subscription_id
-  tenant_id = var.tenant_id
-  prefix = var.prefix
-}
-```
