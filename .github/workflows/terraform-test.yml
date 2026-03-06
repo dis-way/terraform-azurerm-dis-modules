@@ -148,8 +148,7 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
 
           modules=$(echo "$jobs" \
-            | jq -r '.jobs[] | select(.name | test("^(Validate|Docs) / ")) | .name | ltrimstr("Validate / ") | ltrimstr("Docs / ")' \
-            | grep -v '^\${{' \
+            | jq -r '.jobs[] | select((.name | test("^(Validate|Docs) / ")) and .conclusion != "skipped") | .name | ltrimstr("Validate / ") | ltrimstr("Docs / ")' \
             | sort -u)
 
           if [ -n "$modules" ]; then
