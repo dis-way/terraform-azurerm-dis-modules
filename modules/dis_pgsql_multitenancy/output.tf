@@ -1,6 +1,6 @@
 output "subnet_ids" {
   description = "The IDs of the created subnets."
-  value       = [for s in azurerm_subnet.postgresql_subnets : s.id]
+  value       = [for i in range(length(azurerm_subnet.postgresql_subnets)) : azurerm_subnet.postgresql_subnets[tostring(i)].id]
 }
 
 output "vnet_id" {
