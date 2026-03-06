@@ -1,0 +1,187 @@
+name: Terraform Module Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "modules/**"
+      - ".github/workflows/terraform-test.yml"
+  pull_request:
+    branches: [main]
+
+jobs:
+  detect-modules:
+    name: Detect changed modules
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.list.outputs.modules }}
+      any_changed: ${{ steps.list.outputs.any_changed }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Build matrix
+        id: list
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            changed=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          else
+            changed=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}")
+          fi
+
+          modules=$(echo "$changed" \
+            | grep '^modules/' \
+            | cut -d'/' -f1-2 \
+            | sort -u \
+            | jq -R -s -c 'split("\n")[:-1]')
+
+          if [ "$modules" = "[]" ] || [ -z "$modules" ]; then
+            echo "any_changed=false" >> "$GITHUB_OUTPUT"
+            echo "modules=[]" >> "$GITHUB_OUTPUT"
+          else
+            echo "any_changed=true" >> "$GITHUB_OUTPUT"
+            echo "modules=$modules" >> "$GITHUB_OUTPUT"
+          fi
+
+  fmt:
+    name: Format check
+    runs-on: ubuntu-latest
+    outputs:
+      unformatted: ${{ steps.fmt.outputs.unformatted }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4.0.0
+      - name: terraform fmt
+        id: fmt
+        run: |
+          unformatted=$(terraform fmt -check -recursive -list=true modules/ 2>&1 | grep -E '^modules/' || true)
+          if [ -n "$unformatted" ]; then
+            echo "The following files need formatting:"
+            echo "$unformatted"
+            {
+              echo "unformatted<<EOF"
+              echo "$unformatted"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+            while IFS= read -r file; do
+              echo "::error file=${file}::Run 'terraform fmt ${file}' to fix formatting"
+            done <<< "$unformatted"
+            exit 1
+          fi
+
+  validate:
+    name: Validate / ${{ matrix.module }}
+    needs: detect-modules
+    if: needs.detect-modules.outputs.any_changed == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module: ${{ fromJson(needs.detect-modules.outputs.modules) }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4.0.0
+
+      - name: Cache providers
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: ${{ matrix.module }}/.terraform
+          key: terraform-${{ matrix.module }}-${{ hashFiles(format('{0}/providers.tf', matrix.module)) }}
+
+      - name: terraform init
+        run: terraform init -backend=false
+        working-directory: ${{ matrix.module }}
+
+      - name: terraform validate
+        run: terraform validate
+        working-directory: ${{ matrix.module }}
+
+  docs:
+    name: Docs / ${{ matrix.module }}
+    needs: detect-modules
+    if: needs.detect-modules.outputs.any_changed == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module: ${{ fromJson(needs.detect-modules.outputs.modules) }}
+    env:
+      MODULE: ${{ matrix.module }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install terraform-docs
+        env:
+          # renovate: datasource=github-releases packageName=terraform-docs/terraform-docs
+          TFDOCS_VERSION: "0.19.0"
+        run: |
+          curl -sSLo /tmp/terraform-docs.tar.gz \
+            "https://github.com/terraform-docs/terraform-docs/releases/download/v${TFDOCS_VERSION}/terraform-docs-v${TFDOCS_VERSION}-linux-amd64.tar.gz"
+          tar -xzf /tmp/terraform-docs.tar.gz -C /tmp terraform-docs
+          sudo mv /tmp/terraform-docs /usr/local/bin/terraform-docs
+
+      - name: Regenerate README
+        working-directory: ${{ matrix.module }}
+        run: |
+          if [ ! -f base.md ]; then
+            echo "::error file=${MODULE}/base.md::base.md is missing. Create it with a usage example for the module."
+            exit 1
+          fi
+          cat base.md > README.md
+          terraform-docs markdown --hide-empty table . >> README.md
+
+      - name: Check for diff
+        run: |
+          if ! git diff --exit-code "$MODULE/README.md"; then
+            echo "::error file=${MODULE}/README.md::README.md is out of date. Run generate-docs.sh --module $(basename "$MODULE") and commit the result."
+            exit 1
+          fi
+
+  summary:
+    name: Summary
+    needs: [detect-modules, fmt, validate, docs]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    steps:
+      - name: Write job summary
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "## Terraform Module Check Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          jobs=$(gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" --paginate)
+
+          fmt=$(echo "$jobs" | jq -r '.jobs[] | select(.name == "Format check") | .conclusion')
+          fmt_cell() { [ "$1" = "success" ] && echo "✅" || echo "❌ $1"; }
+
+          echo "**Format check:** $(fmt_cell "$fmt")" >> "$GITHUB_STEP_SUMMARY"
+          unformatted="${{ needs.fmt.outputs.unformatted }}"
+          if [ -n "$unformatted" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "The following files need formatting (`terraform fmt <file>`):" >> "$GITHUB_STEP_SUMMARY"
+            while IFS= read -r file; do
+              echo "- \`$file\`" >> "$GITHUB_STEP_SUMMARY"
+            done <<< "$unformatted"
+          fi
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          modules=$(echo "$jobs" \
+            | jq -r '.jobs[] | select((.name | test("^(Validate|Docs) / ")) and .conclusion != "skipped") | .name | ltrimstr("Validate / ") | ltrimstr("Docs / ")' \
+            | sort -u)
+
+          if [ -n "$modules" ]; then
+            echo "| Module | Validate | Docs |" >> "$GITHUB_STEP_SUMMARY"
+            echo "|--------|----------|------|" >> "$GITHUB_STEP_SUMMARY"
+
+            while IFS= read -r module; do
+              validate=$(echo "$jobs" | jq -r --arg m "Validate / $module" '.jobs[] | select(.name == $m) | .conclusion')
+              docs=$(echo "$jobs" | jq -r --arg m "Docs / $module" '.jobs[] | select(.name == $m) | .conclusion')
+              echo "| \`$module\` | $(fmt_cell "$validate") | $(fmt_cell "$docs") |" >> "$GITHUB_STEP_SUMMARY"
+            done <<< "$modules"
+          else
+            echo "_No module changes detected._" >> "$GITHUB_STEP_SUMMARY"
+          fi
