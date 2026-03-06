@@ -213,7 +213,7 @@ variable "api_server_subnet_prefixes" {
     error_message = "api_server_subnet_prefixes must be an IPv4 prefix. IPv6 and dual-stack are not supported."
   }
   validation {
-    condition     = tonumber(split("/", var.api_server_subnet_prefixes[0])[1]) <= 28
+    condition     = try(tonumber(split("/", var.api_server_subnet_prefixes[0])[1]) <= 28, false)
     error_message = "api_server_subnet_prefixes IPv4 prefix must be /28 or larger (e.g. /28, /27, /24)."
   }
 }
