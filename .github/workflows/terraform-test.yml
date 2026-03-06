@@ -15,37 +15,41 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       modules: ${{ steps.list.outputs.modules }}
-      any_changed: ${{ steps.changed.outputs.any_changed }}
+      any_changed: ${{ steps.list.outputs.any_changed }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
 
-      - name: Get changed module dirs
-        id: changed
-        uses: tj-actions/changed-files@v46
-        with:
-          dir_names: "true"
-          dir_names_max_depth: "2"
-          files: modules/**
-
       - name: Build matrix
         id: list
-        if: steps.changed.outputs.any_changed == 'true'
         run: |
-          modules=$(echo "${{ steps.changed.outputs.all_changed_files }}" \
-            | tr ' ' '\n' \
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            changed=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          else
+            changed=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}")
+          fi
+
+          modules=$(echo "$changed" \
             | grep '^modules/' \
+            | cut -d'/' -f1-2 \
             | sort -u \
             | jq -R -s -c 'split("\n")[:-1]')
-          echo "modules=$modules" >> "$GITHUB_OUTPUT"
+
+          if [ "$modules" = "[]" ] || [ -z "$modules" ]; then
+            echo "any_changed=false" >> "$GITHUB_OUTPUT"
+            echo "modules=[]" >> "$GITHUB_OUTPUT"
+          else
+            echo "any_changed=true" >> "$GITHUB_OUTPUT"
+            echo "modules=$modules" >> "$GITHUB_OUTPUT"
+          fi
 
   fmt:
     name: Format check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4.0.0
       - name: terraform fmt
         run: terraform fmt -check -recursive modules/
 
@@ -59,11 +63,11 @@ jobs:
       matrix:
         module: ${{ fromJson(needs.detect-modules.outputs.modules) }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4.0.0
 
       - name: Cache providers
-        uses: actions/cache@v4
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ${{ matrix.module }}/.terraform
           key: terraform-${{ matrix.module }}-${{ hashFiles(format('{0}/providers.tf', matrix.module)) }}
@@ -86,10 +90,11 @@ jobs:
       matrix:
         module: ${{ fromJson(needs.detect-modules.outputs.modules) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install terraform-docs
         env:
+          # renovate: datasource=github-releases packageName=terraform-docs/terraform-docs
           TFDOCS_VERSION: "0.19.0"
         run: |
           curl -sSLo /tmp/terraform-docs.tar.gz \
@@ -129,7 +134,6 @@ jobs:
 
           jobs=$(gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" --paginate)
 
-          # Collect all module names from both job types
           modules=$(echo "$jobs" \
             | jq -r '.jobs[] | select(.name | test("^(Validate|Docs) / ")) | .name | ltrimstr("Validate / ") | ltrimstr("Docs / ")' \
             | sort -u)
