@@ -25,10 +25,10 @@ variable "enable_dis_identity_operator" {
 }
 
 variable "dis_identity_target_tenant_id" {
-  type = string
+  type        = string
   description = "Tenant ID where dis-identity ApplicationIdentity will be created"
-  sensitive = true
-  default = ""
+  sensitive   = true
+  default     = ""
   validation {
     condition     = var.enable_dis_identity_operator == false || (var.enable_dis_identity_operator == true && length(var.dis_identity_target_tenant_id) > 0)
     error_message = "You must provide a value for dis_identity_target_tenant_id when enable_dis_identity_operator is true."
