@@ -4,14 +4,13 @@ variable "enable_opencost" {
   description = "Enable opencost"
 }
 
-variable "opencost_tenant_id" {
+variable "opencost_resource_group_name" {
   type        = string
-  sensitive   = true
-  description = "Tenant id where the azure monitoring workspace is deployed"
+  description = "Resource group where opencost user manage identities are created"
   default     = ""
   validation {
-    condition     = var.enable_opencost ? length(var.opencost_tenant_id) > 0 : true
-    error_message = "opencost_tenant_id must be provided when enable_opencost is true."
+    condition     = var.enable_opencost ? length(var.opencost_resource_group_name) > 0 : true
+    error_message = "opencost_resource_group_name must be provided when enable_opencost is true."
   }
 }
 

@@ -1,7 +1,7 @@
 resource "azurerm_user_assigned_identity" "opencost_metrics_reader" {
   count               = var.enable_opencost ? 1 : 0
   name                = "opencost-reader"
-  resource_group_name = var.aks_resource_group
+  resource_group_name = var.opencost_resource_group_name
   location            = "norwayeast"
 }
 
@@ -34,7 +34,7 @@ resource "azapi_resource" "opencost" {
           path  = "./multitenancy"
           postBuild = {
             substitute = {
-              AZURE_TENANT_ID : "${var.opencost_tenant_id}"
+              AZURE_TENANT_ID : "${var.tenant_id}"
               OPENCOST_CLIENT_ID : "${azurerm_user_assigned_identity.opencost_metrics_reader[0].client_id}"
               AZURE_PROMETHEUS_ENDPOINT : "${var.opencost_prometheus_endpoint}"
               AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
@@ -65,4 +65,3 @@ resource "azapi_resource" "opencost" {
     }
   }
 }
-
