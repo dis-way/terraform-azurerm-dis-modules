@@ -106,6 +106,8 @@ jobs:
       fail-fast: false
       matrix:
         module: ${{ fromJson(needs.detect-modules.outputs.modules) }}
+    env:
+      MODULE: ${{ matrix.module }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
@@ -122,13 +124,17 @@ jobs:
       - name: Regenerate README
         working-directory: ${{ matrix.module }}
         run: |
+          if [ ! -f base.md ]; then
+            echo "::error file=${MODULE}/base.md::base.md is missing. Create it with a usage example for the module."
+            exit 1
+          fi
           cat base.md > README.md
           terraform-docs markdown --hide-empty table . >> README.md
 
       - name: Check for diff
         run: |
-          if ! git diff --exit-code ${{ matrix.module }}/README.md; then
-            echo "::error file=${{ matrix.module }}/README.md::README.md is out of date. Run generate-docs.sh --module $(basename ${{ matrix.module }}) and commit the result."
+          if ! git diff --exit-code "$MODULE/README.md"; then
+            echo "::error file=${MODULE}/README.md::README.md is out of date. Run generate-docs.sh --module $(basename "$MODULE") and commit the result."
             exit 1
           fi
 
