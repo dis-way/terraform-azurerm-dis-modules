@@ -106,3 +106,8 @@ output "products_azure_monitor_workspace_name" {
   description = "Name of the Azure Monitor Workspace used by products. If enable_products_azure_monitoring_resources is false, this will be an empty string"
 }
 
+output "products_azure_monitor_workspace_read_endpoint" {
+  value       = var.enable_products_azure_monitoring_resources ? azurerm_monitor_workspace.products[0].query_endpoint : ""
+  description = "The query endpoint for the Azure Monitor Workspace"
+}
+
