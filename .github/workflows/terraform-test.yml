@@ -1,0 +1,108 @@
+name: Terraform Module Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "modules/**"
+      - ".github/workflows/terraform-test.yml"
+  pull_request:
+    branches: [main]
+
+jobs:
+  detect-modules:
+    name: Detect changed modules
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.list.outputs.modules }}
+      any_changed: ${{ steps.changed.outputs.any_changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed module dirs
+        id: changed
+        uses: tj-actions/changed-files@v46
+        with:
+          dir_names: "true"
+          dir_names_max_depth: "2"
+          files: modules/**
+
+      - name: Build matrix
+        id: list
+        if: steps.changed.outputs.any_changed == 'true'
+        run: |
+          modules=$(echo "${{ steps.changed.outputs.all_changed_files }}" \
+            | tr ' ' '\n' \
+            | grep '^modules/' \
+            | sort -u \
+            | jq -R -s -c 'split("\n")[:-1]')
+          echo "modules=$modules" >> "$GITHUB_OUTPUT"
+
+  fmt:
+    name: Format check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: terraform fmt
+        run: terraform fmt -check -recursive modules/
+
+  validate:
+    name: Validate / ${{ matrix.module }}
+    needs: detect-modules
+    if: needs.detect-modules.outputs.any_changed == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module: ${{ fromJson(needs.detect-modules.outputs.modules) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Cache providers
+        uses: actions/cache@v4
+        with:
+          path: ${{ matrix.module }}/.terraform
+          key: terraform-${{ matrix.module }}-${{ hashFiles(format('{0}/providers.tf', matrix.module)) }}
+
+      - name: terraform init
+        run: terraform init -backend=false
+        working-directory: ${{ matrix.module }}
+
+      - name: terraform validate
+        run: terraform validate
+        working-directory: ${{ matrix.module }}
+
+  summary:
+    name: Summary
+    needs: [detect-modules, validate]
+    if: always() && needs.detect-modules.outputs.any_changed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    steps:
+      - name: Write job summary
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "## Terraform Validation Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Module | Result |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|--------|" >> "$GITHUB_STEP_SUMMARY"
+
+          jobs=$(gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" --paginate)
+
+          echo "$jobs" \
+            | jq -r '.jobs[] | select(.name | startswith("Validate /")) | [.name, .conclusion] | @tsv' \
+            | sort \
+            | while IFS=$'\t' read -r name conclusion; do
+                module="${name#Validate / }"
+                if [ "$conclusion" = "success" ]; then
+                  echo "| \`$module\` | ✅ passed |" >> "$GITHUB_STEP_SUMMARY"
+                else
+                  echo "| \`$module\` | ❌ $conclusion |" >> "$GITHUB_STEP_SUMMARY"
+                fi
+              done
