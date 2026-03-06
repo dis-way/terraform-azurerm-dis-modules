@@ -94,8 +94,13 @@ jobs:
         working-directory: ${{ matrix.module }}
 
       - name: terraform validate
-        run: terraform validate
         working-directory: ${{ matrix.module }}
+        run: |
+          if grep -qE 'configuration_aliases' providers.tf 2>/dev/null; then
+            echo "::notice file=${MODULE}/providers.tf::Skipping terraform validate — module uses configuration_aliases and cannot be validated in isolation."
+          else
+            terraform validate
+          fi
 
   docs:
     name: Docs / ${{ matrix.module }}

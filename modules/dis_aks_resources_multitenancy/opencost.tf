@@ -22,7 +22,7 @@ resource "azurerm_role_assignment" "opencost_metrics_reader" {
   role_definition_name = "Monitoring Reader"
 }
 
-resource "azapi_resource" "otel_operator" {
+resource "azapi_resource" "opencost" {
   type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
   name      = "opencost"
   parent_id = var.azurerm_kubernetes_cluster_id
