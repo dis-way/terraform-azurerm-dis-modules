@@ -1,4 +1,33 @@
-## Requirements
+# dis_aks_resources_adminservices
+
+Deploys admin/platform services onto an AKS cluster: cert-manager, External Secrets Operator, Flux syncroot, Grafana operator, Lakmus, Linkerd, OpenTelemetry, and Traefik.
+
+## Usage
+
+```hcl
+module "dis_aks_resources_adminservices" {
+  source = "git::https://github.com/dis-way/terraform-azurerm-dis-modules.git//modules/dis_aks_resources_adminservices?ref=<version>"
+
+  azurerm_kubernetes_cluster_id = module.aks.cluster_id
+  subscription_id               = var.subscription_id
+  environment                   = var.environment
+
+  developer_entra_id_group = var.developer_entra_id_group
+
+  aks_node_resource_group = module.aks.node_resource_group
+  aks_vnet_ipv4_cidr      = var.aks_vnet_ipv4_cidr
+  aks_vnet_ipv6_cidr      = var.aks_vnet_ipv6_cidr
+  pip4_ip_address         = module.aks.pip4_ip_address
+  pip6_ip_address         = module.aks.pip6_ip_address
+
+  obs_amw_write_endpoint = module.dis_monitoring_resources.amw_write_endpoint
+  obs_client_id          = module.dis_monitoring_resources.obs_client_id
+  obs_kv_uri             = module.dis_monitoring_resources.kv_uri
+  obs_tenant_id          = var.tenant_id
+
+  lakmus_client_id = module.dis_monitoring_resources.lakmus_client_id
+}
+```## Requirements
 
 | Name | Version |
 |------|---------|
@@ -9,10 +38,6 @@
 | Name | Version |
 |------|---------|
 | <a name="provider_azapi"></a> [azapi](#provider\_azapi) | >= 2.3.0 |
-
-## Modules
-
-No modules.
 
 ## Resources
 
@@ -42,6 +67,7 @@ No modules.
 | <a name="input_azurerm_kubernetes_cluster_id"></a> [azurerm\_kubernetes\_cluster\_id](#input\_azurerm\_kubernetes\_cluster\_id) | AKS cluster resource id | `string` | n/a | yes |
 | <a name="input_azurerm_kubernetes_cluster_oidc_issuer_url"></a> [azurerm\_kubernetes\_cluster\_oidc\_issuer\_url](#input\_azurerm\_kubernetes\_cluster\_oidc\_issuer\_url) | The OIDC issuer URL of the AKS cluster. | `string` | `""` | no |
 | <a name="input_developer_entra_id_group"></a> [developer\_entra\_id\_group](#input\_developer\_entra\_id\_group) | EntraID group that should have access to grafana and kubernetes cluster | `string` | n/a | yes |
+| <a name="input_dis_identity_target_tenant_id"></a> [dis\_identity\_target\_tenant\_id](#input\_dis\_identity\_target\_tenant\_id) | Tenant ID where dis-identity ApplicationIdentity will be created | `string` | `""` | no |
 | <a name="input_enable_cert_manager_tls_issuer"></a> [enable\_cert\_manager\_tls\_issuer](#input\_enable\_cert\_manager\_tls\_issuer) | Enable cert-manager issuer for TLS certificates | `bool` | `true` | no |
 | <a name="input_enable_dis_identity_operator"></a> [enable\_dis\_identity\_operator](#input\_enable\_dis\_identity\_operator) | Enable the dis-identity-operator to manage User Assigned Managed Identities in the cluster. | `bool` | `false` | no |
 | <a name="input_enable_grafana_operator"></a> [enable\_grafana\_operator](#input\_enable\_grafana\_operator) | Toggle deployment of grafana operator in cluster. If deployed grafana\_endpoint must be defined | `bool` | `true` | no |
@@ -65,7 +91,3 @@ No modules.
 | <a name="input_tls_cert_manager_zone_name"></a> [tls\_cert\_manager\_zone\_name](#input\_tls\_cert\_manager\_zone\_name) | Azure DNS zone name for TLS certificates | `string` | `""` | no |
 | <a name="input_tls_cert_manager_zone_rg_name"></a> [tls\_cert\_manager\_zone\_rg\_name](#input\_tls\_cert\_manager\_zone\_rg\_name) | Azure DNS zone resource group name for TLS certificates | `string` | `""` | no |
 | <a name="input_token_grafana_operator"></a> [token\_grafana\_operator](#input\_token\_grafana\_operator) | Authentication token for Grafana operator to manage Grafana resources | `string` | `""` | no |
-
-## Outputs
-
-No outputs.

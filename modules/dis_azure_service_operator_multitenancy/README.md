@@ -58,6 +58,8 @@ module "dis_azure_service_operator" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_aks_vnet_ipv4_cidr"></a> [aks\_vnet\_ipv4\_cidr](#input\_aks\_vnet\_ipv4\_cidr) | AKS VNet IPv4 CIDR | `string` | n/a | yes |
+| <a name="input_aks_vnet_ipv6_cidr"></a> [aks\_vnet\_ipv6\_cidr](#input\_aks\_vnet\_ipv6\_cidr) | AKS VNet IPv6 CIDR | `string` | n/a | yes |
 | <a name="input_aso_crd_pattern"></a> [aso\_crd\_pattern](#input\_aso\_crd\_pattern) | The pattern for the Azure Service Operator Custom Resource Definitions (CRDs). | `string` | `"managedidentity.azure.com/*;authorization.azure.com/*;dbforpostgresql.azure.com/*;network.azure.com/*;insights.azure.com/*"` | no |
 | <a name="input_aso_namespace"></a> [aso\_namespace](#input\_aso\_namespace) | The namespace where the Azure Service Operator will be deployed. | `string` | `"azureserviceoperator-system"` | no |
 | <a name="input_aso_service_account_name"></a> [aso\_service\_account\_name](#input\_aso\_service\_account\_name) | The name of the service account for the Azure Service Operator. | `string` | `"azureserviceoperator-system"` | no |

@@ -1,38 +1,3 @@
-### Minimal usage example
-This module provisions an Azure API Management instance with diagnostics integrated with Application Insights and Log Analytics, and supports assigning APIM Service Contributor access to additional principals.
-
-```hcl
-module "dis_apim_multitenancy" {
-  source = "./modules/dis_apim_multitenancy"
-
-  # Required
-  prefix          = "myapp"
-  environment     = "dev"
-  publisher_email = "platform@example.com"
-
-  # Optional
-  location      = "norwayeast"
-  apim_rg_name  = ""
-  publisher     = "Altinn"
-  sku_name      = "Developer_1"
-
-  # Diagnostics
-  sampling_percentage = 0.0
-  headers_to_log      = []
-  body_bytes_to_log   = 0
-
-  # Optional APIM role assignments (name => principal object id)
-  apim_service_contributors = {
-    "platform-team" = "00000000-0000-0000-0000-000000000000"
-  }
-
-  tags = {
-    Environment = "dev"
-    ManagedBy   = "terraform"
-  }
-}
-```
-
 ## Requirements
 
 | Name | Version |
@@ -74,7 +39,7 @@ module "dis_apim_multitenancy" {
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | Resources prefixes | `string` | n/a | yes |
 | <a name="input_publisher"></a> [publisher](#input\_publisher) | The name of the publisher for the API Management service. | `string` | `"Altinn"` | no |
 | <a name="input_publisher_email"></a> [publisher\_email](#input\_publisher\_email) | The email address of the publisher for the API Management service. | `string` | n/a | yes |
-| <a name="input_sampling_percentage"></a> [sampling\_percentage](#input\_sampling\_percentage) | Sampling percentage for Application Insights diagnostics. Set to 0.0 to log only errors. | `number` | `0.0` | no |
+| <a name="input_sampling_percentage"></a> [sampling\_percentage](#input\_sampling\_percentage) | Sampling percentage for Application Insights diagnostics. Set to 0.0 to log only errors. | `number` | `0` | no |
 | <a name="input_sku_name"></a> [sku\_name](#input\_sku\_name) | SKU name | `string` | `"Developer_1"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the created resources. | `map(string)` | `{}` | no |
 
@@ -82,7 +47,7 @@ module "dis_apim_multitenancy" {
 
 | Name | Description |
 |------|-------------|
-| <a name="output_apim_default_logger_id"></a> [apim\_default\_logger\_id](#output\_apim\_default\_logger\_id) | The resource ID of the default APIM logger connected to Application Insights. |
-| <a name="output_apim_id"></a> [apim\_id](#output\_apim\_id) | The resource ID of the API Management service. |
-| <a name="output_apim_rg_name"></a> [apim\_rg\_name](#output\_apim\_rg\_name) | The name of the resource group where APIM and diagnostics resources are deployed. |
-| <a name="output_apim_service_name"></a> [apim\_service\_name](#output\_apim\_service\_name) | The name of the API Management service. |
+| <a name="output_apim_default_logger_id"></a> [apim\_default\_logger\_id](#output\_apim\_default\_logger\_id) | n/a |
+| <a name="output_apim_id"></a> [apim\_id](#output\_apim\_id) | n/a |
+| <a name="output_apim_rg_name"></a> [apim\_rg\_name](#output\_apim\_rg\_name) | n/a |
+| <a name="output_apim_service_name"></a> [apim\_service\_name](#output\_apim\_service\_name) | n/a |
