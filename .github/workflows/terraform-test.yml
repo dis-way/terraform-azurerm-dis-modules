@@ -47,15 +47,23 @@ jobs:
   fmt:
     name: Format check
     runs-on: ubuntu-latest
+    outputs:
+      unformatted: ${{ steps.fmt.outputs.unformatted }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4.0.0
       - name: terraform fmt
+        id: fmt
         run: |
           unformatted=$(terraform fmt -check -recursive -list=true modules/ 2>&1 | grep -E '^modules/' || true)
           if [ -n "$unformatted" ]; then
             echo "The following files need formatting:"
             echo "$unformatted"
+            {
+              echo "unformatted<<EOF"
+              echo "$unformatted"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
             while IFS= read -r file; do
               echo "::error file=${file}::Run 'terraform fmt ${file}' to fix formatting"
             done <<< "$unformatted"
@@ -145,6 +153,14 @@ jobs:
           fmt_cell() { [ "$1" = "success" ] && echo "✅" || echo "❌ $1"; }
 
           echo "**Format check:** $(fmt_cell "$fmt")" >> "$GITHUB_STEP_SUMMARY"
+          unformatted="${{ needs.fmt.outputs.unformatted }}"
+          if [ -n "$unformatted" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "The following files need formatting (`terraform fmt <file>`):" >> "$GITHUB_STEP_SUMMARY"
+            while IFS= read -r file; do
+              echo "- \`$file\`" >> "$GITHUB_STEP_SUMMARY"
+            done <<< "$unformatted"
+          fi
           echo "" >> "$GITHUB_STEP_SUMMARY"
 
           modules=$(echo "$jobs" \
