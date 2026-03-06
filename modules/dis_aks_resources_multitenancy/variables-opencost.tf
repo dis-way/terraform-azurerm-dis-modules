@@ -7,6 +7,7 @@ variable "enable_opencost" {
 variable "opencost_resource_group_name" {
   type        = string
   description = "Resource group where opencost user manage identities are created"
+  default     = ""
   validation {
     condition     = var.enable_opencost ? length(var.opencost_resource_group_name) > 0 : true
     error_message = "opencost_resource_group_name must be provided when enable_opencost is true."

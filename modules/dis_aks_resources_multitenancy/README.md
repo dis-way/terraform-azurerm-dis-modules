@@ -91,7 +91,7 @@ module "dis_aks_resources_multitenancy" {
 | <a name="input_obs_tenant_id"></a> [obs\_tenant\_id](#input\_obs\_tenant\_id) | Tenant id for the observability app. | `string` | `""` | no |
 | <a name="input_opencost_azure_monitoring_workspace_id"></a> [opencost\_azure\_monitoring\_workspace\_id](#input\_opencost\_azure\_monitoring\_workspace\_id) | Azure id of the monitoring workspace to read from | `string` | `""` | no |
 | <a name="input_opencost_prometheus_endpoint"></a> [opencost\_prometheus\_endpoint](#input\_opencost\_prometheus\_endpoint) | URL of the prometheus endpint that opencost queries | `string` | `""` | no |
-| <a name="input_opencost_resource_group_name"></a> [opencost\_resource\_group\_name](#input\_opencost\_resource\_group\_name) | Resource group where opencost user manage identities are created | `string` | n/a | yes |
+| <a name="input_opencost_resource_group_name"></a> [opencost\_resource\_group\_name](#input\_opencost\_resource\_group\_name) | Resource group where opencost user manage identities are created | `string` | `""` | no |
 | <a name="input_otel_amw_write_endpoint"></a> [otel\_amw\_write\_endpoint](#input\_otel\_amw\_write\_endpoint) | Azure Monitor Workspaces write endpoint to write prometheus metrics to via prometheus exporter | `string` | n/a | yes |
 | <a name="input_otel_client_id"></a> [otel\_client\_id](#input\_otel\_client\_id) | Client id for the federated identity used by otel | `string` | n/a | yes |
 | <a name="input_otel_kv_uri"></a> [otel\_kv\_uri](#input\_otel\_kv\_uri) | Key vault uri for otel config | `string` | n/a | yes |
