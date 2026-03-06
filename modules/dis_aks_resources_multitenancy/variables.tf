@@ -1,3 +1,8 @@
+variable "tenant_id" {
+  type        = string
+  description = "Tenant id where aks cluster and other resources are deployed"
+}
+
 variable "subscription_id" {
   type        = string
   description = "Subscription id where aks cluster and other resources are deployed"
