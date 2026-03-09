@@ -23,9 +23,11 @@ resource "azurerm_role_assignment" "opencost_metrics_reader" {
 }
 
 resource "azapi_resource" "opencost" {
-  type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
-  name      = "opencost"
-  parent_id = var.azurerm_kubernetes_cluster_id
+  depends_on = [azurerm_user_assigned_identity.opencost_metrics_reader, azurerm_federated_identity_credential.opencost_metrics_reader, azurerm_role_assignment.opencost_metrics_reader]
+  count      = var.enable_opencost ? 1 : 0
+  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
+  name       = "opencost"
+  parent_id  = var.azurerm_kubernetes_cluster_id
   body = {
     properties = {
       kustomizations = {
