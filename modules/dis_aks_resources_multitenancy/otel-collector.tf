@@ -1,5 +1,5 @@
 resource "azapi_resource" "otel_collector" {
-  depends_on = [azapi_resource.external_secrets_operator]
+  depends_on = [azapi_resource.external_secrets_operator, azapi_resource.otel_operator]
   type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
   name       = "otel-collector"
   parent_id  = var.azurerm_kubernetes_cluster_id
