@@ -17,7 +17,7 @@ resource "azurerm_federated_identity_credential" "opencost_metrics_reader" {
 
 resource "azurerm_role_assignment" "opencost_metrics_reader" {
   count                = var.enable_opencost ? 1 : 0
-  principal_id         = azurerm_user_assigned_identity.opencost_metrics_reader[0].client_id
+  principal_id         = azurerm_user_assigned_identity.opencost_metrics_reader[0].principal_id
   scope                = var.opencost_azure_monitoring_workspace_id
   role_definition_name = "Monitoring Reader"
 }
