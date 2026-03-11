@@ -1,4 +1,9 @@
 resource "random_string" "random_postfix" {
+  keepers = {
+    product = var.product
+    env     = var.environment
+    cluster = var.aks_cluster_id
+  }
   length  = 4
   numeric = true
   upper   = false

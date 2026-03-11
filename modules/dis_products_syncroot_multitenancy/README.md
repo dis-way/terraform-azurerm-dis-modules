@@ -18,14 +18,14 @@ module "dis_products_syncroot_multitenancy" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 2.3.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | >=3.8.0 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | >=3.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_azapi"></a> [azapi](#provider\_azapi) | >= 2.3.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | >=3.8.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | >=3.0.0 |
 
 ## Resources
 
