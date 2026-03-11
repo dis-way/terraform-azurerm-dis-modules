@@ -1,22 +1,9 @@
 # Assign "Network Contributor" Role to AKS control-plane managed identity.
-# Scoped to the VNet (not the resource group) for least-privilege.
-# Must be pre-assigned before cluster creation; required for API server VNet integration.
+# Scoped to the resource group so the identity can manage the VNet (API server VNet
+# integration), subnets, and outbound public IP prefixes (required for load balancer sync).
+# Must be pre-assigned before cluster creation.
 resource "azurerm_role_assignment" "network_contributor" {
-  scope                            = azurerm_virtual_network.aks.id
-  role_definition_name             = "Network Contributor"
-  principal_id                     = azurerm_user_assigned_identity.aks_control_plane.principal_id
-  skip_service_principal_aad_check = true
-}
-
-resource "azurerm_role_assignment" "control_plane_prefix4_join" {
-  scope                            = azurerm_public_ip_prefix.prefix4.id
-  role_definition_name             = "Network Contributor"
-  principal_id                     = azurerm_user_assigned_identity.aks_control_plane.principal_id
-  skip_service_principal_aad_check = true
-}
-
-resource "azurerm_role_assignment" "control_plane_prefix6_join" {
-  scope                            = azurerm_public_ip_prefix.prefix6.id
+  scope                            = azurerm_resource_group.aks.id
   role_definition_name             = "Network Contributor"
   principal_id                     = azurerm_user_assigned_identity.aks_control_plane.principal_id
   skip_service_principal_aad_check = true
