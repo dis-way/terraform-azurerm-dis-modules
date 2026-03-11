@@ -25,7 +25,7 @@ module "aks" {
   }
   system_pool_subnet_prefixes = ["10.0.0.0/24", "fd00:0:0:1::/64"]
 
-  api_server_subnet_prefixes = ["10.0.3.0/28", "fd00:0:0:4::/64"]
+  api_server_subnet_prefixes = ["10.0.3.0/28"]
 
   # Node pools
   node_pool_configs = {
