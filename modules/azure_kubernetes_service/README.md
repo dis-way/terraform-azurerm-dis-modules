@@ -97,8 +97,6 @@ module "aks" {
 | [azurerm_resource_group.monitor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_role_assignment.aks_acrpull](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.aks_user_role](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
-| [azurerm_role_assignment.control_plane_prefix4_join](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
-| [azurerm_role_assignment.control_plane_prefix6_join](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.network_contributor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.private_dns_zone_contributor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.vnet_network_contributor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
@@ -119,7 +117,7 @@ module "aks" {
 | <a name="input_aks_local_account_disabled"></a> [aks\_local\_account\_disabled](#input\_aks\_local\_account\_disabled) | Disable local account for the AKS cluster. When true, only Azure AD authentication is allowed. | `bool` | `true` | no |
 | <a name="input_aks_sku_tier"></a> [aks\_sku\_tier](#input\_aks\_sku\_tier) | Kubernetes SKU | `string` | `"Free"` | no |
 | <a name="input_aks_user_role_scopes"></a> [aks\_user\_role\_scopes](#input\_aks\_user\_role\_scopes) | List of groups to get user role scopes for AKS | `list(string)` | `[]` | no |
-| <a name="input_api_server_subnet_prefixes"></a> [api\_server\_subnet\_prefixes](#input\_api\_server\_subnet\_prefixes) | Address prefixes for the API server subnet. Must contain at least one IPv4 prefix (/28 minimum, larger networks accepted). IPv6 prefixes are accepted for backwards compatibility but Azure does not support IPv6 on delegated API server subnets. | `list(string)` | n/a | yes |
+| <a name="input_api_server_subnet_prefixes"></a> [api\_server\_subnet\_prefixes](#input\_api\_server\_subnet\_prefixes) | Address prefixes for the API server subnet. Must contain exactly one IPv4 prefix (/28 minimum, larger networks accepted). Dual-stack and IPv6 are not supported. | `list(string)` | n/a | yes |
 | <a name="input_azurerm_kubernetes_cluster_aks_dns_service_ip"></a> [azurerm\_kubernetes\_cluster\_aks\_dns\_service\_ip](#input\_azurerm\_kubernetes\_cluster\_aks\_dns\_service\_ip) | Optional explicit aks dns service ip | `string` | `""` | no |
 | <a name="input_azurerm_kubernetes_cluster_aks_name"></a> [azurerm\_kubernetes\_cluster\_aks\_name](#input\_azurerm\_kubernetes\_cluster\_aks\_name) | Optional explicit name of the AKS cluster | `string` | `""` | no |
 | <a name="input_azurerm_kubernetes_cluster_aks_pod_cidrs"></a> [azurerm\_kubernetes\_cluster\_aks\_pod\_cidrs](#input\_azurerm\_kubernetes\_cluster\_aks\_pod\_cidrs) | Optional explicit aks pod cidrs | `list(string)` | `[]` | no |
