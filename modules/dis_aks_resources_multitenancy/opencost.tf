@@ -6,12 +6,12 @@ resource "azurerm_user_assigned_identity" "opencost_metrics_reader" {
 }
 
 resource "azurerm_federated_identity_credential" "opencost_metrics_reader" {
-  count               = var.enable_opencost ? 1 : 0
-  name     = "opencost-aks-federation"
-  audience = ["api://AzureADTokenExchange"]
-  issuer              = var.azurerm_kubernetes_cluster_oidc_issuer_url
-  subject             = "system:serviceaccount:opencost-system:opencost"
-  parent_id           = azurerm_user_assigned_identity.opencost_metrics_reader[0].id
+  count     = var.enable_opencost ? 1 : 0
+  name      = "opencost-aks-federation"
+  audience  = ["api://AzureADTokenExchange"]
+  issuer    = var.azurerm_kubernetes_cluster_oidc_issuer_url
+  subject   = "system:serviceaccount:opencost-system:opencost"
+  parent_id = azurerm_user_assigned_identity.opencost_metrics_reader[0].id
 }
 
 resource "azurerm_role_definition" "opencost_rate_card_query_role" {
