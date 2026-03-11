@@ -18,7 +18,7 @@ resource "azapi_resource" "syncroot" {
   body = {
     properties = {
       kustomizations = {
-        "${var.product}-${random_string.random_postfix.result}" = {
+        (var.product) = {
           force                  = false
           path                   = "./${var.environment}"
           prune                  = var.prune_enabled
