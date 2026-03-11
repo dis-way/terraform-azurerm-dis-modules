@@ -44,20 +44,11 @@ resource "azurerm_role_assignment" "opencost_metrics_reader" {
   role_definition_name = "Monitoring Reader"
 }
 
-resource "azurerm_role_assignment" "opencost_rate_card_reader" {
-  depends_on         = [azurerm_role_definition.opencost_rate_card_query_role]
-  count              = var.enable_opencost ? 1 : 0
-  principal_id       = azurerm_user_assigned_identity.opencost_metrics_reader[0].principal_id
-  scope              = "/subscriptions/${var.subscription_id}"
-  role_definition_id = azurerm_role_definition.opencost_rate_card_query_role[0].role_definition_id
-}
-
 resource "azapi_resource" "opencost" {
   depends_on = [
     azurerm_user_assigned_identity.opencost_metrics_reader,
     azurerm_federated_identity_credential.opencost_metrics_reader,
-    azurerm_role_assignment.opencost_metrics_reader,
-    azurerm_role_assignment.opencost_rate_card_reader
+    azurerm_role_assignment.opencost_metrics_reader
   ]
   count     = var.enable_opencost ? 1 : 0
   type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
