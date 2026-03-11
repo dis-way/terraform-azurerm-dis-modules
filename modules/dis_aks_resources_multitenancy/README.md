@@ -62,6 +62,8 @@ module "dis_aks_resources_multitenancy" {
 | [azapi_resource.traefik](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azurerm_federated_identity_credential.opencost_metrics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
 | [azurerm_role_assignment.opencost_metrics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+| [azurerm_role_assignment.opencost_rate_card_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+| [azurerm_role_definition.opencost_rate_card_query_role](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) | resource |
 | [azurerm_user_assigned_identity.opencost_metrics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
 
 ## Inputs
@@ -90,6 +92,7 @@ module "dis_aks_resources_multitenancy" {
 | <a name="input_linkerd_disable_ipv6"></a> [linkerd\_disable\_ipv6](#input\_linkerd\_disable\_ipv6) | Disable IPv6 for Linkerd | `string` | `"false"` | no |
 | <a name="input_obs_tenant_id"></a> [obs\_tenant\_id](#input\_obs\_tenant\_id) | Tenant id for the observability app. | `string` | `""` | no |
 | <a name="input_opencost_azure_monitoring_workspace_id"></a> [opencost\_azure\_monitoring\_workspace\_id](#input\_opencost\_azure\_monitoring\_workspace\_id) | Azure id of the monitoring workspace to read from | `string` | `""` | no |
+| <a name="input_opencost_environment"></a> [opencost\_environment](#input\_opencost\_environment) | Name of the environment this opencost instance is deployed to. Eg: at22 | `string` | `""` | no |
 | <a name="input_opencost_prometheus_endpoint"></a> [opencost\_prometheus\_endpoint](#input\_opencost\_prometheus\_endpoint) | URL of the prometheus endpint that opencost queries | `string` | `""` | no |
 | <a name="input_opencost_resource_group_name"></a> [opencost\_resource\_group\_name](#input\_opencost\_resource\_group\_name) | Resource group where opencost user manage identities are created | `string` | `""` | no |
 | <a name="input_otel_amw_write_endpoint"></a> [otel\_amw\_write\_endpoint](#input\_otel\_amw\_write\_endpoint) | Azure Monitor Workspaces write endpoint to write prometheus metrics to via prometheus exporter | `string` | n/a | yes |
