@@ -18,18 +18,21 @@ module "dis_products_syncroot_multitenancy" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 2.3.0 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | >=3.8.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_azapi"></a> [azapi](#provider\_azapi) | >= 2.3.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | >=3.8.0 |
 
 ## Resources
 
 | Name | Type |
 |------|------|
 | [azapi_resource.syncroot](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [random_string.random_postfix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 
 ## Inputs
 

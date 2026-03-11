@@ -1,11 +1,19 @@
+resource "random_string" "random_postfix" {
+  length  = 4
+  numeric = true
+  upper   = false
+  lower   = true
+  special = false
+}
+
 resource "azapi_resource" "syncroot" {
   type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
-  name      = var.product
+  name      = "${var.product}-${random_string.random_postfix.result}"
   parent_id = var.aks_cluster_id
   body = {
     properties = {
       kustomizations = {
-        (var.product) = {
+        "${var.product}-${random_string.random_postfix.result}" = {
           force                  = false
           path                   = "./${var.environment}"
           prune                  = var.prune_enabled
