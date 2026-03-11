@@ -8,11 +8,10 @@ resource "azurerm_user_assigned_identity" "lakmus" {
 resource "azurerm_federated_identity_credential" "lakmus" {
   count               = var.enable_lakmus ? 1 : 0
   name                = "${var.prefix}-${var.environment}-lakmus"
-  audience            = ["api://AzureADTokenExchange"]
-  issuer              = var.oidc_issuer_url
-  subject             = "system:serviceaccount:monitoring:lakmus"
-  resource_group_name = var.azurerm_resource_group_obs_name
-  parent_id           = azurerm_user_assigned_identity.lakmus[0].id
+  audience  = ["api://AzureADTokenExchange"]
+  issuer    = var.oidc_issuer_url
+  subject   = "system:serviceaccount:monitoring:lakmus"
+  parent_id = azurerm_user_assigned_identity.lakmus[0].id
 }
 
 # Gives key vault reader to the whole subscription
