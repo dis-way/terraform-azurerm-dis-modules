@@ -33,3 +33,13 @@ variable "opencost_prometheus_endpoint" {
     error_message = "opencost_prometheus_endpoint must be provided when enable_opencost is true."
   }
 }
+
+variable "opencost_environment" {
+  type        = string
+  description = "Name of the environment this opencost instance is deployed to. Eg: at22"
+  default     = ""
+  validation {
+    condition     = var.enable_opencost ? length(var.opencost_environment) > 0 : true
+    error_message = "opencost_environment must be provided when enable_opencost is true."
+  }
+}
