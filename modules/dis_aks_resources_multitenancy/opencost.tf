@@ -17,9 +17,9 @@ resource "azurerm_federated_identity_credential" "opencost_metrics_reader" {
 
 resource "azurerm_role_definition" "opencost_rate_card_query_role" {
   count       = var.enable_opencost ? 1 : 0
-  name        = "open-cost-rate-card-query-${var.opencost_environment}"
+  name        = "opencost-rate-card-query-${var.opencost_environment}"
   scope       = "/subscriptions/${var.subscription_id}"
-  description = "This is a custom role created via Terraform"
+  description = "Custom role for OpenCost to query Azure rate cards and pricing information"
 
   permissions {
     actions = [
