@@ -2,7 +2,7 @@
 
 ```hcl
 module "ts_exit_node" {
-  source = "git::https://github.com/your-org/terraform-azurerm-dis-modules.git//modules/ts_exit_node"
+  source = "git::https://github.com/dis-way/terraform-azurerm-dis-modules.git//modules/ts_exit_node"
 
   name           = "ts-exit-prod"
   resource_group = "rg-networking"
