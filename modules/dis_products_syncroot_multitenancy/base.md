@@ -11,5 +11,7 @@ module "dis_products_syncroot_multitenancy" {
   product        = var.product_name
   environment    = var.environment
   aks_cluster_id = module.aks.cluster_id
+  admin_group_id = var.admin_group_id
+  reader_group_id = var.reader_group_id
 }
 ```
