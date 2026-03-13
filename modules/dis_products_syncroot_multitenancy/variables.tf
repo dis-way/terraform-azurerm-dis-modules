@@ -22,3 +22,13 @@ variable "aks_cluster_id" {
   type        = string
   description = "The ID of the AKS cluster where the Flux configuration will be applied"
 }
+
+variable "admin_group_id" {
+  type        = string
+  description = "Object id of the EntraID group that should have admin on the product namespace and reader in the cluster"
+}
+
+variable "reader_group_id" {
+  type        = string
+  description = "Object id of the EntraID group that should have reader permissions in the product namespace"
+}
