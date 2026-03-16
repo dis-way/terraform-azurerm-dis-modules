@@ -89,7 +89,7 @@ write_files:
       upgrade_type = default
       apply_updates = yes
       reboot = when-needed
-      reboot_command = "shutdown -r +5 'Rebooting for security updates'"
+      reboot_command = "shutdown -r +5 'Rebooting for updates'"
 
   - path: /etc/systemd/system/dnf-automatic.timer.d/override.conf
     content: |
