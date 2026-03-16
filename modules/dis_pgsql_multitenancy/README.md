@@ -60,7 +60,7 @@ module "dis_pgsql_multitenancy" {
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Name of the resources group where the PostgreSQL vnets and subnets are placed | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Set of tags to add to vnet | `map(string)` | `{}` | no |
 | <a name="input_user_assigned_identity_name"></a> [user\_assigned\_identity\_name](#input\_user\_assigned\_identity\_name) | Optional override for the user-assigned identity name used by dis-pgsql. | `string` | `""` | no |
-| <a name="input_vnet_address_space"></a> [vnet\_address\_space](#input\_vnet\_address\_space) | IPv4 address space of the PostgreSQL vnet, must be a valid CIDR notation of size 24 | `string` | n/a | yes |
+| <a name="input_vnet_address_space"></a> [vnet\_address\_space](#input\_vnet\_address\_space) | IPv4 address space of the PostgreSQL vnet, must be a valid CIDR notation of size /23 or /24 | `string` | n/a | yes |
 
 ## Outputs
 
