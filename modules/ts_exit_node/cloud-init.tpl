@@ -75,6 +75,7 @@ write_files:
       GIT_ASKPASS="$ASKPASS_FILE" ansible-pull \
         --url "https://x-access-token@github.com/dis-way/adminservices.git" \
         --checkout main \
+        -i "$(hostname -s)," \
         ansible/ts-exit-node-playbooks.yml
 
   - path: /etc/tailscale/auth-key
