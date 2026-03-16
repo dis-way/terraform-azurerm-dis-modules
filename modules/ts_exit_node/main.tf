@@ -106,16 +106,10 @@ resource "azurerm_linux_virtual_machine" "main" {
   }))
 
   source_image_reference {
-    publisher = "resf"
-    offer     = "rockylinux-x86_64"
-    sku       = "9-base"
+    publisher = "almalinux"
+    offer     = "almalinux-x86_64"
+    sku       = "10-gen2"
     version   = "latest"
-  }
-
-  plan {
-    name      = "9-base"
-    product   = "rockylinux-x86_64"
-    publisher = "resf"
   }
 
   os_disk {
