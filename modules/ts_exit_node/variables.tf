@@ -23,8 +23,8 @@ variable "ipv6_cidr_subnet" {
   description = "IPv6 /64 CIDR block for the subnet"
 
   validation {
-    condition     = can(cidrhost(var.ipv6_cidr_subnet, 0))
-    error_message = "ipv6_cidr_subnet must be a valid IPv6 CIDR block."
+    condition     = can(cidrhost(var.ipv6_cidr_subnet, 0)) && tonumber(split("/", var.ipv6_cidr_subnet)[1]) == 64
+    error_message = "ipv6_cidr_subnet must be a valid IPv6 CIDR block with a /64 prefix."
   }
 }
 
