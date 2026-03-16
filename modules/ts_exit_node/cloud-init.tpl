@@ -65,8 +65,15 @@ write_files:
       #!/bin/bash
       set -euo pipefail
       TOKEN=$(/usr/local/bin/github-app-token)
-      exec ansible-pull \
-        --url "https://x-access-token:$${TOKEN}@github.com/dis-way/adminservices.git" \
+      TOKEN_FILE=$(mktemp /tmp/gh-token.XXXXXX)
+      ASKPASS_FILE=$(mktemp /tmp/gh-askpass.XXXXXX)
+      chmod 600 "$TOKEN_FILE"
+      chmod 700 "$ASKPASS_FILE"
+      printf '%s' "$TOKEN" > "$TOKEN_FILE"
+      printf '#!/bin/bash\ncat %s\n' "$TOKEN_FILE" > "$ASKPASS_FILE"
+      trap 'rm -f "$TOKEN_FILE" "$ASKPASS_FILE"' EXIT
+      GIT_ASKPASS="$ASKPASS_FILE" ansible-pull \
+        --url "https://x-access-token@github.com/dis-way/adminservices.git" \
         --checkout main \
         ansible/ts-exit-node-playbooks.yml
 
