@@ -56,7 +56,7 @@ write_files:
               'X-GitHub-Api-Version': '2022-11-28'
           }
       )
-      with urllib.request.urlopen(req) as resp:
+      with urllib.request.urlopen(req, timeout=10) as resp:
           print(json.loads(resp.read())['token'])
 
   - path: /usr/local/bin/ansible-pull-wrapper
@@ -108,6 +108,10 @@ write_files:
       Type=oneshot
       ExecStart=/usr/local/bin/ansible-pull-wrapper
       User=root
+      Restart=on-failure
+      RestartSec=30
+      StartLimitIntervalSec=600
+      StartLimitBurst=10
 
 runcmd:
   - mkdir -p /etc/systemd/system/dnf-automatic.timer.d
