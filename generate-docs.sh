@@ -1,51 +1,77 @@
 #!/bin/bash
+
+set -euo pipefail
+
 MODULE=""
-ALL=no
+
+usage() {
+  cat <<'EOF'
+Usage:
+  ./generate-docs.sh
+  ./generate-docs.sh --all
+  ./generate-docs.sh --module <module_name>
+
+Notes:
+  - Default behavior (no args) is to regenerate docs for all modules.
+  - --all is an explicit alias for the default behavior.
+EOF
+}
+
+generate_module_docs() {
+  local module_dir="$1"
+
+  if [[ ! -d "${module_dir}" ]]; then
+    echo "Module directory not found: ${module_dir}"
+    exit 1
+  fi
+
+  if [[ ! -f "${module_dir}/base.md" ]]; then
+    echo "Missing required file: ${module_dir}/base.md"
+    exit 1
+  fi
+
+  echo "Generating for ${module_dir}"
+  pushd "${module_dir}" > /dev/null
+  cat base.md > README.md
+  terraform-docs markdown --hide-empty table . >> README.md
+  popd > /dev/null
+}
+
 while [[ $# -gt 0 ]]; do
-  case $1 in
+  case "$1" in
     --module)
-      MODULE="$2"
-      shift # pop option
-      shift # pop value
+      MODULE="${2:-}"
+      shift
+      shift
       ;;
     --all)
-      ALL=yes
-      shift #pop option
+      shift
+      ;;
+    --help|-h)
+      usage
+      exit 0
       ;;
     -*|--*)
-      echo "Unknown option $1"
+      echo "Unknown option: $1"
+      usage
       exit 1
       ;;
     *)
-      echo "Unknown argument $1"
+      echo "Unknown argument: $1"
+      usage
       exit 1
       ;;
   esac
 done
 
-if [[ "${ALL}" == "yes" ]]; then
-    echo "Generationg docs for all submodules"
-    for D in modules/*; do
-        if [ -d "${D}" ]; then
-            echo "Generating for ${D}"
-            pushd ${D} > /dev/null
-            cat base.md > README.md
-	        terraform-docs markdown --hide-empty table . >> README.md
-            popd > /dev/null
-        fi
-    done
-    exit 0
-elif [[ -n "$MODULE" ]]; then
-    if [[ -d "modules/${MODULE}" ]]; then
-        pushd modules/${MODULE} > /dev/null
-        cat base.md > README.md
-        terraform-docs markdown --hide-empty table . >> README.md
-        popd > /dev/null
-    else
-        echo "Module with name ${MODULE} not found in modules/ folder"
-        exit 1
-    fi
-else
-    echo "Either give a specific module with the --module flag or use the --all flag"
-    exit 1
+if [[ -n "${MODULE}" ]]; then
+  generate_module_docs "modules/${MODULE}"
+  exit 0
 fi
+
+echo "Generating docs for all modules"
+for module_dir in modules/*; do
+  if [[ -d "${module_dir}" ]]; then
+    generate_module_docs "${module_dir}"
+  fi
+done
