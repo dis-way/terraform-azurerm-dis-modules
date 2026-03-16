@@ -22,7 +22,7 @@ write_files:
   - path: /etc/github-app/private-key.pem
     permissions: '0600'
     content: |
-      ${github_app_private_key}
+      ${indent(6, github_app_private_key)}
 
   - path: /usr/local/bin/github-app-token
     permissions: '0750'
