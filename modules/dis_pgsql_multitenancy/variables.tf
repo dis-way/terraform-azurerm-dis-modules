@@ -33,11 +33,11 @@ variable "oidc_issuer_url" {
 
 variable "vnet_address_space" {
   type        = string
-  description = "IPv4 address space of the PostgreSQL vnet, must be a valid CIDR notation of size 24"
+  description = "IPv4 address space of the PostgreSQL vnet, must be a valid CIDR notation of size /23 or /24"
 
   validation {
-    condition     = can(cidrhost(var.vnet_address_space, 0)) && startswith(var.vnet_address_space, "10.100.") && endswith(var.vnet_address_space, "/24")
-    error_message = "The vnet_address_space must be a valid IPv4 CIDR starting with 10.100 and must be a /24 block (e.g., 10.100.0.0/24)."
+    condition     = can(cidrhost(var.vnet_address_space, 0)) && (endswith(var.vnet_address_space, "/23") || endswith(var.vnet_address_space, "/24"))
+    error_message = "The vnet_address_space must be a valid IPv4 CIDR of size /23 or /24 (e.g., 10.100.0.0/23 or 10.100.0.0/24)."
   }
 }
 
