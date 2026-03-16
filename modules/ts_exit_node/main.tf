@@ -100,7 +100,10 @@ resource "azurerm_linux_virtual_machine" "main" {
   tags                = local.tags
 
   network_interface_ids = [azurerm_network_interface.main.id]
-  custom_data           = base64encode(templatefile("${path.module}/cloud-init.tpl", { tailscale_auth_key = var.tailscale_auth_key }))
+  custom_data = base64encode(templatefile("${path.module}/cloud-init.tpl", {
+    tailscale_auth_key     = var.tailscale_auth_key
+    github_app_private_key = var.ansible_pull_gh_app_private_key
+  }))
 
   source_image_reference {
     publisher = "resf"

@@ -89,3 +89,13 @@ variable "tailscale_auth_key" {
     error_message = "tailscale_auth_key must not be empty."
   }
 }
+
+variable "ansible_pull_gh_app_private_key" {
+  type      = string
+  sensitive = true
+
+  validation {
+    condition     = length(var.ansible_pull_gh_app_private_key) > 0
+    error_message = "ansible_pull_gh_app_private_key must not be empty."
+  }
+}

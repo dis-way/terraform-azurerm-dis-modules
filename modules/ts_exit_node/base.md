@@ -13,6 +13,7 @@ module "ts_exit_node" {
   ipv6_cidr_vnet   = "fd00:dead:beef::/48"
   ipv6_cidr_subnet = "fd00:dead:beef:1::/64"
 
-  tailscale_auth_key = var.tailscale_auth_key
+  tailscale_auth_key              = var.tailscale_auth_key
+  ansible_pull_gh_app_private_key = var.ansible_pull_gh_app_private_key
 }
 ```

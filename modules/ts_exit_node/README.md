@@ -13,7 +13,8 @@ module "ts_exit_node" {
   ipv6_cidr_vnet   = "fd00:dead:beef::/48"
   ipv6_cidr_subnet = "fd00:dead:beef:1::/64"
 
-  tailscale_auth_key = var.tailscale_auth_key
+  tailscale_auth_key              = var.tailscale_auth_key
+  ansible_pull_gh_app_private_key = var.ansible_pull_gh_app_private_key
 }
 ```
 ## Requirements
@@ -48,6 +49,7 @@ module "ts_exit_node" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_ansible_pull_gh_app_private_key"></a> [ansible\_pull\_gh\_app\_private\_key](#input\_ansible\_pull\_gh\_app\_private\_key) | n/a | `string` | n/a | yes |
 | <a name="input_ipv4_cidr_subnet"></a> [ipv4\_cidr\_subnet](#input\_ipv4\_cidr\_subnet) | IPv4 CIDR block for the subnet (e.g. 172.30.1.0/27) | `string` | n/a | yes |
 | <a name="input_ipv4_cidr_vnet"></a> [ipv4\_cidr\_vnet](#input\_ipv4\_cidr\_vnet) | IPv4 CIDR block for the virtual network (e.g. 172.30.1.0/24) | `string` | n/a | yes |
 | <a name="input_ipv6_cidr_subnet"></a> [ipv6\_cidr\_subnet](#input\_ipv6\_cidr\_subnet) | IPv6 /64 CIDR block for the subnet | `string` | n/a | yes |
