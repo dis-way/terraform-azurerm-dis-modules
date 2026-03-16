@@ -55,6 +55,9 @@ resource "azurerm_role_definition" "user_assigned_identity_role_dis_rg" {
       "Microsoft.Insights/diagnosticSettings/read",
       "Microsoft.Insights/diagnosticSettings/write",
       "Microsoft.Insights/diagnosticSettings/delete",
+      "Microsoft.KeyVault/vaults/read",
+      "Microsoft.KeyVault/vaults/write",
+      "Microsoft.KeyVault/vaults/delete",
       "Microsoft.Authorization/*/read",
     ]
     not_actions = []
@@ -70,6 +73,12 @@ resource "azurerm_role_assignment" "aso_contrib_role_assignment" {
   scope              = var.dis_resource_group_id
   role_definition_id = azurerm_role_definition.user_assigned_identity_role_dis_rg.role_definition_resource_id
   principal_id       = azurerm_user_assigned_identity.aso_identity.principal_id
+}
+
+resource "azurerm_role_assignment" "aso_key_vault_data_access_admin_role_assignment" {
+  scope                = var.dis_resource_group_id
+  role_definition_name = "Key Vault Data Access Administrator"
+  principal_id         = azurerm_user_assigned_identity.aso_identity.principal_id
 }
 
 resource "azurerm_role_definition" "user_assigned_identity_role_dis_aks_vnet" {
