@@ -67,11 +67,11 @@ write_files:
       TOKEN=$(/usr/local/bin/github-app-token)
       TOKEN_FILE=$(mktemp /tmp/gh-token.XXXXXX)
       ASKPASS_FILE=$(mktemp /tmp/gh-askpass.XXXXXX)
+      trap 'rm -f "$TOKEN_FILE" "$ASKPASS_FILE"' EXIT
       chmod 600 "$TOKEN_FILE"
       chmod 700 "$ASKPASS_FILE"
       printf '%s' "$TOKEN" > "$TOKEN_FILE"
       printf '#!/bin/bash\ncat %s\n' "$TOKEN_FILE" > "$ASKPASS_FILE"
-      trap 'rm -f "$TOKEN_FILE" "$ASKPASS_FILE"' EXIT
       GIT_ASKPASS="$ASKPASS_FILE" ansible-pull \
         --url "https://x-access-token@github.com/dis-way/adminservices.git" \
         --checkout main \
@@ -103,6 +103,8 @@ write_files:
       Description=Run ansible-pull to apply configuration
       After=network-online.target
       Wants=network-online.target
+      StartLimitIntervalSec=600
+      StartLimitBurst=10
 
       [Service]
       Type=oneshot
@@ -110,8 +112,6 @@ write_files:
       User=root
       Restart=on-failure
       RestartSec=30
-      StartLimitIntervalSec=600
-      StartLimitBurst=10
 
 runcmd:
   - mkdir -p /etc/systemd/system/dnf-automatic.timer.d
