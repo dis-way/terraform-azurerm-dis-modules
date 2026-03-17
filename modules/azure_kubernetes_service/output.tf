@@ -1,3 +1,8 @@
+output "private_endpoint_subnet_id" {
+  value       = length(azurerm_subnet.private_endpoints) > 0 ? azurerm_subnet.private_endpoints[0].id : ""
+  description = "ID of the private endpoints subnet, empty if not created"
+}
+
 output "aks_identity" {
   value       = azurerm_kubernetes_cluster.aks.identity
   description = "Managed Service Identity that is configured on this Kubernetes Cluster"
