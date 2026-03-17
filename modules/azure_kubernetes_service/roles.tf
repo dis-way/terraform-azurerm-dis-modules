@@ -30,7 +30,7 @@ resource "azurerm_role_assignment" "aks_acrpull" {
   depends_on = [azurerm_kubernetes_cluster.aks]
 }
 
-# Assign pull permission in listed ACR
+# Assign CR Repository Reader permission in listed ACR
 resource "azurerm_role_assignment" "aks_acr_repo_reader" {
   for_each                         = toset(var.aks_acrpull_scopes)
   principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
