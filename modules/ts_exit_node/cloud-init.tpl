@@ -5,109 +5,117 @@ package_reboot_if_required: true
 
 packages:
   - dnf-automatic
-  - nftables
+  - ansible-core
+  - python3-cryptography
 
 write_files:
-  - path: /etc/dnf/automatic.conf
+  - path: /etc/github-app/app-id
+    permissions: '0644'
     content: |
-      [commands]
-      upgrade_type = security
-      apply_updates = yes
-      reboot = when-needed
-      reboot_command = "shutdown -r +5 'Rebooting for security updates'"
-  - path: /etc/systemd/system/dnf-automatic.timer.d/override.conf
+      3104534
+
+  - path: /etc/github-app/installation-id
+    permissions: '0644'
     content: |
-      [Timer]
-      OnCalendar=
-      OnCalendar=*-*-* 04:00:00 Europe/Oslo
-  - path: /usr/local/bin/update-nftables
+      116758437
+
+  - path: /etc/github-app/private-key.pem
+    permissions: '0600'
+    content: |
+      ${indent(6, github_app_private_key)}
+
+  - path: /usr/local/bin/github-app-token
+    permissions: '0750'
+    content: |
+      #!/usr/bin/env python3
+      import time, json, base64, urllib.request
+      from cryptography.hazmat.primitives import hashes, serialization
+      from cryptography.hazmat.primitives.asymmetric import padding
+
+      app_id = open('/etc/github-app/app-id').read().strip()
+      installation_id = open('/etc/github-app/installation-id').read().strip()
+      private_key = serialization.load_pem_private_key(
+          open('/etc/github-app/private-key.pem', 'rb').read(), password=None)
+
+      def b64url(data):
+          return base64.urlsafe_b64encode(data).rstrip(b'=').decode()
+
+      now = int(time.time())
+      header = b64url(json.dumps({'alg': 'RS256', 'typ': 'JWT'}).encode())
+      body = b64url(json.dumps({'iat': now - 60, 'exp': now + 540, 'iss': app_id}).encode())
+      message = f'{header}.{body}'.encode()
+      signature = b64url(private_key.sign(message, padding.PKCS1v15(), hashes.SHA256()))
+      jwt = f'{header}.{body}.{signature}'
+
+      req = urllib.request.Request(
+          f'https://api.github.com/app/installations/{installation_id}/access_tokens',
+          method='POST',
+          headers={
+              'Authorization': f'Bearer {jwt}',
+              'Accept': 'application/vnd.github+json',
+              'X-GitHub-Api-Version': '2022-11-28'
+          }
+      )
+      with urllib.request.urlopen(req, timeout=10) as resp:
+          print(json.loads(resp.read())['token'])
+
+  - path: /usr/local/bin/ansible-pull-wrapper
     permissions: '0750'
     content: |
       #!/bin/bash
       set -euo pipefail
+      TOKEN=$(/usr/local/bin/github-app-token)
+      TOKEN_FILE=$(mktemp /tmp/gh-token.XXXXXX)
+      ASKPASS_FILE=$(mktemp /tmp/gh-askpass.XXXXXX)
+      chmod 600 "$TOKEN_FILE"
+      chmod 700 "$ASKPASS_FILE"
+      printf '%s' "$TOKEN" > "$TOKEN_FILE"
+      printf '#!/bin/bash\ncat %s\n' "$TOKEN_FILE" > "$ASKPASS_FILE"
+      trap 'rm -f "$TOKEN_FILE" "$ASKPASS_FILE"' EXIT
+      GIT_ASKPASS="$ASKPASS_FILE" ansible-pull \
+        --url "https://x-access-token@github.com/dis-way/adminservices.git" \
+        --checkout main \
+        -i "$(hostname -s)," \
+        ansible/ts-exit-node-playbooks.yml
 
-      ALLOWED_PORTS="{ 22, 80, 443, 5432, 6432, 6443 }"
-      CONF=/etc/nftables-exit.conf
-
-      printf 'table inet exit_filter {}\n' > "$CONF"
-      printf 'flush table inet exit_filter\n' >> "$CONF"
-      printf 'table inet exit_filter {\n' >> "$CONF"
-      printf '  chain forward {\n' >> "$CONF"
-      printf '    type filter hook forward priority 0; policy drop;\n' >> "$CONF"
-      printf '    ct state established,related accept\n' >> "$CONF"
-      printf '    iifname "tailscale0" meta l4proto { tcp, udp } th dport 53 accept\n' >> "$CONF"
-      printf '    iifname "tailscale0" ip daddr { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 } accept\n' >> "$CONF"
-      printf '    iifname "tailscale0" ip6 daddr fd00::/8 accept\n' >> "$CONF"
-      printf '    iifname "tailscale0" meta l4proto tcp th dport %s accept\n' "$ALLOWED_PORTS" >> "$CONF"
-      printf '    iifname "tailscale0" meta l4proto udp th dport 443 accept\n' >> "$CONF"
-      printf '    iifname "tailscale0" drop\n' >> "$CONF"
-      printf '  }\n' >> "$CONF"
-      printf '}\n' >> "$CONF"
-
-      nft -f "$CONF"
-      echo "nftables rules updated"
-  - path: /etc/gai.conf
+  - path: /etc/tailscale/auth-key
+    permissions: '0600'
     content: |
-      # /etc/gai.conf — prefer IPv6 ULA over IPv4 (RFC 6724 policy table)
-      #
-      # Precedence: higher = more preferred
-      # Label: source/destination pairs with the same label are preferred
+      ${tailscale_auth_key}
 
-      label  ::1/128        0    # loopback
-      label  ::/0           1    # native IPv6 (GUA)
-      label  ::ffff:0:0/96  4    # IPv4-mapped
-      label  2002::/16      2    # 6to4
-      label  2001::/32      5    # Teredo
-      label  fc00::/7       1    # ULA — same label as ::/0 so ULA src matches IPv6 dst
-      label  ::/96          3    # deprecated IPv4-compat
-      label  fec0::/10     11    # deprecated site-local
-      label  3ffe::/16     12    # deprecated 6bone
+  - path: /etc/dnf/automatic.conf
+    content: |
+      [commands]
+      upgrade_type = default
+      apply_updates = yes
+      reboot = when-needed
+      reboot_command = "shutdown -r +5 'Rebooting for updates'"
 
-      # Precedence table — fc00::/7 raised to 45, above IPv4 (35)
-      precedence ::1/128       50
-      precedence ::/0          40
-      precedence fc00::/7      45   # ULA: above IPv4, below loopback
-      precedence ::ffff:0:0/96 35   # IPv4-mapped (native IPv4)
-      precedence 2002::/16     30   # 6to4
-      precedence 2001::/32      5   # Teredo
-      precedence ::/96          1
-      precedence fec0::/10      1
-      precedence 3ffe::/16      1
-  - path: /etc/systemd/system/nftables-update.service
+  - path: /etc/systemd/system/dnf-automatic.timer.d/override.conf
+    content: |
+      [Timer]
+      OnCalendar=
+      OnCalendar=Mon..Fri *-*-* 04:00:00 Europe/Oslo
+
+  - path: /etc/systemd/system/ansible-pull.service
     content: |
       [Unit]
-      Description=Apply nftables exit node rules
+      Description=Run ansible-pull to apply configuration
       After=network-online.target
       Wants=network-online.target
 
       [Service]
       Type=oneshot
-      ExecStart=/usr/local/bin/update-nftables
-      RemainAfterExit=yes
-  - path: /etc/systemd/system/nftables-update.timer
-    content: |
-      [Unit]
-      Description=Reapply nftables exit node rules on boot
-
-      [Timer]
-      OnBootSec=60
-      Persistent=true
-
-      [Install]
-      WantedBy=timers.target
+      ExecStart=/usr/local/bin/ansible-pull-wrapper
+      User=root
+      Restart=on-failure
+      RestartSec=30
+      StartLimitIntervalSec=600
+      StartLimitBurst=10
 
 runcmd:
   - mkdir -p /etc/systemd/system/dnf-automatic.timer.d
   - systemctl daemon-reload
   - systemctl enable --now dnf-automatic.timer
-  - echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.d/99-tailscale.conf
-  - echo 'net.ipv6.conf.all.forwarding = 1' >> /etc/sysctl.d/99-tailscale.conf
-  - sysctl -p /etc/sysctl.d/99-tailscale.conf
-  - curl -fsSL https://pkgs.tailscale.com/stable/rhel/9/tailscale.repo -o /etc/yum.repos.d/tailscale.repo
-  - dnf install -y tailscale
-  - systemctl enable --now tailscaled
-  - timeout 30 bash -c 'until systemctl is-active tailscaled; do sleep 1; done'
-  - semanage port -a -t ssh_port_t -p tcp 41641 || true
-  - tailscale up --login-server=https://headscale.altinn.cloud --ssh --auth-key=${tailscale_auth_key} --advertise-exit-node --accept-dns=false
-  - systemctl enable --now nftables-update.timer
-  - systemctl start nftables-update.service
+  - ansible-galaxy collection install ansible.posix community.general
+  - systemctl start ansible-pull.service
