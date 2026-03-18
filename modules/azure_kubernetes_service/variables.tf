@@ -204,7 +204,7 @@ variable "subnet_service_endpoints" {
 variable "private_endpoint_subnet_prefixes" {
   type        = list(string)
   default     = []
-  description = "Address prefixes for the private endpoints subnet. If empty, no subnet is created."
+  description = "Address prefixes for the private endpoints subnet (IPv4 only). If empty, no subnet is created."
 }
 
 variable "api_server_subnet_prefixes" {
