@@ -201,6 +201,12 @@ variable "subnet_service_endpoints" {
   description = "List of service endpoints to associate with the AKS subnets"
 }
 
+variable "private_endpoint_subnet_prefixes" {
+  type        = list(string)
+  default     = []
+  description = "Address prefixes for the private endpoints subnet. If empty, no subnet is created."
+}
+
 variable "api_server_subnet_prefixes" {
   type        = list(string)
   description = "Address prefixes for the API server subnet. Must contain exactly one IPv4 prefix (/28 minimum, larger networks accepted). Dual-stack and IPv6 are not supported."

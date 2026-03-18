@@ -23,6 +23,14 @@ resource "azurerm_subnet" "node_pools" {
   service_endpoints    = var.subnet_service_endpoints
 }
 
+resource "azurerm_subnet" "private_endpoints" {
+  count                = length(var.private_endpoint_subnet_prefixes) > 0 ? 1 : 0
+  name                 = "aks_privateendpoints"
+  resource_group_name  = azurerm_resource_group.aks.name
+  virtual_network_name = azurerm_virtual_network.aks.name
+  address_prefixes     = var.private_endpoint_subnet_prefixes
+}
+
 resource "azurerm_subnet" "api_server" {
   name                 = "aks_apiserver"
   resource_group_name  = azurerm_resource_group.aks.name

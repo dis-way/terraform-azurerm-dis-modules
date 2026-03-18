@@ -104,6 +104,7 @@ module "aks" {
 | [azurerm_storage_account.aks_log](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account) | resource |
 | [azurerm_subnet.api_server](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_subnet.node_pools](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
+| [azurerm_subnet.private_endpoints](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_subnet.system_pool](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_user_assigned_identity.aks_control_plane](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
 | [azurerm_virtual_network.aks](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) | resource |
@@ -143,6 +144,7 @@ module "aks" {
 | <a name="input_node_pool_subnet_prefixes"></a> [node\_pool\_subnet\_prefixes](#input\_node\_pool\_subnet\_prefixes) | Map of node pool names to their subnet address prefixes. Keys must match node\_pool\_configs keys. | `map(list(string))` | `{}` | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | Prefix for resource names (required, max 8 characters). Combined with environment, must not exceed 12 characters for storage account naming. | `string` | n/a | yes |
 | <a name="input_private_dns_zone_contributor_object_ids"></a> [private\_dns\_zone\_contributor\_object\_ids](#input\_private\_dns\_zone\_contributor\_object\_ids) | List of principal object IDs to assign the Private DNS Zone Contributor role on the AKS node resource group. | `list(string)` | `[]` | no |
+| <a name="input_private_endpoint_subnet_prefixes"></a> [private\_endpoint\_subnet\_prefixes](#input\_private\_endpoint\_subnet\_prefixes) | Address prefixes for the private endpoints subnet. If empty, no subnet is created. | `list(string)` | `[]` | no |
 | <a name="input_products_application_insights_retention_days"></a> [products\_application\_insights\_retention\_days](#input\_products\_application\_insights\_retention\_days) | Specifies the retention period in days for the products log analytics workspace | `number` | `90` | no |
 | <a name="input_products_log_analytics_workspace_retention_days"></a> [products\_log\_analytics\_workspace\_retention\_days](#input\_products\_log\_analytics\_workspace\_retention\_days) | Specifies the retention period in days for the products log analytics workspace | `number` | `30` | no |
 | <a name="input_subnet_service_endpoints"></a> [subnet\_service\_endpoints](#input\_subnet\_service\_endpoints) | List of service endpoints to associate with the AKS subnets | `list(string)` | `[]` | no |
@@ -172,6 +174,7 @@ module "aks" {
 | <a name="output_kube_config"></a> [kube\_config](#output\_kube\_config) | Base64 encoded Kubernetes configuration for accessing the cluster |
 | <a name="output_pip4_ip_address"></a> [pip4\_ip\_address](#output\_pip4\_ip\_address) | The IPv4 address value that was allocated |
 | <a name="output_pip6_ip_address"></a> [pip6\_ip\_address](#output\_pip6\_ip\_address) | The IPv6 address value that was allocated |
+| <a name="output_private_endpoint_subnet_id"></a> [private\_endpoint\_subnet\_id](#output\_private\_endpoint\_subnet\_id) | ID of the private endpoints subnet, empty if not created |
 | <a name="output_products_app_insights_connection_string"></a> [products\_app\_insights\_connection\_string](#output\_products\_app\_insights\_connection\_string) | Connection string of an Application Insights where logs and traces are sent. |
 | <a name="output_products_azure_monitor_workspace_id"></a> [products\_azure\_monitor\_workspace\_id](#output\_products\_azure\_monitor\_workspace\_id) | ID of the Azure Monitor Workspace used by products. If enable\_products\_azure\_monitoring\_resources is false, this will be an empty string |
 | <a name="output_products_azure_monitor_workspace_name"></a> [products\_azure\_monitor\_workspace\_name](#output\_products\_azure\_monitor\_workspace\_name) | Name of the Azure Monitor Workspace used by products. If enable\_products\_azure\_monitoring\_resources is false, this will be an empty string |
