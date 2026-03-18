@@ -204,7 +204,11 @@ variable "subnet_service_endpoints" {
 variable "private_endpoint_subnet_prefixes" {
   type        = list(string)
   default     = []
-  description = "Address prefixes for the private endpoints subnet. If empty, no subnet is created."
+  description = "Address prefixes for the private endpoints subnet (IPv4 only). If empty, no subnet is created."
+  validation {
+    condition     = alltrue([for prefix in var.private_endpoint_subnet_prefixes : !strcontains(prefix, ":")])
+    error_message = "private_endpoint_subnet_prefixes only supports IPv4 CIDR prefixes. IPv6 prefixes (containing ':') are not allowed."
+  }
 }
 
 variable "api_server_subnet_prefixes" {
