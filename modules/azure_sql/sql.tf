@@ -25,6 +25,8 @@ resource "azurerm_mssql_server" "azsql" {
     object_id                   = azurerm_user_assigned_identity.azsql.principal_id
     azuread_authentication_only = true
   }
+
+  primary_user_assigned_identity_id = azurerm_user_assigned_identity.azsql.id
 }
 
 resource "azurerm_private_endpoint" "azsql" {
