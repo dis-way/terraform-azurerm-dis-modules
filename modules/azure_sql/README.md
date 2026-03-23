@@ -45,6 +45,9 @@ module "azure_sql" {
   # Network — subnet must be IPv4-only and dedicated to private endpoints
   private_endpoint_subnet_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myapp-prod-network-rg/providers/Microsoft.Network/virtualNetworks/myapp-prod-vnet/subnets/pe-subnet"
 
+  # DNS — omit to skip automatic DNS registration
+  private_dns_zone_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myapp-prod-dns-rg/providers/Microsoft.Network/privateDnsZones/privatelink.database.windows.net"
+
   tags = {
     environment = "prod"
     component   = "azure-sql"
@@ -102,6 +105,7 @@ module "azure_sql" {
 | <a name="input_max_cores"></a> [max\_cores](#input\_max\_cores) | n/a | `number` | `2` | no |
 | <a name="input_min_cores"></a> [min\_cores](#input\_min\_cores) | n/a | `number` | `0.5` | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | Prefix for resource names (required, max 8 characters). Combined with environment, must not exceed 12 characters for storage account naming. | `string` | n/a | yes |
+| <a name="input_private_dns_zone_id"></a> [private\_dns\_zone\_id](#input\_private\_dns\_zone\_id) | The resource ID of the private DNS zone (privatelink.database.windows.net) to associate with the SQL private endpoint. Leave empty to skip DNS zone group creation. | `string` | `""` | no |
 | <a name="input_private_endpoint_subnet_id"></a> [private\_endpoint\_subnet\_id](#input\_private\_endpoint\_subnet\_id) | The ID of the subnet in which to deploy the private endpoint for the SQL server. | `string` | n/a | yes |
 | <a name="input_server_version"></a> [server\_version](#input\_server\_version) | The version for the new server. Valid values are: 2.0 (for v11 server) and 12.0 (for v12 server). Changing this forces a new resource to be created. | `string` | `"12.0"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to all resources | `map(string)` | `{}` | no |

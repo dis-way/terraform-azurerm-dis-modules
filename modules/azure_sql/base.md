@@ -45,6 +45,9 @@ module "azure_sql" {
   # Network — subnet must be IPv4-only and dedicated to private endpoints
   private_endpoint_subnet_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myapp-prod-network-rg/providers/Microsoft.Network/virtualNetworks/myapp-prod-vnet/subnets/pe-subnet"
 
+  # DNS — omit to skip automatic DNS registration
+  private_dns_zone_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myapp-prod-dns-rg/providers/Microsoft.Network/privateDnsZones/privatelink.database.windows.net"
+
   tags = {
     environment = "prod"
     component   = "azure-sql"
