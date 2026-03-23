@@ -54,6 +54,7 @@ module "azure_sql" {
 ```
 
 ### Outputs
+
 | Name | Description |
 |------|-------------|
 | `uami_id` | Resource ID of the User Assigned Managed Identity used for SQL authentication |

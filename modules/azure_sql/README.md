@@ -54,6 +54,7 @@ module "azure_sql" {
 ```
 
 ### Outputs
+
 | Name | Description |
 |------|-------------|
 | `uami_id` | Resource ID of the User Assigned Managed Identity used for SQL authentication |
@@ -63,7 +64,8 @@ module "azure_sql" {
 | `database_id` | Resource ID of the SQL database |
 | `database_name` | Name of the SQL database |
 | `private_endpoint_id` | Resource ID of the private endpoint |
-| `private_endpoint_ip` | Private IP address allocated to the SQL server private endpoint |## Requirements
+| `private_endpoint_ip` | Private IP address allocated to the SQL server private endpoint |
+## Requirements
 
 | Name | Version |
 |------|---------|
