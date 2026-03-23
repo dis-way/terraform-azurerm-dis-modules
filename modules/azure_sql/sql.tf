@@ -40,6 +40,14 @@ resource "azurerm_private_endpoint" "azsql" {
     subresource_names              = ["sqlServer"]
     is_manual_connection           = false
   }
+
+  dynamic "private_dns_zone_group" {
+    for_each = var.private_dns_zone_id != "" ? [1] : []
+    content {
+      name                 = "sql-dns-zone-group"
+      private_dns_zone_ids = [var.private_dns_zone_id]
+    }
+  }
 }
 
 resource "azurerm_mssql_database" "azsql" {

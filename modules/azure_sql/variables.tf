@@ -86,6 +86,12 @@ variable "private_endpoint_subnet_id" {
   }
 }
 
+variable "private_dns_zone_id" {
+  type        = string
+  description = "The resource ID of the private DNS zone (privatelink.database.windows.net) to associate with the SQL private endpoint. Leave empty to skip DNS zone group creation."
+  default     = ""
+}
+
 variable "server_version" {
   type        = string
   default     = "12.0"
