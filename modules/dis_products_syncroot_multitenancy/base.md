@@ -4,14 +4,35 @@ Deploys a Flux OCI repository configuration for GitOps-based product syncroot de
 
 ## Usage
 
+### Minimal usage example
 ```hcl
 module "dis_products_syncroot_multitenancy" {
   source = "git::https://github.com/dis-way/terraform-azurerm-dis-modules.git//modules/dis_products_syncroot_multitenancy?ref=<version>"
 
-  product        = var.product_name
-  environment    = var.environment
-  aks_cluster_id = module.aks.cluster_id
-  admin_group_id = var.admin_group_id
+  product         = var.product_name
+  environment     = var.environment
+  aks_cluster_id  = module.aks.cluster_id
+  admin_group_id  = var.admin_group_id
   reader_group_id = var.reader_group_id
+}
+```
+
+### Full usage example (with optional parameters)
+```hcl
+module "dis_products_syncroot_multitenancy" {
+  source = "git::https://github.com/dis-way/terraform-azurerm-dis-modules.git//modules/dis_products_syncroot_multitenancy?ref=<version>"
+
+  product         = var.product_name
+  environment     = var.environment
+  aks_cluster_id  = module.aks.cluster_id
+  admin_group_id  = var.admin_group_id
+  reader_group_id = var.reader_group_id
+  prune_enabled   = true
+
+  # Flux postBuild variable substitution
+  substitute = {
+    DATABASE_URL = "jdbc:sqlserver://myapp-prod-server.database.windows.net;databaseName=mydb"
+    API_KEY      = var.api_key
+  }
 }
 ```

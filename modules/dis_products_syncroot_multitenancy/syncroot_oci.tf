@@ -26,6 +26,9 @@ resource "azapi_resource" "syncroot" {
           syncIntervalInSeconds  = 300
           timeoutInSeconds       = 300
           wait                   = true
+          postBuild = {
+            substitute = var.substitute
+          }
         }
       }
       namespace = "product-${var.product}"
