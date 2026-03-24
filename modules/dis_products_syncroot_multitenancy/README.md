@@ -29,7 +29,7 @@ module "dis_products_syncroot_multitenancy" {
   reader_group_id = var.reader_group_id
   prune_enabled   = true
 
-  # Flux postBuild variable substitution — all values are sensitive
+  # Flux postBuild variable substitution
   substitute = {
     DATABASE_URL = "jdbc:sqlserver://myapp-prod-server.database.windows.net;databaseName=mydb"
     API_KEY      = var.api_key
@@ -72,4 +72,4 @@ module "dis_products_syncroot_multitenancy" {
 | <a name="input_product"></a> [product](#input\_product) | Name of the product | `string` | n/a | yes |
 | <a name="input_prune_enabled"></a> [prune\_enabled](#input\_prune\_enabled) | Control if the syncroot enables prune of resources | `bool` | `false` | no |
 | <a name="input_reader_group_id"></a> [reader\_group\_id](#input\_reader\_group\_id) | Object id of the EntraID group that should have reader permissions in the product namespace | `string` | n/a | yes |
-| <a name="input_substitute"></a> [substitute](#input\_substitute) | Key-value pairs for Flux postBuild variable substitution. All values are treated as sensitive. | `map(string)` | `{}` | no |
+| <a name="input_substitute"></a> [substitute](#input\_substitute) | Key-value pairs for Flux postBuild variable substitution. Values are stored as plain text in the Flux configuration payload — do not use this for secrets. All values are treated as sensitive in Terraform output only. | `map(string)` | `{}` | no |

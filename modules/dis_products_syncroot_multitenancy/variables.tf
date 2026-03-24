@@ -37,5 +37,5 @@ variable "substitute" {
   type        = map(string)
   sensitive   = true
   default     = {}
-  description = "Key-value pairs for Flux postBuild variable substitution. All values are treated as sensitive."
+  description = "Key-value pairs for Flux postBuild variable substitution. Values are stored as plain text in the Flux configuration payload — do not use this for secrets. All values are treated as sensitive in Terraform output only."
 }

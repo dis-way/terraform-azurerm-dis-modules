@@ -29,7 +29,7 @@ module "dis_products_syncroot_multitenancy" {
   reader_group_id = var.reader_group_id
   prune_enabled   = true
 
-  # Flux postBuild variable substitution — all values are sensitive
+  # Flux postBuild variable substitution
   substitute = {
     DATABASE_URL = "jdbc:sqlserver://myapp-prod-server.database.windows.net;databaseName=mydb"
     API_KEY      = var.api_key
