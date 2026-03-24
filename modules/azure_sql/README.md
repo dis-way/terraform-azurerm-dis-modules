@@ -120,5 +120,6 @@ module "azure_sql" {
 | <a name="output_private_endpoint_ip"></a> [private\_endpoint\_ip](#output\_private\_endpoint\_ip) | The private IP address allocated to the SQL server private endpoint |
 | <a name="output_server_fqdn"></a> [server\_fqdn](#output\_server\_fqdn) | The fully qualified domain name of the SQL server |
 | <a name="output_server_id"></a> [server\_id](#output\_server\_id) | The resource ID of the SQL server |
+| <a name="output_uami_client_id"></a> [uami\_client\_id](#output\_uami\_client\_id) | The client\_ID of the User Assigned Managed Identity |
 | <a name="output_uami_id"></a> [uami\_id](#output\_uami\_id) | The resource ID of the User Assigned Managed Identity used for SQL server authentication |
 | <a name="output_uami_principal_id"></a> [uami\_principal\_id](#output\_uami\_principal\_id) | The principal (object) ID of the User Assigned Managed Identity |

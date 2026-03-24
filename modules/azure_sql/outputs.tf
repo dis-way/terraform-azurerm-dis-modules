@@ -8,6 +8,11 @@ output "uami_principal_id" {
   value       = azurerm_user_assigned_identity.azsql.principal_id
 }
 
+output "uami_client_id" {
+  description = "The client_ID of the User Assigned Managed Identity"
+  value       = azurerm_user_assigned_identity.azsql.client_id
+}
+
 output "server_id" {
   description = "The resource ID of the SQL server"
   value       = azurerm_mssql_server.azsql.id
