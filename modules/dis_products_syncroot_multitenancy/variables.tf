@@ -32,3 +32,10 @@ variable "reader_group_id" {
   type        = string
   description = "Object id of the EntraID group that should have reader permissions in the product namespace"
 }
+
+variable "substitute" {
+  type        = map(string)
+  sensitive   = true
+  default     = {}
+  description = "Key-value pairs for Flux postBuild variable substitution. All values are treated as sensitive."
+}
