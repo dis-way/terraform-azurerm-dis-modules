@@ -1,5 +1,5 @@
 ### Minimal usage example
-This module provisions an Azure SQL serverless database with a private endpoint, Entra ID-only authentication via a user-assigned managed identity, and zone-redundant storage.
+This module provisions an Azure SQL database with a private endpoint and Entra ID-only authentication via a user-assigned managed identity. It supports both serverless (GP_S_Gen5, zone-redundant) and standard DTU (S-tier) modes.
 
 ```hcl
 module "azure_sql" {
@@ -26,7 +26,7 @@ module "azure_sql" {
 }
 ```
 
-### Full usage example (with optional parameters)
+### Serverless example (with optional parameters)
 ```hcl
 module "azure_sql" {
   source = "./modules/azure_sql"
@@ -45,9 +45,10 @@ module "azure_sql" {
   database_admin_group_object_id = "00000000-0000-0000-0000-000000000001"
   database_admin_group_name      = "myapp-prod-sql-admins"
 
-  # Serverless compute scaling
-  min_cores = 0.5
-  max_cores = 4
+  # Serverless mode (default) — zone-redundant, GP_S_Gen5 SKU
+  serverless = true
+  min_cores  = 0.5
+  max_cores  = 4
 
   # Auto-pause (disable in production if cold-start latency is unacceptable)
   enable_autopause     = false
@@ -61,6 +62,37 @@ module "azure_sql" {
 
   # DNS — omit to skip automatic DNS registration
   private_dns_zone_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myapp-prod-dns-rg/providers/Microsoft.Network/privateDnsZones/privatelink.database.windows.net"
+
+  tags = {
+    environment = "prod"
+    component   = "azure-sql"
+    managed-by  = "terraform"
+  }
+}
+```
+
+### DTU (Standard tier) example
+```hcl
+module "azure_sql" {
+  source = "./modules/azure_sql"
+
+  # Required identifiers
+  prefix      = "myapp"
+  environment = "prod"
+
+  # Database
+  database_name = "myappdb"
+
+  # Entra ID admin group — the UAMI created by this module is added to this group
+  database_admin_group_object_id = "00000000-0000-0000-0000-000000000001"
+  database_admin_group_name      = "myapp-prod-sql-admins"
+
+  # Standard DTU mode — uses Local storage, zone redundancy not available
+  serverless = false
+  dtu_sku    = "S3"
+
+  # Network — subnet must be IPv4-only and dedicated to private endpoints
+  private_endpoint_subnet_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myapp-prod-network-rg/providers/Microsoft.Network/virtualNetworks/myapp-prod-vnet/subnets/pe-subnet"
 
   tags = {
     environment = "prod"
@@ -116,19 +148,21 @@ module "azure_sql" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_autopause_after_mins"></a> [autopause\_after\_mins](#input\_autopause\_after\_mins) | Number of minutes before auto pause, if enable\_autopause is true. Azure enforces a minimum of 60. | `number` | `60` | no |
+| <a name="input_autopause_after_mins"></a> [autopause\_after\_mins](#input\_autopause\_after\_mins) | Number of minutes of inactivity before auto-pause. Azure enforces a minimum of 60. Only used when serverless = true and enable\_autopause = true. | `number` | `60` | no |
 | <a name="input_database_admin_group_name"></a> [database\_admin\_group\_name](#input\_database\_admin\_group\_name) | Database admin group name. | `string` | n/a | yes |
 | <a name="input_database_admin_group_object_id"></a> [database\_admin\_group\_object\_id](#input\_database\_admin\_group\_object\_id) | Database admin group object id. This group will be granted admin rights and the User Assigned Managed Identity created in this module will be added to the group | `string` | n/a | yes |
 | <a name="input_database_name"></a> [database\_name](#input\_database\_name) | Name of the database that will be deployed on this server | `string` | n/a | yes |
-| <a name="input_enable_autopause"></a> [enable\_autopause](#input\_enable\_autopause) | n/a | `bool` | `true` | no |
+| <a name="input_dtu_sku"></a> [dtu\_sku](#input\_dtu\_sku) | Standard DTU performance level to use when serverless = false. Valid values: S0, S1, S2, S3, S4, S6, S7, S9, S12. | `string` | `"S2"` | no |
+| <a name="input_enable_autopause"></a> [enable\_autopause](#input\_enable\_autopause) | Whether to enable auto-pause for the serverless database. Only used when serverless = true. | `bool` | `true` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment for resources (required, max 4 characters). Combined with prefix, must not exceed 12 characters for storage account naming. | `string` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | Default region for resources | `string` | `"norwayeast"` | no |
-| <a name="input_max_cores"></a> [max\_cores](#input\_max\_cores) | n/a | `number` | `2` | no |
-| <a name="input_min_cores"></a> [min\_cores](#input\_min\_cores) | n/a | `number` | `0.5` | no |
+| <a name="input_max_cores"></a> [max\_cores](#input\_max\_cores) | Maximum vCores for serverless scaling. Only used when serverless = true. | `number` | `2` | no |
+| <a name="input_min_cores"></a> [min\_cores](#input\_min\_cores) | Minimum vCores for serverless scaling. Must be at least 0.5 and no greater than max\_cores. Only used when serverless = true. | `number` | `0.5` | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | Prefix for resource names (required, max 8 characters). Combined with environment, must not exceed 12 characters for storage account naming. | `string` | n/a | yes |
 | <a name="input_private_dns_zone_id"></a> [private\_dns\_zone\_id](#input\_private\_dns\_zone\_id) | The resource ID of the private DNS zone (privatelink.database.windows.net) to associate with the SQL private endpoint. Leave empty to skip DNS zone group creation. | `string` | `""` | no |
 | <a name="input_private_endpoint_subnet_id"></a> [private\_endpoint\_subnet\_id](#input\_private\_endpoint\_subnet\_id) | The ID of the subnet in which to deploy the private endpoint for the SQL server. | `string` | n/a | yes |
 | <a name="input_server_version"></a> [server\_version](#input\_server\_version) | The version for the new server. Valid values are: 2.0 (for v11 server) and 12.0 (for v12 server). Changing this forces a new resource to be created. | `string` | `"12.0"` | no |
+| <a name="input_serverless"></a> [serverless](#input\_serverless) | Whether to deploy the database in serverless mode (GP\_S\_Gen5) or standard DTU mode (S-tier). When false, dtu\_sku is used and serverless-specific settings (max\_cores, min\_cores, enable\_autopause, autopause\_after\_mins) are ignored. | `bool` | `true` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to all resources | `map(string)` | `{}` | no |
 
 ## Outputs

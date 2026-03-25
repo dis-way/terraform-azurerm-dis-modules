@@ -1,5 +1,5 @@
 ### Minimal usage example
-This module provisions an Azure SQL serverless database with a private endpoint, Entra ID-only authentication via a user-assigned managed identity, and zone-redundant storage.
+This module provisions an Azure SQL database with a private endpoint and Entra ID-only authentication via a user-assigned managed identity. It supports both serverless (GP_S_Gen5, zone-redundant) and standard DTU (S-tier) modes.
 
 ```hcl
 module "azure_sql" {
@@ -26,7 +26,7 @@ module "azure_sql" {
 }
 ```
 
-### Full usage example (with optional parameters)
+### Serverless example (with optional parameters)
 ```hcl
 module "azure_sql" {
   source = "./modules/azure_sql"
@@ -45,9 +45,10 @@ module "azure_sql" {
   database_admin_group_object_id = "00000000-0000-0000-0000-000000000001"
   database_admin_group_name      = "myapp-prod-sql-admins"
 
-  # Serverless compute scaling
-  min_cores = 0.5
-  max_cores = 4
+  # Serverless mode (default) — zone-redundant, GP_S_Gen5 SKU
+  serverless = true
+  min_cores  = 0.5
+  max_cores  = 4
 
   # Auto-pause (disable in production if cold-start latency is unacceptable)
   enable_autopause     = false
@@ -61,6 +62,37 @@ module "azure_sql" {
 
   # DNS — omit to skip automatic DNS registration
   private_dns_zone_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myapp-prod-dns-rg/providers/Microsoft.Network/privateDnsZones/privatelink.database.windows.net"
+
+  tags = {
+    environment = "prod"
+    component   = "azure-sql"
+    managed-by  = "terraform"
+  }
+}
+```
+
+### DTU (Standard tier) example
+```hcl
+module "azure_sql" {
+  source = "./modules/azure_sql"
+
+  # Required identifiers
+  prefix      = "myapp"
+  environment = "prod"
+
+  # Database
+  database_name = "myappdb"
+
+  # Entra ID admin group — the UAMI created by this module is added to this group
+  database_admin_group_object_id = "00000000-0000-0000-0000-000000000001"
+  database_admin_group_name      = "myapp-prod-sql-admins"
+
+  # Standard DTU mode — uses Local storage, zone redundancy not available
+  serverless = false
+  dtu_sku    = "S3"
+
+  # Network — subnet must be IPv4-only and dedicated to private endpoints
+  private_endpoint_subnet_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myapp-prod-network-rg/providers/Microsoft.Network/virtualNetworks/myapp-prod-vnet/subnets/pe-subnet"
 
   tags = {
     environment = "prod"
