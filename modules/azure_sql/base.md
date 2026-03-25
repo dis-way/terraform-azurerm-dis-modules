@@ -9,6 +9,13 @@ module "azure_sql" {
   prefix      = "myapp"
   environment = "dev"
 
+  # Database
+  database_name = "myappdb"
+
+  # Entra ID admin group — the UAMI created by this module is added to this group
+  database_admin_group_object_id = "00000000-0000-0000-0000-000000000001"
+  database_admin_group_name      = "myapp-dev-sql-admins"
+
   # Network — subnet must be IPv4-only and dedicated to private endpoints
   private_endpoint_subnet_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myapp-dev-network-rg/providers/Microsoft.Network/virtualNetworks/myapp-dev-vnet/subnets/pe-subnet"
 
@@ -30,6 +37,13 @@ module "azure_sql" {
 
   # Region
   location = "norwayeast"
+
+  # Database
+  database_name = "myappdb"
+
+  # Entra ID admin group — the UAMI created by this module is added to this group
+  database_admin_group_object_id = "00000000-0000-0000-0000-000000000001"
+  database_admin_group_name      = "myapp-prod-sql-admins"
 
   # Serverless compute scaling
   min_cores = 0.5
@@ -62,6 +76,7 @@ module "azure_sql" {
 |------|-------------|
 | `uami_id` | Resource ID of the User Assigned Managed Identity used for SQL authentication |
 | `uami_principal_id` | Principal (object) ID of the UAMI — use this to grant Azure RBAC roles |
+| `uami_client_id` | Client ID of the UAMI |
 | `server_id` | Resource ID of the SQL server |
 | `server_fqdn` | Fully qualified domain name of the SQL server |
 | `database_id` | Resource ID of the SQL database |

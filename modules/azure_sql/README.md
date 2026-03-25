@@ -9,6 +9,13 @@ module "azure_sql" {
   prefix      = "myapp"
   environment = "dev"
 
+  # Database
+  database_name = "myappdb"
+
+  # Entra ID admin group — the UAMI created by this module is added to this group
+  database_admin_group_object_id = "00000000-0000-0000-0000-000000000001"
+  database_admin_group_name      = "myapp-dev-sql-admins"
+
   # Network — subnet must be IPv4-only and dedicated to private endpoints
   private_endpoint_subnet_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myapp-dev-network-rg/providers/Microsoft.Network/virtualNetworks/myapp-dev-vnet/subnets/pe-subnet"
 
@@ -30,6 +37,13 @@ module "azure_sql" {
 
   # Region
   location = "norwayeast"
+
+  # Database
+  database_name = "myappdb"
+
+  # Entra ID admin group — the UAMI created by this module is added to this group
+  database_admin_group_object_id = "00000000-0000-0000-0000-000000000001"
+  database_admin_group_name      = "myapp-prod-sql-admins"
 
   # Serverless compute scaling
   min_cores = 0.5
@@ -62,6 +76,7 @@ module "azure_sql" {
 |------|-------------|
 | `uami_id` | Resource ID of the User Assigned Managed Identity used for SQL authentication |
 | `uami_principal_id` | Principal (object) ID of the UAMI — use this to grant Azure RBAC roles |
+| `uami_client_id` | Client ID of the UAMI |
 | `server_id` | Resource ID of the SQL server |
 | `server_fqdn` | Fully qualified domain name of the SQL server |
 | `database_id` | Resource ID of the SQL database |
@@ -73,6 +88,7 @@ module "azure_sql" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
+| <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.53.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.5 |
 
@@ -80,6 +96,7 @@ module "azure_sql" {
 
 | Name | Version |
 |------|---------|
+| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | ~> 3.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.53.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.5 |
 
@@ -87,6 +104,7 @@ module "azure_sql" {
 
 | Name | Type |
 |------|------|
+| [azuread_group_member.azsql_uami_admin](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/group_member) | resource |
 | [azurerm_mssql_database.azsql](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/mssql_database) | resource |
 | [azurerm_mssql_server.azsql](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/mssql_server) | resource |
 | [azurerm_private_endpoint.azsql](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) | resource |
@@ -99,6 +117,9 @@ module "azure_sql" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_autopause_after_mins"></a> [autopause\_after\_mins](#input\_autopause\_after\_mins) | Number of minutes before auto pause, if enable\_autopause is true. Azure enforces a minimum of 60. | `number` | `60` | no |
+| <a name="input_database_admin_group_name"></a> [database\_admin\_group\_name](#input\_database\_admin\_group\_name) | Database admin group name. | `string` | n/a | yes |
+| <a name="input_database_admin_group_object_id"></a> [database\_admin\_group\_object\_id](#input\_database\_admin\_group\_object\_id) | Database admin group object id. This group will be granted admin rights and the User Assigned Managed Identity created in this module will be added to the group | `string` | n/a | yes |
+| <a name="input_database_name"></a> [database\_name](#input\_database\_name) | Name of the database that will be deployed on this server | `string` | n/a | yes |
 | <a name="input_enable_autopause"></a> [enable\_autopause](#input\_enable\_autopause) | n/a | `bool` | `true` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment for resources (required, max 4 characters). Combined with prefix, must not exceed 12 characters for storage account naming. | `string` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | Default region for resources | `string` | `"norwayeast"` | no |

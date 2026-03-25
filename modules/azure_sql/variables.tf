@@ -101,3 +101,26 @@ variable "server_version" {
     error_message = "server_version must be either '2.0' (v11) or '12.0' (v12)."
   }
 }
+
+variable "database_name" {
+  type        = string
+  description = "Name of the database that will be deployed on this server"
+  validation {
+    condition     = length(var.database_name) > 0
+    error_message = "database_name must not be empty."
+  }
+}
+
+variable "database_admin_group_object_id" {
+  type        = string
+  description = "Database admin group object id. This group will be granted admin rights and the User Assigned Managed Identity created in this module will be added to the group"
+  validation {
+    condition     = can(regex("(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.database_admin_group_object_id))
+    error_message = "database_admin_group_object_id must be a valid UUID."
+  }
+}
+
+variable "database_admin_group_name" {
+  type        = string
+  description = "Database admin group name."
+}

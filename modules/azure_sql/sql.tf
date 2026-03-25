@@ -5,7 +5,13 @@ resource "azurerm_user_assigned_identity" "azsql" {
   tags                = var.tags
 }
 
+resource "azuread_group_member" "azsql_uami_admin" {
+  group_object_id  = var.database_admin_group_object_id
+  member_object_id = azurerm_user_assigned_identity.azsql.principal_id
+}
+
 resource "azurerm_mssql_server" "azsql" {
+  depends_on                           = [azuread_group_member.azsql_uami_admin]
   name                                 = "${var.prefix}-${var.environment}-${random_string.db_name_suffix.result}-server"
   resource_group_name                  = azurerm_resource_group.azsql.name
   location                             = azurerm_resource_group.azsql.location
@@ -21,8 +27,8 @@ resource "azurerm_mssql_server" "azsql" {
   }
 
   azuread_administrator {
-    login_username              = azurerm_user_assigned_identity.azsql.name
-    object_id                   = azurerm_user_assigned_identity.azsql.principal_id
+    login_username              = var.database_admin_group_name
+    object_id                   = var.database_admin_group_object_id
     azuread_authentication_only = true
   }
 
@@ -53,7 +59,7 @@ resource "azurerm_private_endpoint" "azsql" {
 }
 
 resource "azurerm_mssql_database" "azsql" {
-  name      = "${var.prefix}-${var.environment}-${random_string.db_name_suffix.result}-serverless-db"
+  name      = var.database_name
   server_id = azurerm_mssql_server.azsql.id
 
   # Serverless SKU name:
@@ -70,4 +76,3 @@ resource "azurerm_mssql_database" "azsql" {
     prevent_destroy = true
   }
 }
-
