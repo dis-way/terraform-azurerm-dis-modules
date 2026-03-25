@@ -132,7 +132,7 @@ variable "database_name" {
 
 variable "database_admin_group_object_id" {
   type        = string
-  description = "Database admin group object id. This group will be granted admin rights and the User Assigned Managed Identity created in this module will be added to the group"
+  description = "Database admin group object id. This group will be granted admin rights and the User Assigned Managed Identity created in this module will be added to the group. Terraform user needs permissions to add users to group"
   validation {
     condition     = can(regex("(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.database_admin_group_object_id))
     error_message = "database_admin_group_object_id must be a valid UUID."
@@ -142,4 +142,8 @@ variable "database_admin_group_object_id" {
 variable "database_admin_group_name" {
   type        = string
   description = "Database admin group name."
+  validation {
+    condition     = length(var.database_admin_group_name) > 0
+    error_message = "You must provide a value for database_admin_group_name."
+  }
 }
