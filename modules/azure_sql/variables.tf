@@ -38,9 +38,16 @@ variable "environment" {
   }
 }
 
+variable "serverless" {
+  type        = bool
+  default     = true
+  description = "Whether to deploy the database in serverless mode (GP_S_Gen5) or standard DTU mode (S-tier). When false, dtu_sku is used and serverless-specific settings (max_cores, min_cores, enable_autopause, autopause_after_mins) are ignored."
+}
+
 variable "max_cores" {
-  type    = number
-  default = 2
+  type        = number
+  default     = 2
+  description = "Maximum vCores for serverless scaling. Only used when serverless = true."
   validation {
     condition     = contains([1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 24, 32, 40, 80], var.max_cores)
     error_message = "max_cores must be one of: 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 24, 32, 40, or 80."
@@ -48,8 +55,9 @@ variable "max_cores" {
 }
 
 variable "min_cores" {
-  type    = number
-  default = 0.5
+  type        = number
+  default     = 0.5
+  description = "Minimum vCores for serverless scaling. Must be at least 0.5 and no greater than max_cores. Only used when serverless = true."
   validation {
     condition     = var.min_cores >= 0.5 && var.min_cores <= var.max_cores
     error_message = "min_cores must be at least 0.5 and less than or equal to max_cores."
@@ -57,17 +65,28 @@ variable "min_cores" {
 }
 
 variable "enable_autopause" {
-  type    = bool
-  default = true
+  type        = bool
+  default     = true
+  description = "Whether to enable auto-pause for the serverless database. Only used when serverless = true."
 }
 
 variable "autopause_after_mins" {
   type        = number
-  description = "Number of minutes before auto pause, if enable_autopause is true. Azure enforces a minimum of 60."
+  description = "Number of minutes of inactivity before auto-pause. Azure enforces a minimum of 60. Only used when serverless = true and enable_autopause = true."
   default     = 60
   validation {
     condition     = var.autopause_after_mins >= 60
     error_message = "autopause_after_mins must be at least 60 (Azure minimum)."
+  }
+}
+
+variable "dtu_sku" {
+  type        = string
+  default     = "S2"
+  description = "Standard DTU performance level to use when serverless = false. Valid values: S0, S1, S2, S3, S4, S6, S7, S9, S12."
+  validation {
+    condition     = contains(["S0", "S1", "S2", "S3", "S4", "S6", "S7", "S9", "S12"], var.dtu_sku)
+    error_message = "dtu_sku must be one of: S0, S1, S2, S3, S4, S6, S7, S9, S12."
   }
 }
 
@@ -99,5 +118,32 @@ variable "server_version" {
   validation {
     condition     = contains(["2.0", "12.0"], var.server_version)
     error_message = "server_version must be either '2.0' (v11) or '12.0' (v12)."
+  }
+}
+
+variable "database_name" {
+  type        = string
+  description = "Name of the database that will be deployed on this server"
+  validation {
+    condition     = length(var.database_name) > 0
+    error_message = "database_name must not be empty."
+  }
+}
+
+variable "database_admin_group_object_id" {
+  type        = string
+  description = "Database admin group object id. This group will be granted admin rights and the User Assigned Managed Identity created in this module will be added to the group. Terraform user needs permissions to add users to group"
+  validation {
+    condition     = can(regex("(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.database_admin_group_object_id))
+    error_message = "database_admin_group_object_id must be a valid UUID."
+  }
+}
+
+variable "database_admin_group_name" {
+  type        = string
+  description = "Database admin group name."
+  validation {
+    condition     = length(var.database_admin_group_name) > 0
+    error_message = "You must provide a value for database_admin_group_name."
   }
 }
