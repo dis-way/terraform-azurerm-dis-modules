@@ -12,7 +12,7 @@ module "azure_sql" {
   # Database
   database_name = "myappdb"
 
-  # Entra ID admin group — the UAMI created by this module is added to this group
+  # Entra ID admin group — the UAMI created by this module is added to this group. Terraform runner needs permissions to add memebers to the group
   database_admin_group_object_id = "00000000-0000-0000-0000-000000000001"
   database_admin_group_name      = "myapp-dev-sql-admins"
 
@@ -41,7 +41,7 @@ module "azure_sql" {
   # Database
   database_name = "myappdb"
 
-  # Entra ID admin group — the UAMI created by this module is added to this group
+  # Entra ID admin group — the UAMI created by this module is added to this group. Terraform runner needs permissions to add memebers to the group
   database_admin_group_object_id = "00000000-0000-0000-0000-000000000001"
   database_admin_group_name      = "myapp-prod-sql-admins"
 
@@ -83,7 +83,7 @@ module "azure_sql" {
   # Database
   database_name = "myappdb"
 
-  # Entra ID admin group — the UAMI created by this module is added to this group
+  # Entra ID admin group — the UAMI created by this module is added to this group. Terraform runner needs permissions to add memebers to the group
   database_admin_group_object_id = "00000000-0000-0000-0000-000000000001"
   database_admin_group_name      = "myapp-prod-sql-admins"
 
