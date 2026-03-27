@@ -1,6 +1,6 @@
 # dis_aks_resources_multitenancy
 
-Deploys multitenancy platform services onto an AKS cluster: cert-manager, Kyverno, External Secrets Operator, Linkerd, OpenTelemetry, DIS identity operator, and optionally OpenCost and the DIS PostgreSQL operator.
+Deploys multitenancy platform services onto an AKS cluster: cert-manager, Kyverno, External Secrets Operator, Linkerd, OpenTelemetry, DIS identity operator, and optionally OpenCost, the DIS PostgreSQL operator, and the DIS Vault operator.
 
 ## Usage
 
@@ -51,6 +51,7 @@ module "dis_aks_resources_multitenancy" {
 | [azapi_resource.cert_manager](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.dis_identity_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.dis_pgsql_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.dis_vault_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.external_secrets_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.kyverno](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.kyverno_policies](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
@@ -83,7 +84,12 @@ module "dis_aks_resources_multitenancy" {
 | <a name="input_dis_db_vnet_name"></a> [dis\_db\_vnet\_name](#input\_dis\_db\_vnet\_name) | Name of the VNet hosting DIS database resources. | `string` | `""` | no |
 | <a name="input_dis_pgsql_uami_client_id"></a> [dis\_pgsql\_uami\_client\_id](#input\_dis\_pgsql\_uami\_client\_id) | Client id for the dis-pgsql workload identity. | `string` | `""` | no |
 | <a name="input_dis_resource_group_name"></a> [dis\_resource\_group\_name](#input\_dis\_resource\_group\_name) | Name of the resource group where DIS operators create their resources. | `string` | `""` | no |
+| <a name="input_dis_vault_aks_subnet_ids"></a> [dis\_vault\_aks\_subnet\_ids](#input\_dis\_vault\_aks\_subnet\_ids) | AKS subnet IDs passed to DIS Vault. | `string` | `""` | no |
+| <a name="input_dis_vault_environment"></a> [dis\_vault\_environment](#input\_dis\_vault\_environment) | Environment name passed to DIS Vault. | `string` | `""` | no |
+| <a name="input_dis_vault_location"></a> [dis\_vault\_location](#input\_dis\_vault\_location) | Azure location for DIS Vault resources. | `string` | `""` | no |
+| <a name="input_dis_vault_vpn_exit_node_subnet_id"></a> [dis\_vault\_vpn\_exit\_node\_subnet\_id](#input\_dis\_vault\_vpn\_exit\_node\_subnet\_id) | Optional VPN exit node subnet ID passed to DIS Vault. | `string` | `""` | no |
 | <a name="input_enable_dis_pgsql_operator"></a> [enable\_dis\_pgsql\_operator](#input\_enable\_dis\_pgsql\_operator) | Enable the dis-pgsql operator in the cluster. | `bool` | `false` | no |
+| <a name="input_enable_dis_vault_operator"></a> [enable\_dis\_vault\_operator](#input\_enable\_dis\_vault\_operator) | Enable the dis-vault operator in the cluster. | `bool` | `false` | no |
 | <a name="input_enable_lets_encrypt_tls_issuer"></a> [enable\_lets\_encrypt\_tls\_issuer](#input\_enable\_lets\_encrypt\_tls\_issuer) | Enable Let's Encrypt cert-manager issuer for TLS certificates | `bool` | `true` | no |
 | <a name="input_enable_opencost"></a> [enable\_opencost](#input\_enable\_opencost) | Enable opencost | `bool` | `false` | no |
 | <a name="input_flux_release_tag"></a> [flux\_release\_tag](#input\_flux\_release\_tag) | OCI image that Flux should watch and reconcile | `string` | n/a | yes |
