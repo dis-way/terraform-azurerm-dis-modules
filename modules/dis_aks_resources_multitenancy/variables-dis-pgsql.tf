@@ -19,8 +19,8 @@ variable "dis_resource_group_name" {
   description = "Name of the resource group where DIS operators create their resources."
   default     = ""
   validation {
-    condition     = var.enable_dis_pgsql_operator == false || (var.enable_dis_pgsql_operator == true && length(var.dis_resource_group_name) > 0)
-    error_message = "You must provide a value for dis_resource_group_name when enable_dis_pgsql_operator is true."
+    condition     = (var.enable_dis_pgsql_operator == false && var.enable_dis_vault_operator == false) || length(var.dis_resource_group_name) > 0
+    error_message = "You must provide a value for dis_resource_group_name when enable_dis_pgsql_operator or enable_dis_vault_operator is true."
   }
 }
 

@@ -1,6 +1,6 @@
 # dis_aks_resources_multitenancy
 
-Deploys multitenancy platform services onto an AKS cluster: cert-manager, Kyverno, External Secrets Operator, Linkerd, OpenTelemetry, DIS identity operator, and optionally OpenCost and the DIS PostgreSQL operator.
+Deploys multitenancy platform services onto an AKS cluster: cert-manager, Kyverno, External Secrets Operator, Linkerd, OpenTelemetry, DIS identity operator, and optionally OpenCost, the DIS PostgreSQL operator, and the DIS Vault operator.
 
 ## Usage
 
