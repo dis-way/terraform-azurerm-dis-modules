@@ -53,6 +53,7 @@ module "dis_aks_resources_multitenancy" {
 | [azapi_resource.dis_pgsql_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.dis_vault_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.external_secrets_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.kro](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.kyverno](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.kyverno_policies](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.lets_encrypt_tls_issuer](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
