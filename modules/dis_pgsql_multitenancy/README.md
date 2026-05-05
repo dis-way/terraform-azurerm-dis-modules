@@ -27,19 +27,19 @@ module "dis_pgsql_multitenancy" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.0.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.0.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azurerm_federated_identity_credential.dispgsql_fic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
 | [azurerm_role_assignment.dispgsql_network_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_subnet.postgresql_subnets](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
@@ -51,7 +51,7 @@ module "dis_pgsql_multitenancy" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment for resources | `string` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | Location where the PostgreSQL vnets and subnets are deployed | `string` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | Name of the PostgreSQL vnet and subnets | `string` | n/a | yes |
@@ -65,7 +65,7 @@ module "dis_pgsql_multitenancy" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_dispgsql_uami_client_id"></a> [dispgsql\_uami\_client\_id](#output\_dispgsql\_uami\_client\_id) | The client ID of the user assigned managed identity for dis-pgsql. |
 | <a name="output_subnet_ids"></a> [subnet\_ids](#output\_subnet\_ids) | The IDs of the created subnets. |
 | <a name="output_vnet_id"></a> [vnet\_id](#output\_vnet\_id) | The ID of the created virtual network. |

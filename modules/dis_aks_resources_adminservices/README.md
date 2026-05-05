@@ -30,19 +30,19 @@ module "dis_aks_resources_adminservices" {
 ```## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 2.3.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_azapi"></a> [azapi](#provider\_azapi) | >= 2.3.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azapi_resource.cert_manager](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.cert_manager_issuer](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.container_runtime_aks_config](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
@@ -59,7 +59,7 @@ module "dis_aks_resources_adminservices" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aks_node_resource_group"></a> [aks\_node\_resource\_group](#input\_aks\_node\_resource\_group) | AKS node resource group name | `string` | n/a | yes |
 | <a name="input_aks_vnet_ipv4_cidr"></a> [aks\_vnet\_ipv4\_cidr](#input\_aks\_vnet\_ipv4\_cidr) | AKS VNet IPv4 CIDR | `string` | n/a | yes |
 | <a name="input_aks_vnet_ipv6_cidr"></a> [aks\_vnet\_ipv6\_cidr](#input\_aks\_vnet\_ipv6\_cidr) | AKS VNet IPv6 CIDR | `string` | n/a | yes |

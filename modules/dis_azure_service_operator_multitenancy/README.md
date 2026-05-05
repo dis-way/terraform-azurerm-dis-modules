@@ -30,21 +30,21 @@ module "dis_azure_service_operator" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 2.3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.9.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_azapi"></a> [azapi](#provider\_azapi) | >= 2.3.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.9.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azapi_resource.aso](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azurerm_federated_identity_credential.aso_fic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
 | [azurerm_resource_group.aso_rg](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
@@ -58,7 +58,7 @@ module "dis_azure_service_operator" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aks_vnet_ipv4_cidr"></a> [aks\_vnet\_ipv4\_cidr](#input\_aks\_vnet\_ipv4\_cidr) | AKS VNet IPv4 CIDR | `string` | n/a | yes |
 | <a name="input_aks_vnet_ipv6_cidr"></a> [aks\_vnet\_ipv6\_cidr](#input\_aks\_vnet\_ipv6\_cidr) | AKS VNet IPv6 CIDR | `string` | n/a | yes |
 | <a name="input_aso_crd_pattern"></a> [aso\_crd\_pattern](#input\_aso\_crd\_pattern) | The pattern for the Azure Service Operator Custom Resource Definitions (CRDs). | `string` | `"managedidentity.azure.com/*;authorization.azure.com/*;dbforpostgresql.azure.com/*;network.azure.com/*;insights.azure.com/*;keyvault.azure.com/*"` | no |
@@ -80,5 +80,5 @@ module "dis_azure_service_operator" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_azurerm_user_assigned_identity_principal_id"></a> [azurerm\_user\_assigned\_identity\_principal\_id](#output\_azurerm\_user\_assigned\_identity\_principal\_id) | The principal ID of the Azure Service Operator User Assigned Managed Identity. |

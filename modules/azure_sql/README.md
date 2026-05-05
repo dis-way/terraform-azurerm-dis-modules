@@ -118,7 +118,7 @@ module "azure_sql" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 | <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.53.0 |
@@ -127,7 +127,7 @@ module "azure_sql" {
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_azuread"></a> [azuread](#provider\_azuread) | ~> 3.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.53.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.5 |
@@ -135,7 +135,7 @@ module "azure_sql" {
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azuread_group_member.azsql_uami_admin](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/group_member) | resource |
 | [azurerm_mssql_database.azsql](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/mssql_database) | resource |
 | [azurerm_mssql_server.azsql](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/mssql_server) | resource |
@@ -147,7 +147,7 @@ module "azure_sql" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_autopause_after_mins"></a> [autopause\_after\_mins](#input\_autopause\_after\_mins) | Number of minutes of inactivity before auto-pause. Azure enforces a minimum of 60. Only used when serverless = true and enable\_autopause = true. | `number` | `60` | no |
 | <a name="input_database_admin_group_name"></a> [database\_admin\_group\_name](#input\_database\_admin\_group\_name) | Database admin group name. | `string` | n/a | yes |
 | <a name="input_database_admin_group_object_id"></a> [database\_admin\_group\_object\_id](#input\_database\_admin\_group\_object\_id) | Database admin group object id. This group will be granted admin rights and the User Assigned Managed Identity created in this module will be added to the group. Terraform user needs permissions to add users to group | `string` | n/a | yes |
@@ -168,7 +168,7 @@ module "azure_sql" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_database_id"></a> [database\_id](#output\_database\_id) | The resource ID of the SQL database |
 | <a name="output_database_name"></a> [database\_name](#output\_database\_name) | The name of the SQL database |
 | <a name="output_private_endpoint_id"></a> [private\_endpoint\_id](#output\_private\_endpoint\_id) | The resource ID of the SQL server private endpoint |
