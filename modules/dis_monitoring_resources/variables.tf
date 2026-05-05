@@ -120,3 +120,21 @@ variable "enable_lakmus" {
   default     = true
   description = "Deploy the resources needed by lakmus"
 }
+
+variable "grafana_principal_id" {
+  type        = string
+  default     = ""
+  description = "Object ID of the Grafana managed identity. Grants Monitoring Reader on the AMW and Log Analytics Reader on the Log Analytics workspace."
+}
+
+variable "grafana_deploy_principal_id" {
+  type        = string
+  default     = ""
+  description = "Object ID of the service principal that deploys Grafana. Grants Monitoring Reader on the AMW so Azure allows linking the workspace."
+}
+
+variable "developer_group_object_id" {
+  type        = string
+  default     = ""
+  description = "Object ID of the developer Entra ID group. Grants Log Analytics Reader on the Log Analytics workspace for portal access to logs and App Insights."
+}
