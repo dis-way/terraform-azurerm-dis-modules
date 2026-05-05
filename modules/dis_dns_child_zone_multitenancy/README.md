@@ -33,14 +33,14 @@ module "dis_dns_child_zone_multitenancy" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_azuread"></a> [azuread](#provider\_azuread) | ~> 3.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.0 |
 | <a name="provider_azurerm.parent_zone"></a> [azurerm.parent\_zone](#provider\_azurerm.parent\_zone) | ~> 4.0 |
@@ -48,7 +48,7 @@ module "dis_dns_child_zone_multitenancy" {
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azuread_application.cert_manager_app](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application) | resource |
 | [azuread_application_federated_identity_credential.cert_manager_fed_identity](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application_federated_identity_credential) | resource |
 | [azuread_service_principal.cert_manager_sp](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/service_principal) | resource |
@@ -65,7 +65,7 @@ module "dis_dns_child_zone_multitenancy" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_child_dns_zone_name"></a> [child\_dns\_zone\_name](#input\_child\_dns\_zone\_name) | Child zone name | `string` | `""` | no |
 | <a name="input_child_dns_zone_rg_name"></a> [child\_dns\_zone\_rg\_name](#input\_child\_dns\_zone\_rg\_name) | Override generated name for resource group for child dns zone. | `string` | `""` | no |
 | <a name="input_cluster_ipv4_address"></a> [cluster\_ipv4\_address](#input\_cluster\_ipv4\_address) | Cluster ipv4 address | `string` | n/a | yes |
@@ -81,7 +81,7 @@ module "dis_dns_child_zone_multitenancy" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_azuread_cert_manager_client_id"></a> [azuread\_cert\_manager\_client\_id](#output\_azuread\_cert\_manager\_client\_id) | Client ID for the Entra ID application used by cert-manager. |
 | <a name="output_azurerm_dns_zone_name"></a> [azurerm\_dns\_zone\_name](#output\_azurerm\_dns\_zone\_name) | The DNS name of the created child zone. |
 | <a name="output_azurerm_dns_zone_resource_group_name"></a> [azurerm\_dns\_zone\_resource\_group\_name](#output\_azurerm\_dns\_zone\_resource\_group\_name) | Resource group name containing the created child zone. |

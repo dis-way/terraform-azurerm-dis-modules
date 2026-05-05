@@ -62,7 +62,7 @@ module "aks" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.53.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.5 |
@@ -70,14 +70,14 @@ module "aks" {
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.53.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.5 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azurerm_application_insights.products](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/application_insights) | resource |
 | [azurerm_kubernetes_cluster.aks](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster) | resource |
 | [azurerm_kubernetes_cluster_extension.flux](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_extension) | resource |
@@ -113,7 +113,7 @@ module "aks" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_admin_group_object_ids"></a> [admin\_group\_object\_ids](#input\_admin\_group\_object\_ids) | List of group object IDs to get admin access to the cluster | `list(string)` | n/a | yes |
 | <a name="input_aks_acrpull_scopes"></a> [aks\_acrpull\_scopes](#input\_aks\_acrpull\_scopes) | List of AKS ACR pull scopes | `list(string)` | `[]` | no |
 | <a name="input_aks_local_account_disabled"></a> [aks\_local\_account\_disabled](#input\_aks\_local\_account\_disabled) | Disable local account for the AKS cluster. When true, only Azure AD authentication is allowed. | `bool` | `true` | no |
@@ -157,7 +157,7 @@ module "aks" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_aks_control_plane_identity_principal_id"></a> [aks\_control\_plane\_identity\_principal\_id](#output\_aks\_control\_plane\_identity\_principal\_id) | Principal ID of the user-assigned managed identity used by the AKS control plane |
 | <a name="output_aks_identity"></a> [aks\_identity](#output\_aks\_identity) | Managed Service Identity that is configured on this Kubernetes Cluster |
 | <a name="output_aks_kubelet_identity"></a> [aks\_kubelet\_identity](#output\_aks\_kubelet\_identity) | Managed Identity assigned to the Kubelets |

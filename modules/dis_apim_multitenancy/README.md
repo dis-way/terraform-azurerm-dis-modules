@@ -17,21 +17,21 @@ module "dis_apim_multitenancy" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.0.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.0.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.0.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.0.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azurerm_api_management.apim](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/api_management) | resource |
 | [azurerm_api_management_diagnostic.apim_application_insights](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/api_management_diagnostic) | resource |
 | [azurerm_api_management_logger.apimlogger](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/api_management_logger) | resource |
@@ -45,7 +45,7 @@ module "dis_apim_multitenancy" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_apim_rg_name"></a> [apim\_rg\_name](#input\_apim\_rg\_name) | The name of the Resource Group in which the API Management service should be created. If not specified, a name will be generated. | `string` | `""` | no |
 | <a name="input_apim_service_contributors"></a> [apim\_service\_contributors](#input\_apim\_service\_contributors) | A map of principal IDs to grant the 'API Management Service Contributor' role. The map key is a descriptive name for the assignment, and the value is the principal's object ID. | `map(string)` | `{}` | no |
 | <a name="input_body_bytes_to_log"></a> [body\_bytes\_to\_log](#input\_body\_bytes\_to\_log) | The number of payload bytes (up to 8192) to log in Application Insights diagnostics. By default, no payload is logged. | `number` | `0` | no |
@@ -62,7 +62,7 @@ module "dis_apim_multitenancy" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_apim_default_logger_id"></a> [apim\_default\_logger\_id](#output\_apim\_default\_logger\_id) | n/a |
 | <a name="output_apim_id"></a> [apim\_id](#output\_apim\_id) | n/a |
 | <a name="output_apim_rg_name"></a> [apim\_rg\_name](#output\_apim\_rg\_name) | n/a |

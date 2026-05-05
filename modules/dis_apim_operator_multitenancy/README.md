@@ -32,21 +32,21 @@ module "dis_apim_operator_multitenancy" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 2.3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.9.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_azapi"></a> [azapi](#provider\_azapi) | >= 2.3.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.9.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azapi_resource.dis_apim_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azurerm_federated_identity_credential.disapim_fic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
 | [azurerm_role_assignment.disapim_service_operator_role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
@@ -55,7 +55,7 @@ module "dis_apim_operator_multitenancy" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_apim_id"></a> [apim\_id](#input\_apim\_id) | APIM resource id | `string` | n/a | yes |
 | <a name="input_apim_resource_group_name"></a> [apim\_resource\_group\_name](#input\_apim\_resource\_group\_name) | Resource group where the APIM service is located | `string` | n/a | yes |
 | <a name="input_apim_service_name"></a> [apim\_service\_name](#input\_apim\_service\_name) | APIM service name | `string` | n/a | yes |
@@ -73,5 +73,5 @@ module "dis_apim_operator_multitenancy" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_dis_apim_workload_identity_client_id"></a> [dis\_apim\_workload\_identity\_client\_id](#output\_dis\_apim\_workload\_identity\_client\_id) | n/a |

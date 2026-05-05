@@ -28,7 +28,7 @@ module "dis_monitoring_resources" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.42.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.7.2 |
@@ -36,14 +36,14 @@ module "dis_monitoring_resources" {
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.42.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.7.2 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azurerm_federated_identity_credential.lakmus](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
 | [azurerm_federated_identity_credential.otel_collector](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
 | [azurerm_key_vault.obs_kv](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault) | resource |
@@ -55,6 +55,10 @@ module "dis_monitoring_resources" {
 | [azurerm_monitor_data_collection_rule.amw](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_data_collection_rule) | resource |
 | [azurerm_monitor_data_collection_rule_association.amw](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_data_collection_rule_association) | resource |
 | [azurerm_role_assignment.ci_kv_secrets_role](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+| [azurerm_role_assignment.developer_log_analytics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+| [azurerm_role_assignment.grafana_deploy_monitor_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+| [azurerm_role_assignment.grafana_log_analytics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+| [azurerm_role_assignment.grafana_monitor_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.kv_reader_lakmus](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.obs_kv_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.otel_collector_metrics_publisher](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
@@ -65,13 +69,16 @@ module "dis_monitoring_resources" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_app_insights_connection_string"></a> [app\_insights\_connection\_string](#input\_app\_insights\_connection\_string) | Connection string of an Application Insights where logs and traces are sendt. | `string` | n/a | yes |
 | <a name="input_azurerm_kubernetes_cluster_id"></a> [azurerm\_kubernetes\_cluster\_id](#input\_azurerm\_kubernetes\_cluster\_id) | AKS cluster resource id | `string` | n/a | yes |
 | <a name="input_azurerm_resource_group_obs_name"></a> [azurerm\_resource\_group\_obs\_name](#input\_azurerm\_resource\_group\_obs\_name) | Name of the observability resource group where all the resources will be placed. | `string` | n/a | yes |
 | <a name="input_ci_service_principal_object_id"></a> [ci\_service\_principal\_object\_id](#input\_ci\_service\_principal\_object\_id) | Object ID of the CI service principal used for role assignments. | `string` | n/a | yes |
+| <a name="input_developer_group_object_id"></a> [developer\_group\_object\_id](#input\_developer\_group\_object\_id) | Object ID of the developer Entra ID group. Grants Log Analytics Reader on the Log Analytics workspace for portal access to logs and App Insights. | `string` | `""` | no |
 | <a name="input_enable_lakmus"></a> [enable\_lakmus](#input\_enable\_lakmus) | Deploy the resources needed by lakmus | `bool` | `true` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment for resources | `string` | n/a | yes |
+| <a name="input_grafana_deploy_principal_id"></a> [grafana\_deploy\_principal\_id](#input\_grafana\_deploy\_principal\_id) | Object ID of the service principal that deploys Grafana. Grants Monitoring Reader on the AMW so Azure allows linking the workspace. | `string` | `""` | no |
+| <a name="input_grafana_principal_id"></a> [grafana\_principal\_id](#input\_grafana\_principal\_id) | Object ID of the Grafana managed identity. Grants Monitoring Reader on the AMW and Log Analytics Reader on the Log Analytics workspace. | `string` | `""` | no |
 | <a name="input_localtags"></a> [localtags](#input\_localtags) | A map of tags to assign to the created resources. | `map(string)` | `{}` | no |
 | <a name="input_location"></a> [location](#input\_location) | Region for resources | `string` | `"norwayeast"` | no |
 | <a name="input_log_analytics_workspace_id"></a> [log\_analytics\_workspace\_id](#input\_log\_analytics\_workspace\_id) | ID of an existing Log Analytics Workspace when reusing. | `string` | n/a | yes |
@@ -85,7 +92,7 @@ module "dis_monitoring_resources" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_key_vault_uri"></a> [key\_vault\_uri](#output\_key\_vault\_uri) | n/a |
 | <a name="output_kubernetes_recording_rules_id"></a> [kubernetes\_recording\_rules\_id](#output\_kubernetes\_recording\_rules\_id) | ID of the Kubernetes Recording Rules rule group |
 | <a name="output_lakmus_client_id"></a> [lakmus\_client\_id](#output\_lakmus\_client\_id) | The client ID of the user assigned identity used by lakmus. |
