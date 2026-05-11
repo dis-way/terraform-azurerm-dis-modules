@@ -50,12 +50,12 @@ variable "default_gateway_hostname" {
 
 variable "lb_source_range_apim" {
   type        = string
-  description = "Load balancer source IP range for APIM IPv4"
+  description = "Additional IPv4 source range added to the load balancer alongside the hardcoded ranges in the Flux manifests. Defaults to loopback (127.0.0.1/32) meaning no additional source is granted. Override with the actual APIM IPv4 CIDR to allow APIM traffic."
   default     = "127.0.0.1/32"
 }
 
 variable "lb_source_range_apim_ipv6" {
   type        = string
-  description = "Load balancer source IP range for APIM IPv6"
+  description = "Additional IPv6 source range added to the load balancer alongside the hardcoded ranges in the Flux manifests. Defaults to loopback (::1/128) meaning no additional source is granted. Override with the actual APIM IPv6 CIDR to allow APIM traffic."
   default     = "::1/128"
 }
