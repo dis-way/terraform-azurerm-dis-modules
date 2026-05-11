@@ -17,6 +17,8 @@ resource "azapi_resource" "traefik" {
               AKS_NODE_RG : "${var.aks_node_resource_group}"
               PUBLIC_IP_V4 : "${var.aks_public_ipv4_address}"
               PUBLIC_IP_V6 : "${var.aks_public_ipv6_address}"
+              LB_SOURCE_RANGE_APIM : "${var.lb_source_range_apim}"
+              LB_SOURCE_RANGE_APIM_IPV6 : "${var.lb_source_range_apim_ipv6}"
               # EXTERNAL_TRAFFIC_POLICY: Cluster (Local is default in traefik oci)
             }
           }
