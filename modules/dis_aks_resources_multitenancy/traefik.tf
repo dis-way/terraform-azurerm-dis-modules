@@ -28,6 +28,16 @@ resource "azapi_resource" "traefik" {
           timeoutInSeconds       = 300
           wait                   = true
         }
+        traefik-post-deploy = {
+          dependsOn              = ["traefik"]
+          force                  = false
+          path                   = "./multitenancy/post-deploy/"
+          prune                  = false
+          retryIntervalInSeconds = 300
+          syncIntervalInSeconds  = 300
+          timeoutInSeconds       = 300
+          wait                   = false
+        }
       }
       ociRepository = {
         insecure = false
