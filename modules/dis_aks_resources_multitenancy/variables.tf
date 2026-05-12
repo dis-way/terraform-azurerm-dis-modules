@@ -47,3 +47,15 @@ variable "default_gateway_hostname" {
   type        = string
   description = "The default gateway hostname of the AKS cluster. This will be the Hostname in the default gateway https://gateway-api.sigs.k8s.io/reference/spec/#hostname"
 }
+
+variable "lb_source_range_apim" {
+  type        = string
+  description = "Additional IPv4 source range added to the load balancer alongside the hardcoded ranges in the Flux manifests. Defaults to loopback (127.0.0.1/32) meaning no additional source is granted. Override with the actual APIM IPv4 CIDR to allow APIM traffic."
+  default     = "127.0.0.1/32"
+}
+
+variable "lb_source_range_apim_ipv6" {
+  type        = string
+  description = "Additional IPv6 source range added to the load balancer alongside the hardcoded ranges in the Flux manifests. Defaults to loopback (::1/128) meaning no additional source is granted. Override with the actual APIM IPv6 CIDR to allow APIM traffic."
+  default     = "::1/128"
+}
