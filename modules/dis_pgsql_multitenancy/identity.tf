@@ -6,7 +6,7 @@ resource "azurerm_user_assigned_identity" "dispgsql_identity" {
 }
 
 resource "azurerm_federated_identity_credential" "dispgsql_fic" {
-  name      = "dis-pgsql-aks-${var.name}-${var.environment}"
+  name                      = "dis-pgsql-aks-${var.name}-${var.environment}"
   user_assigned_identity_id = azurerm_user_assigned_identity.dispgsql_identity.id
 
   audience = ["api://AzureADTokenExchange"]

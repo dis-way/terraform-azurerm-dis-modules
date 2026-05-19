@@ -12,10 +12,10 @@ resource "azurerm_user_assigned_identity" "aso_identity" {
 }
 
 resource "azurerm_federated_identity_credential" "aso_fic" {
-  name      = "aso-aks-${var.prefix}-${var.environment}"
-  audience  = ["api://AzureADTokenExchange"]
-  issuer    = var.azurerm_kubernetes_cluster_oidc_issuer_url
-  subject   = "system:serviceaccount:${var.aso_namespace}:${var.aso_service_account_name}"
+  name                      = "aso-aks-${var.prefix}-${var.environment}"
+  audience                  = ["api://AzureADTokenExchange"]
+  issuer                    = var.azurerm_kubernetes_cluster_oidc_issuer_url
+  subject                   = "system:serviceaccount:${var.aso_namespace}:${var.aso_service_account_name}"
   user_assigned_identity_id = azurerm_user_assigned_identity.aso_identity.id
 }
 

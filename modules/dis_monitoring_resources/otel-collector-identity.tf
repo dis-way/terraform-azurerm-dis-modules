@@ -5,9 +5,9 @@ resource "azurerm_user_assigned_identity" "otel_collector" {
 }
 
 resource "azurerm_federated_identity_credential" "otel_collector" {
-  name      = "fed-identity-${var.prefix}-${var.environment}-otel-collector"
-  audience  = ["api://AzureADTokenExchange"]
-  issuer    = var.oidc_issuer_url
-  subject   = "system:serviceaccount:monitoring:otel-collector"
+  name                      = "fed-identity-${var.prefix}-${var.environment}-otel-collector"
+  audience                  = ["api://AzureADTokenExchange"]
+  issuer                    = var.oidc_issuer_url
+  subject                   = "system:serviceaccount:monitoring:otel-collector"
   user_assigned_identity_id = azurerm_user_assigned_identity.otel_collector.id
 }
