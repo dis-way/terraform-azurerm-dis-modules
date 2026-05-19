@@ -9,5 +9,5 @@ resource "azurerm_federated_identity_credential" "otel_collector" {
   audience  = ["api://AzureADTokenExchange"]
   issuer    = var.oidc_issuer_url
   subject   = "system:serviceaccount:monitoring:otel-collector"
-  parent_id = azurerm_user_assigned_identity.otel_collector.id
+  user_assigned_identity_id = azurerm_user_assigned_identity.otel_collector.id
 }

@@ -10,7 +10,7 @@ resource "azurerm_federated_identity_credential" "disapim_fic" {
   audience  = ["api://AzureADTokenExchange"]
   issuer    = var.kubernetes_cluster_oidc_issuer_url
   subject   = "system:serviceaccount:${var.target_namespace}:dis-apim-operator-controller-manager"
-  parent_id = azurerm_user_assigned_identity.disapim_identity.id
+  user_assigned_identity_id = azurerm_user_assigned_identity.disapim_identity.id
 }
 
 resource "azurerm_role_assignment" "disapim_service_operator_role_assignment" {
