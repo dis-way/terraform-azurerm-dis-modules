@@ -84,5 +84,8 @@ resource "azurerm_mssql_database" "azsql" {
 
   lifecycle {
     prevent_destroy = true
+    # storage_account_type and zone_redundant are immutable after creation;
+    # Azure silently ignores changes, causing perpetual drift if not suppressed.
+    ignore_changes = [storage_account_type, zone_redundant]
   }
 }
