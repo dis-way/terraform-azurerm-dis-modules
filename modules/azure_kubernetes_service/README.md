@@ -164,9 +164,9 @@ module "aks" {
 | <a name="output_aks_name"></a> [aks\_name](#output\_aks\_name) | The name of the managed Kubernetes Cluster |
 | <a name="output_aks_node_resource_group"></a> [aks\_node\_resource\_group](#output\_aks\_node\_resource\_group) | The name of the Resource Group in which the managed Kubernetes Cluster exists |
 | <a name="output_aks_oidc_issuer_url"></a> [aks\_oidc\_issuer\_url](#output\_aks\_oidc\_issuer\_url) | The OIDC issuer URL that is associated with the cluster |
-| <a name="output_aks_workpool_vnet_id"></a> [aks\_workpool\_vnet\_id](#output\_aks\_workpool\_vnet\_id) | ID of the vnets where the workpool nodes are located |
-| <a name="output_aks_workpool_vnet_name"></a> [aks\_workpool\_vnet\_name](#output\_aks\_workpool\_vnet\_name) | Name of the vnets where the workpool nodes are located |
-| <a name="output_aks_workpool_vnet_resource_group_name"></a> [aks\_workpool\_vnet\_resource\_group\_name](#output\_aks\_workpool\_vnet\_resource\_group\_name) | Name of the resource group where the aks vnet is deployed |
+| <a name="output_aks_vnet_id"></a> [aks\_vnet\_id](#output\_aks\_vnet\_id) | ID of the VNet where the AKS nodes are located |
+| <a name="output_aks_vnet_name"></a> [aks\_vnet\_name](#output\_aks\_vnet\_name) | Name of the VNet where the AKS nodes are located |
+| <a name="output_aks_vnet_resource_group_name"></a> [aks\_vnet\_resource\_group\_name](#output\_aks\_vnet\_resource\_group\_name) | Name of the resource group where the AKS VNet is deployed |
 | <a name="output_azurerm_kubernetes_cluster_id"></a> [azurerm\_kubernetes\_cluster\_id](#output\_azurerm\_kubernetes\_cluster\_id) | Resource id of aks cluster |
 | <a name="output_dis_resource_group_id"></a> [dis\_resource\_group\_id](#output\_dis\_resource\_group\_id) | ID of the resource group where the DIS operators creates their resources |
 | <a name="output_dis_resource_group_name"></a> [dis\_resource\_group\_name](#output\_dis\_resource\_group\_name) | Name of the resource group where the DIS operators creates their resources |
