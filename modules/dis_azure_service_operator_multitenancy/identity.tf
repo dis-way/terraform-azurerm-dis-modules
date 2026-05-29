@@ -47,7 +47,6 @@ resource "azurerm_role_definition" "user_assigned_identity_role_dis_rg" {
       "Microsoft.DBforPostgreSQL/flexibleServers/virtualendpoints/delete",
       "Microsoft.DBforPostgreSQL/flexibleServers/configurations/read",
       "Microsoft.DBforPostgreSQL/flexibleServers/configurations/write",
-      "Microsoft.DBforPostgreSQL/flexibleServers/configurations/delete",
       "Microsoft.Network/privateDnsZones/read",
       "Microsoft.Network/privateDnsZones/write",
       "Microsoft.Network/privateDnsZones/delete",
