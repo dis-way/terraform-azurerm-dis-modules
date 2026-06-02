@@ -8,7 +8,7 @@ resource "azapi_resource" "kube_state_metrics" {
         kube-state-metrics = {
           force                  = false
           path                   = "./multitenancy/"
-          prune                  = false
+          prune                  = true
           retryIntervalInSeconds = 300
           syncIntervalInSeconds  = 300
           timeoutInSeconds       = 300
