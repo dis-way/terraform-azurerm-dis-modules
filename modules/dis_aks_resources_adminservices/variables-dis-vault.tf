@@ -9,7 +9,7 @@ variable "dis_vault_location" {
   description = "Azure location for DIS Vault resources."
   default     = ""
   validation {
-    condition     = var.enable_dis_vault_operator == false || (var.enable_dis_vault_operator == true && length(var.dis_vault_location) > 0)
+    condition     = var.enable_dis_vault_operator == false || (var.enable_dis_vault_operator == true && length(trimspace(var.dis_vault_location)) > 0)
     error_message = "You must provide a value for dis_vault_location when enable_dis_vault_operator is true."
   }
 }
@@ -19,7 +19,7 @@ variable "dis_vault_environment" {
   description = "Environment name passed to DIS Vault."
   default     = ""
   validation {
-    condition     = var.enable_dis_vault_operator == false || (var.enable_dis_vault_operator == true && length(var.dis_vault_environment) > 0)
+    condition     = var.enable_dis_vault_operator == false || (var.enable_dis_vault_operator == true && length(trimspace(var.dis_vault_environment)) > 0)
     error_message = "You must provide a value for dis_vault_environment when enable_dis_vault_operator is true."
   }
 }
@@ -29,7 +29,7 @@ variable "dis_vault_aks_subnet_ids" {
   description = "Comma-separated AKS subnet IDs allowed to reach DIS Vault key vaults."
   default     = ""
   validation {
-    condition     = var.enable_dis_vault_operator == false || (var.enable_dis_vault_operator == true && length(var.dis_vault_aks_subnet_ids) > 0)
+    condition     = var.enable_dis_vault_operator == false || (var.enable_dis_vault_operator == true && length(trimspace(var.dis_vault_aks_subnet_ids)) > 0)
     error_message = "You must provide a value for dis_vault_aks_subnet_ids when enable_dis_vault_operator is true."
   }
 }
@@ -45,7 +45,7 @@ variable "dis_resource_group_name" {
   description = "Name of the DIS resource group where DIS Vault key vaults are created. Required when enable_dis_vault_operator is true."
   default     = ""
   validation {
-    condition     = var.enable_dis_vault_operator == false || (var.enable_dis_vault_operator == true && length(var.dis_resource_group_name) > 0)
+    condition     = var.enable_dis_vault_operator == false || (var.enable_dis_vault_operator == true && length(trimspace(var.dis_resource_group_name)) > 0)
     error_message = "You must provide a value for dis_resource_group_name when enable_dis_vault_operator is true."
   }
 }
@@ -55,7 +55,7 @@ variable "tenant_id" {
   description = "Azure tenant ID passed to DIS Vault. Required when enable_dis_vault_operator is true."
   default     = ""
   validation {
-    condition     = var.enable_dis_vault_operator == false || (var.enable_dis_vault_operator == true && length(var.tenant_id) > 0)
+    condition     = var.enable_dis_vault_operator == false || (var.enable_dis_vault_operator == true && length(trimspace(var.tenant_id)) > 0)
     error_message = "You must provide a value for tenant_id when enable_dis_vault_operator is true."
   }
 }
