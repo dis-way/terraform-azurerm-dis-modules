@@ -47,6 +47,7 @@ module "dis_aks_resources_adminservices" {
 | [azapi_resource.cert_manager_issuer](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.container_runtime_aks_config](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.dis_identity_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.dis_vault_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.eso](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.flux_syncroot](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.grafana_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
@@ -69,8 +70,14 @@ module "dis_aks_resources_adminservices" {
 | <a name="input_azurerm_kubernetes_cluster_oidc_issuer_url"></a> [azurerm\_kubernetes\_cluster\_oidc\_issuer\_url](#input\_azurerm\_kubernetes\_cluster\_oidc\_issuer\_url) | The OIDC issuer URL of the AKS cluster. | `string` | `""` | no |
 | <a name="input_developer_entra_id_group"></a> [developer\_entra\_id\_group](#input\_developer\_entra\_id\_group) | EntraID group that should have access to grafana and kubernetes cluster | `string` | n/a | yes |
 | <a name="input_dis_identity_target_tenant_id"></a> [dis\_identity\_target\_tenant\_id](#input\_dis\_identity\_target\_tenant\_id) | Tenant ID where dis-identity ApplicationIdentity will be created | `string` | `""` | no |
+| <a name="input_dis_resource_group_name"></a> [dis\_resource\_group\_name](#input\_dis\_resource\_group\_name) | Name of the DIS resource group where DIS Vault key vaults are created. Required when enable\_dis\_vault\_operator is true. | `string` | `""` | no |
+| <a name="input_dis_vault_aks_subnet_ids"></a> [dis\_vault\_aks\_subnet\_ids](#input\_dis\_vault\_aks\_subnet\_ids) | Comma-separated AKS subnet IDs allowed to reach DIS Vault key vaults. | `string` | `""` | no |
+| <a name="input_dis_vault_environment"></a> [dis\_vault\_environment](#input\_dis\_vault\_environment) | Environment name passed to DIS Vault. | `string` | `""` | no |
+| <a name="input_dis_vault_location"></a> [dis\_vault\_location](#input\_dis\_vault\_location) | Azure location for DIS Vault resources. | `string` | `""` | no |
+| <a name="input_dis_vault_vpn_exit_node_subnet_id"></a> [dis\_vault\_vpn\_exit\_node\_subnet\_id](#input\_dis\_vault\_vpn\_exit\_node\_subnet\_id) | Optional VPN exit node subnet ID passed to DIS Vault. | `string` | `""` | no |
 | <a name="input_enable_cert_manager_tls_issuer"></a> [enable\_cert\_manager\_tls\_issuer](#input\_enable\_cert\_manager\_tls\_issuer) | Enable cert-manager issuer for TLS certificates | `bool` | `true` | no |
 | <a name="input_enable_dis_identity_operator"></a> [enable\_dis\_identity\_operator](#input\_enable\_dis\_identity\_operator) | Enable the dis-identity-operator to manage User Assigned Managed Identities in the cluster. | `bool` | `false` | no |
+| <a name="input_enable_dis_vault_operator"></a> [enable\_dis\_vault\_operator](#input\_enable\_dis\_vault\_operator) | Enable the dis-vault operator in the cluster. | `bool` | `false` | no |
 | <a name="input_enable_grafana_operator"></a> [enable\_grafana\_operator](#input\_enable\_grafana\_operator) | Toggle deployment of grafana operator in cluster. If deployed grafana\_endpoint must be defined | `bool` | `true` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment | `string` | n/a | yes |
 | <a name="input_flux_release_tag"></a> [flux\_release\_tag](#input\_flux\_release\_tag) | OCI image that Flux should watch and reconcile | `string` | `"latest"` | no |
@@ -88,6 +95,7 @@ module "dis_aks_resources_adminservices" {
 | <a name="input_pip6_ip_address"></a> [pip6\_ip\_address](#input\_pip6\_ip\_address) | AKS ipv6 public ip | `string` | n/a | yes |
 | <a name="input_subscription_id"></a> [subscription\_id](#input\_subscription\_id) | Subscription id where aks cluster and other resources are deployed | `string` | n/a | yes |
 | <a name="input_syncroot_namespace"></a> [syncroot\_namespace](#input\_syncroot\_namespace) | The namespace to use for the syncroot. This is the containing 'folder' in altinncr repo and the namespace in the cluster. If empty, syncroot will not be deployed. | `string` | `""` | no |
+| <a name="input_tenant_id"></a> [tenant\_id](#input\_tenant\_id) | Azure tenant ID passed to DIS Vault. Required when enable\_dis\_vault\_operator is true. | `string` | `""` | no |
 | <a name="input_tls_cert_manager_workload_identity_client_id"></a> [tls\_cert\_manager\_workload\_identity\_client\_id](#input\_tls\_cert\_manager\_workload\_identity\_client\_id) | Client id for cert-manager workload identity | `string` | `""` | no |
 | <a name="input_tls_cert_manager_zone_name"></a> [tls\_cert\_manager\_zone\_name](#input\_tls\_cert\_manager\_zone\_name) | Azure DNS zone name for TLS certificates | `string` | `""` | no |
 | <a name="input_tls_cert_manager_zone_rg_name"></a> [tls\_cert\_manager\_zone\_rg\_name](#input\_tls\_cert\_manager\_zone\_rg\_name) | Azure DNS zone resource group name for TLS certificates | `string` | `""` | no |
