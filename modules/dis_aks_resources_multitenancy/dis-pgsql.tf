@@ -19,6 +19,7 @@ resource "azapi_resource" "dis_pgsql_operator" {
               DISPG_AKS_VNET_NAME               = "${var.aks_workpool_vnet_name}"
               DISPG_AKS_RESOURCE_GROUP          = "${var.aks_resource_group}"
               DISPG_WORKLOAD_IDENTITY_CLIENT_ID = "${var.dis_pgsql_uami_client_id}"
+              DISPG_CLUSTER_ID                  = "${var.cluster_id}"
             }
           }
           prune                  = false
