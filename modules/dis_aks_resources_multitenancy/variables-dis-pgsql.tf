@@ -63,3 +63,13 @@ variable "dis_pgsql_uami_client_id" {
     error_message = "You must provide a value for dis_pgsql_uami_client_id when enable_dis_pgsql_operator is true."
   }
 }
+
+variable "cluster_id" {
+  type        = string
+  description = "Deterministic, human-readable identifier of the cluster. dis-pgsql appends it to new Azure PostgreSQL Flexible Server names (\"<db>-<cluster_id>\") to keep them globally unique across clusters, so it must be unique and stable per cluster."
+  default     = ""
+  validation {
+    condition     = var.enable_dis_pgsql_operator == false || (var.enable_dis_pgsql_operator == true && length(var.cluster_id) > 0)
+    error_message = "You must provide a value for cluster_id when enable_dis_pgsql_operator is true."
+  }
+}
