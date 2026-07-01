@@ -85,7 +85,7 @@ resource "azurerm_role_assignment" "aso_key_vault_data_access_admin_role_assignm
 }
 
 locals {
-  aso_delegatable_role_ids_csv = join(", ", var.aso_delegatable_role_definition_ids)
+  aso_delegatable_role_ids_csv = join(", ", [for id in var.aso_delegatable_role_definition_ids : trimspace(id)])
 }
 
 # ABAC-constrained delegation: ASO may assign/remove only the allowlisted roles.
