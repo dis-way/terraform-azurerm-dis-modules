@@ -96,3 +96,17 @@ variable "aks_vnet_ipv6_cidr" {
   type        = string
   description = "AKS VNet IPv6 CIDR"
 }
+
+variable "aso_delegatable_role_definition_ids" {
+  description = "Built-in Azure role definition GUIDs the ASO identity may assign/remove via a constrained Role Based Access Control Administrator grant. Used by dis-pgsql to grant debug-level Reader on Flexible Servers without the identity gaining general role-assignment power. Set to [] to disable the delegation."
+  type        = list(string)
+  default     = ["acdd72a7-3385-48ef-bd42-f606fba81ae7"] # Reader
+
+  validation {
+    condition = alltrue([
+      for id in var.aso_delegatable_role_definition_ids :
+      can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", trimspace(id)))
+    ])
+    error_message = "Each aso_delegatable_role_definition_ids entry must be a role definition GUID (e.g. acdd72a7-3385-48ef-bd42-f606fba81ae7)."
+  }
+}
