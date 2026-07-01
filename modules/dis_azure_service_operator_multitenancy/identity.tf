@@ -84,6 +84,24 @@ resource "azurerm_role_assignment" "aso_key_vault_data_access_admin_role_assignm
   principal_id         = azurerm_user_assigned_identity.aso_identity.principal_id
 }
 
+locals {
+  aso_delegatable_role_ids_csv = join(", ", var.aso_delegatable_role_definition_ids)
+}
+
+# ABAC-constrained delegation: ASO may assign/remove only the allowlisted roles.
+resource "azurerm_role_assignment" "aso_constrained_role_delegation" {
+  count                = length(var.aso_delegatable_role_definition_ids) > 0 ? 1 : 0
+  scope                = var.dis_resource_group_id
+  role_definition_name = "Role Based Access Control Administrator"
+  principal_id         = azurerm_user_assigned_identity.aso_identity.principal_id
+  condition_version    = "2.0"
+  condition = format(
+    "((!(ActionMatches{'Microsoft.Authorization/roleAssignments/write'})) OR (@Request[Microsoft.Authorization/roleAssignments:RoleDefinitionId] ForAnyOfAnyValues:GuidEquals {%s})) AND ((!(ActionMatches{'Microsoft.Authorization/roleAssignments/delete'})) OR (@Resource[Microsoft.Authorization/roleAssignments:RoleDefinitionId] ForAnyOfAnyValues:GuidEquals {%s}))",
+    local.aso_delegatable_role_ids_csv,
+    local.aso_delegatable_role_ids_csv,
+  )
+}
+
 resource "azurerm_role_definition" "user_assigned_identity_role_dis_aks_vnet" {
   name        = "dis-aso-vnet-join-${var.prefix}-${var.environment}"
   scope       = var.azurerm_kubernetes_workpool_vnet_id
