@@ -51,6 +51,7 @@ module "dis_azure_service_operator" {
 | [azurerm_federated_identity_credential.aso_fic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
 | [azurerm_resource_group.aso_rg](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_role_assignment.aso_aks_vnet_role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+| [azurerm_role_assignment.aso_constrained_role_delegation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.aso_contrib_role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.aso_key_vault_data_access_admin_role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_definition.user_assigned_identity_role_dis_aks_vnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) | resource |
@@ -62,6 +63,7 @@ module "dis_azure_service_operator" {
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aso_crd_pattern"></a> [aso\_crd\_pattern](#input\_aso\_crd\_pattern) | The pattern for the Azure Service Operator Custom Resource Definitions (CRDs). | `string` | `"managedidentity.azure.com/*;authorization.azure.com/*;dbforpostgresql.azure.com/*;network.azure.com/*;insights.azure.com/*;keyvault.azure.com/*"` | no |
+| <a name="input_aso_delegatable_role_definition_ids"></a> [aso\_delegatable\_role\_definition\_ids](#input\_aso\_delegatable\_role\_definition\_ids) | Built-in Azure role definition GUIDs the ASO identity may assign/remove via a constrained Role Based Access Control Administrator grant. Used by dis-pgsql to grant debug-level Reader on Flexible Servers without the identity gaining general role-assignment power. Set to [] to disable the delegation. | `list(string)` | <pre>[<br/>  "acdd72a7-3385-48ef-bd42-f606fba81ae7"<br/>]</pre> | no |
 | <a name="input_aso_namespace"></a> [aso\_namespace](#input\_aso\_namespace) | The namespace where the Azure Service Operator will be deployed. | `string` | `"azureserviceoperator-system"` | no |
 | <a name="input_aso_service_account_name"></a> [aso\_service\_account\_name](#input\_aso\_service\_account\_name) | The name of the service account for the Azure Service Operator. | `string` | `"azureserviceoperator-system"` | no |
 | <a name="input_azurerm_kubernetes_cluster_id"></a> [azurerm\_kubernetes\_cluster\_id](#input\_azurerm\_kubernetes\_cluster\_id) | The ID of the AKS cluster where the Azure Service Operator will be deployed. | `string` | n/a | yes |
