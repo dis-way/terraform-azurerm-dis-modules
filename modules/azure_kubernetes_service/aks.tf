@@ -9,6 +9,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   lifecycle {
     ignore_changes = [
       windows_profile,
+      microsoft_defender,
     ]
   }
   depends_on                = [azurerm_role_assignment.network_contributor]
