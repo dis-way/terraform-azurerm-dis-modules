@@ -19,6 +19,7 @@ resource "azapi_resource" "dis_vault_operator" {
               DISVAULT_ENV                     = "${var.dis_vault_environment}"
               DISVAULT_AKS_SUBNET_IDS          = "${var.dis_vault_aks_subnet_ids}"
               DISVAULT_VPN_EXIT_NODE_SUBNET_ID = "${var.dis_vault_vpn_exit_node_subnet_id}"
+              DISVAULT_BASE_TAGS               = jsonencode(var.base_tags)
             }
           }
           prune                  = false
