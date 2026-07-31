@@ -15,6 +15,7 @@ resource "azapi_resource" "dis_identity_operator" {
               DISID_ISSUER_URL            = "${var.azurerm_kubernetes_cluster_oidc_issuer_url}"
               DISID_TARGET_RESOURCE_GROUP = "${var.azurerm_dis_identity_resource_group_id}"
               DISID_TARGET_TENANT_ID      = "${var.dis_identity_target_tenant_id}"
+              DISID_BASE_TAGS             = jsonencode(var.base_tags)
             }
           }
           prune                  = false

@@ -59,3 +59,9 @@ variable "lb_source_range_apim_ipv6" {
   description = "Additional IPv6 source range added to the load balancer alongside the hardcoded ranges in the Flux manifests. Defaults to loopback (::1/128) meaning no additional source is granted. Override with the actual APIM IPv6 CIDR to allow APIM traffic."
   default     = "::1/128"
 }
+
+variable "base_tags" {
+  type        = map(string)
+  description = "Platform base tags (the RFC 0007 finops tag set) passed to the DIS operators, which apply them to every Azure resource they create. Empty disables operator platform tagging."
+  default     = {}
+}

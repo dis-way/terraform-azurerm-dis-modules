@@ -20,6 +20,7 @@ resource "azapi_resource" "dis_pgsql_operator" {
               DISPG_AKS_RESOURCE_GROUP          = "${var.aks_resource_group}"
               DISPG_WORKLOAD_IDENTITY_CLIENT_ID = "${var.dis_pgsql_uami_client_id}"
               DISPG_CLUSTER_ID                  = "${var.cluster_id}"
+              DISPG_BASE_TAGS                   = jsonencode(var.base_tags)
             }
           }
           prune                  = false
