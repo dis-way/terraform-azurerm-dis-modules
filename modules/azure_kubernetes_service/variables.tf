@@ -49,6 +49,12 @@ variable "aks_local_account_disabled" {
   description = "Disable local account for the AKS cluster. When true, only Azure AD authentication is allowed."
 }
 
+variable "enable_flux" {
+  type        = bool
+  default     = true
+  description = "Enable flux gitops extension in azure kubernetes service. (Via azure extension)"
+}
+
 variable "enable_multi_tenancy" {
   type        = bool
   default     = false
