@@ -29,6 +29,12 @@ resource "azurerm_kubernetes_cluster" "aks" {
     keda_enabled = var.enable_keda
   }
 
+  # Required from azurerm v5. "Manual" keeps the node pools declared here in charge
+  # of provisioning (the pre-v5 default); "Auto" would hand them to Node Auto Provisioning.
+  node_provisioning_profile {
+    mode = "Manual"
+  }
+
   default_node_pool {
     name                         = "syspool"
     os_sku                       = "AzureLinux"
