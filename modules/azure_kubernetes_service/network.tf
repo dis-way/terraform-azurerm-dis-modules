@@ -4,6 +4,14 @@ resource "azurerm_virtual_network" "aks" {
   resource_group_name = azurerm_resource_group.aks.name
   address_space       = var.vnet_address_space
   tags                = var.tags
+
+  dynamic "ddos_protection_plan" {
+    for_each = var.ddos_protection_plan_id == "" ? [] : [var.ddos_protection_plan_id]
+    content {
+      id     = ddos_protection_plan.value
+      enable = true
+    }
+  }
 }
 
 resource "azurerm_subnet" "system_pool" {

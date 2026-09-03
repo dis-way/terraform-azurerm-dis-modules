@@ -26,5 +26,16 @@ resource "azurerm_kubernetes_cluster_node_pool" "pools" {
     undrainable_node_behavior = "Schedule"
   }
 
+  dynamic "linux_os_config" {
+    for_each = var.node_sysctl_config == null ? [] : [var.node_sysctl_config]
+    content {
+      sysctl_config {
+        net_core_somaxconn           = linux_os_config.value.net_core_somaxconn
+        net_ipv4_tcp_max_syn_backlog = linux_os_config.value.net_ipv4_tcp_max_syn_backlog
+        net_core_netdev_max_backlog  = linux_os_config.value.net_core_netdev_max_backlog
+      }
+    }
+  }
+
   tags = var.tags
 }
