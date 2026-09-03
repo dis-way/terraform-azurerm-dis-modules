@@ -1,3 +1,8 @@
+moved {
+  from = azurerm_kubernetes_cluster_extension.flux
+  to   = azurerm_kubernetes_cluster_extension.flux[0]
+}
+
 resource "azurerm_kubernetes_cluster_extension" "flux" {
   count          = var.enable_flux ? 1 : 0
   name           = "flux"
