@@ -15,7 +15,13 @@ resource "azurerm_subnet" "main" {
   resource_group_name  = var.resource_group
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = [var.ipv4_cidr_subnet, var.ipv6_cidr_subnet]
-  service_endpoints    = var.service_endpoints
+
+  dynamic "service_endpoint" {
+    for_each = toset(var.service_endpoints)
+    content {
+      service = service_endpoint.value
+    }
+  }
 }
 
 resource "azurerm_public_ip" "ipv4" {
