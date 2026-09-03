@@ -95,8 +95,9 @@ variable "system_pool_config" {
     min_count            = optional(number)
     max_count            = optional(number)
     ephemeral_os_disk    = optional(bool, false)
+    zones                = optional(list(string), ["1", "2", "3"])
   })
-  description = "Configuration for the system node pool. Set ephemeral_os_disk=true for VMs with sufficient cache/NVMe storage. When auto_scaling_enabled=true, node_count is optional (initial count), and min_count/max_count are required. When auto_scaling_enabled=false, node_count is required."
+  description = "Configuration for the system node pool. Set ephemeral_os_disk=true for VMs with sufficient cache/NVMe storage. When auto_scaling_enabled=true, node_count is optional (initial count), and min_count/max_count are required. When auto_scaling_enabled=false, node_count is required. zones defaults to all three Norway East availability zones; changing it on an existing cluster cycles the system node pool."
   validation {
     condition     = var.system_pool_config.auto_scaling_enabled || var.system_pool_config.node_count != null
     error_message = "node_count is required when auto_scaling_enabled is false."
@@ -193,6 +194,58 @@ variable "node_pool_subnet_prefixes" {
   type        = map(list(string))
   default     = {}
   description = "Map of node pool names to their subnet address prefixes. Keys must match node_pool_configs keys."
+}
+
+variable "load_balancer_outbound_ports_allocated" {
+  type        = number
+  default     = 0
+  description = "Number of SNAT ports allocated per node on the cluster outbound load balancer. 0 lets Azure size the allocation from the backend pool, which reshuffles ports as the cluster crosses node-count boundaries. AKS applies this to the IPv4 and IPv6 outbound rules alike, so a fixed value must satisfy ports_per_node * max_nodes <= 64000 * outbound_ip_count for each family independently, counting surge nodes. The default matches the provider default, so existing clusters are unaffected."
+  validation {
+    condition     = var.load_balancer_outbound_ports_allocated >= 0 && var.load_balancer_outbound_ports_allocated <= 64000 && floor(var.load_balancer_outbound_ports_allocated) == var.load_balancer_outbound_ports_allocated
+    error_message = "load_balancer_outbound_ports_allocated must be a whole number between 0 and 64000."
+  }
+  validation {
+    condition     = var.load_balancer_outbound_ports_allocated % 8 == 0
+    error_message = "load_balancer_outbound_ports_allocated must be a multiple of 8."
+  }
+}
+
+variable "load_balancer_idle_timeout_in_minutes" {
+  type        = number
+  default     = 30
+  description = "Outbound flow idle timeout in minutes for the cluster load balancer. The default matches the provider default, so existing clusters are unaffected."
+  validation {
+    condition     = var.load_balancer_idle_timeout_in_minutes >= 4 && var.load_balancer_idle_timeout_in_minutes <= 100 && floor(var.load_balancer_idle_timeout_in_minutes) == var.load_balancer_idle_timeout_in_minutes
+    error_message = "load_balancer_idle_timeout_in_minutes must be a whole number between 4 and 100."
+  }
+}
+
+variable "node_sysctl_config" {
+  type = object({
+    net_core_somaxconn           = optional(number)
+    net_ipv4_tcp_max_syn_backlog = optional(number)
+    net_core_netdev_max_backlog  = optional(number)
+  })
+  default     = null
+  description = "Connection backlog sysctls applied to the system pool and all node pools via linux_os_config. Null (the default) emits no block, leaving nodes on the AzureLinux defaults. All three govern IPv4 and IPv6 TCP alike - net.ipv4.tcp_max_syn_backlog is shared across both families despite its name, and AKS exposes no net.ipv6.* sysctls. Setting this on an existing cluster cycles every node pool without cordon and drain."
+  validation {
+    condition     = var.node_sysctl_config == null || try(var.node_sysctl_config.net_core_somaxconn, null) == null || (var.node_sysctl_config.net_core_somaxconn >= 4096 && var.node_sysctl_config.net_core_somaxconn <= 3240000)
+    error_message = "net_core_somaxconn must be between 4096 and 3240000."
+  }
+  validation {
+    condition     = var.node_sysctl_config == null || try(var.node_sysctl_config.net_ipv4_tcp_max_syn_backlog, null) == null || (var.node_sysctl_config.net_ipv4_tcp_max_syn_backlog >= 128 && var.node_sysctl_config.net_ipv4_tcp_max_syn_backlog <= 3240000)
+    error_message = "net_ipv4_tcp_max_syn_backlog must be between 128 and 3240000."
+  }
+  validation {
+    condition     = var.node_sysctl_config == null || try(var.node_sysctl_config.net_core_netdev_max_backlog, null) == null || (var.node_sysctl_config.net_core_netdev_max_backlog >= 1000 && var.node_sysctl_config.net_core_netdev_max_backlog <= 3240000)
+    error_message = "net_core_netdev_max_backlog must be between 1000 and 3240000."
+  }
+}
+
+variable "ddos_protection_plan_id" {
+  type        = string
+  default     = ""
+  description = "Resource ID of an existing Azure DDoS Network Protection plan to associate with the AKS VNet. Covers every public IP in the VNet, IPv4 and IPv6 alike. Empty (the default) emits no ddos_protection_plan block, so existing VNets are unaffected. Enable at VNet creation so adaptive tuning can learn the traffic baseline before production traffic arrives."
 }
 
 variable "subnet_service_endpoints" {

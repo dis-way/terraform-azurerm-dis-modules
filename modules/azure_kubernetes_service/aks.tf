@@ -29,6 +29,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
     keda_enabled = var.enable_keda
   }
 
+  node_provisioning_profile {
+    mode = "Manual"
+  }
+
   default_node_pool {
     name                         = "syspool"
     os_sku                       = "AzureLinux"
@@ -41,7 +45,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     vm_size                      = var.system_pool_config.vm_size
     min_count                    = var.system_pool_config.auto_scaling_enabled ? var.system_pool_config.min_count : null
     max_count                    = var.system_pool_config.auto_scaling_enabled ? var.system_pool_config.max_count : null
-    zones                        = ["1", "2", "3"]
+    zones                        = var.system_pool_config.zones
     orchestrator_version         = var.kubernetes_version
     os_disk_type                 = var.system_pool_config.ephemeral_os_disk ? "Ephemeral" : "Managed"
     os_disk_size_gb              = var.system_pool_config.ephemeral_os_disk ? (can(regex("Standard_[DE]2[a-z]*s_v[0-9]+", var.system_pool_config.vm_size)) ? 110 : null) : 128
@@ -49,6 +53,17 @@ resource "azurerm_kubernetes_cluster" "aks" {
     upgrade_settings {
       max_surge                 = "10%"
       undrainable_node_behavior = "Schedule"
+    }
+
+    dynamic "linux_os_config" {
+      for_each = var.node_sysctl_config == null ? [] : [var.node_sysctl_config]
+      content {
+        sysctl_config {
+          net_core_somaxconn           = linux_os_config.value.net_core_somaxconn
+          net_ipv4_tcp_max_syn_backlog = linux_os_config.value.net_ipv4_tcp_max_syn_backlog
+          net_core_netdev_max_backlog  = linux_os_config.value.net_core_netdev_max_backlog
+        }
+      }
     }
   }
 
@@ -68,6 +83,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
         azurerm_public_ip_prefix.prefix4.id,
         azurerm_public_ip_prefix.prefix6.id
       ]
+      outbound_ports_allocated = var.load_balancer_outbound_ports_allocated
+      idle_timeout_in_minutes  = var.load_balancer_idle_timeout_in_minutes
     }
   }
 

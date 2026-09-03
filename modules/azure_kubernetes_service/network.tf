@@ -4,6 +4,14 @@ resource "azurerm_virtual_network" "aks" {
   resource_group_name = azurerm_resource_group.aks.name
   address_space       = var.vnet_address_space
   tags                = var.tags
+
+  dynamic "ddos_protection_plan" {
+    for_each = var.ddos_protection_plan_id == "" ? [] : [var.ddos_protection_plan_id]
+    content {
+      id     = ddos_protection_plan.value
+      enable = true
+    }
+  }
 }
 
 resource "azurerm_subnet" "system_pool" {
@@ -11,7 +19,13 @@ resource "azurerm_subnet" "system_pool" {
   resource_group_name  = azurerm_resource_group.aks.name
   virtual_network_name = azurerm_virtual_network.aks.name
   address_prefixes     = var.system_pool_subnet_prefixes
-  service_endpoints    = var.subnet_service_endpoints
+
+  dynamic "service_endpoint" {
+    for_each = toset(var.subnet_service_endpoints)
+    content {
+      service = service_endpoint.value
+    }
+  }
 }
 
 resource "azurerm_subnet" "node_pools" {
@@ -20,7 +34,13 @@ resource "azurerm_subnet" "node_pools" {
   resource_group_name  = azurerm_resource_group.aks.name
   virtual_network_name = azurerm_virtual_network.aks.name
   address_prefixes     = each.value
-  service_endpoints    = var.subnet_service_endpoints
+
+  dynamic "service_endpoint" {
+    for_each = toset(var.subnet_service_endpoints)
+    content {
+      service = service_endpoint.value
+    }
+  }
 }
 
 resource "azurerm_subnet" "private_endpoints" {
