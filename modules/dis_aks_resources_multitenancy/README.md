@@ -63,6 +63,7 @@ module "dis_aks_resources_multitenancy" {
 | [azapi_resource.otel_collector](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.otel_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.traefik](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.valkey_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azurerm_federated_identity_credential.opencost_metrics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
 | [azurerm_role_assignment.opencost_metrics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_definition.opencost_rate_card_query_role](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) | resource |
@@ -96,6 +97,7 @@ module "dis_aks_resources_multitenancy" {
 | <a name="input_enable_dis_vault_operator"></a> [enable\_dis\_vault\_operator](#input\_enable\_dis\_vault\_operator) | Enable the dis-vault operator in the cluster. | `bool` | `false` | no |
 | <a name="input_enable_lets_encrypt_tls_issuer"></a> [enable\_lets\_encrypt\_tls\_issuer](#input\_enable\_lets\_encrypt\_tls\_issuer) | Enable Let's Encrypt cert-manager issuer for TLS certificates | `bool` | `true` | no |
 | <a name="input_enable_opencost"></a> [enable\_opencost](#input\_enable\_opencost) | Enable opencost | `bool` | `false` | no |
+| <a name="input_enable_valkey_operator"></a> [enable\_valkey\_operator](#input\_enable\_valkey\_operator) | Enable the Valkey operator in the cluster. | `bool` | `false` | no |
 | <a name="input_flux_release_tag"></a> [flux\_release\_tag](#input\_flux\_release\_tag) | OCI image that Flux should watch and reconcile | `string` | n/a | yes |
 | <a name="input_lb_source_range_apim"></a> [lb\_source\_range\_apim](#input\_lb\_source\_range\_apim) | Additional IPv4 source range added to the load balancer alongside the hardcoded ranges in the Flux manifests. Defaults to loopback (127.0.0.1/32) meaning no additional source is granted. Override with the actual APIM IPv4 CIDR to allow APIM traffic. | `string` | `"127.0.0.1/32"` | no |
 | <a name="input_lb_source_range_apim_ipv6"></a> [lb\_source\_range\_apim\_ipv6](#input\_lb\_source\_range\_apim\_ipv6) | Additional IPv6 source range added to the load balancer alongside the hardcoded ranges in the Flux manifests. Defaults to loopback (::1/128) meaning no additional source is granted. Override with the actual APIM IPv6 CIDR to allow APIM traffic. | `string` | `"::1/128"` | no |
