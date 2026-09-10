@@ -1,6 +1,6 @@
 # dis_aks_resources_adminservices
 
-Deploys admin/platform services onto an AKS cluster: cert-manager, External Secrets Operator, Flux syncroot, Grafana operator, Lakmus, Linkerd, OpenTelemetry, and Traefik.
+Deploys admin/platform services onto an AKS cluster: cert-manager, External Secrets Operator, Flux syncroot, Gateway API CRDs, Grafana operator, Lakmus, Linkerd, OpenTelemetry, and Traefik.
 
 ## Usage
 
