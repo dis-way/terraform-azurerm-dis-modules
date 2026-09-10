@@ -1,6 +1,6 @@
 # dis_aks_resources_multitenancy
 
-Deploys multitenancy platform services onto an AKS cluster: cert-manager, Kyverno, External Secrets Operator, Linkerd, OpenTelemetry, DIS identity operator, and optionally OpenCost, the DIS PostgreSQL operator, and the DIS Vault operator.
+Deploys multitenancy platform services onto an AKS cluster: cert-manager, Kyverno, External Secrets Operator, Gateway API CRDs, Linkerd, OpenTelemetry, DIS identity operator, and optionally OpenCost, the DIS PostgreSQL operator, and the DIS Vault operator.
 
 ## Usage
 
@@ -53,6 +53,7 @@ module "dis_aks_resources_multitenancy" {
 | [azapi_resource.dis_pgsql_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.dis_vault_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.external_secrets_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.gateway_api](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.kro](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.kube_state_metrics](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.kyverno](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |

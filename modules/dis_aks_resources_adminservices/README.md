@@ -1,6 +1,6 @@
 # dis_aks_resources_adminservices
 
-Deploys admin/platform services onto an AKS cluster: cert-manager, External Secrets Operator, Flux syncroot, Grafana operator, Lakmus, Linkerd, OpenTelemetry, and Traefik.
+Deploys admin/platform services onto an AKS cluster: cert-manager, External Secrets Operator, Flux syncroot, Gateway API CRDs, Grafana operator, Lakmus, Linkerd, OpenTelemetry, and Traefik.
 
 ## Usage
 
@@ -51,6 +51,7 @@ module "dis_aks_resources_adminservices" {
 | [azapi_resource.dis_vault_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.eso](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.flux_syncroot](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.gateway_api](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.grafana_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.kube_state_metrics](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.lakmus](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |

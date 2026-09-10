@@ -1,5 +1,5 @@
 resource "azapi_resource" "traefik" {
-  depends_on = [azapi_resource.linkerd]
+  depends_on = [azapi_resource.linkerd, azapi_resource.gateway_api]
   type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
   name       = "traefik"
   parent_id  = var.azurerm_kubernetes_cluster_id

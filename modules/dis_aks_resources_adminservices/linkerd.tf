@@ -1,5 +1,5 @@
 resource "azapi_resource" "linkerd" {
-  depends_on = [azapi_resource.cert_manager]
+  depends_on = [azapi_resource.cert_manager, azapi_resource.gateway_api]
   type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
   name       = "linkerd"
   parent_id  = var.azurerm_kubernetes_cluster_id
