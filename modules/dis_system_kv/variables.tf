@@ -76,7 +76,7 @@ variable "ci_service_principal_object_id" {
 }
 
 variable "secrets" {
-  description = "Secrets to create in the dis-system Key Vault, keyed by Key Vault secret name. The whole map is sensitive, so no value appears in plan output."
+  description = "Secrets to create in the dis-system Key Vault, keyed by Key Vault secret name. Values are sent via the write-only API so they are not persisted in Terraform state."
   type        = map(string)
   sensitive   = true
   default     = {}
@@ -88,4 +88,10 @@ variable "secrets" {
     ])
     error_message = "Key Vault secret names may contain only letters, digits and dashes, and must be 1-127 characters long."
   }
+}
+
+variable "secret_versions" {
+  description = "Non-sensitive version marker for each secret value. Increment the number when a secret value changes so Terraform updates the Key Vault secret without persisting the secret value in state."
+  type        = map(number)
+  default     = {}
 }
