@@ -49,6 +49,7 @@ module "dis_aks_resources_multitenancy" {
 | Name | Type |
 | ---- | ---- |
 | [azapi_resource.cert_manager](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.dis_cache_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.dis_identity_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.dis_pgsql_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.dis_vault_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
@@ -94,6 +95,7 @@ module "dis_aks_resources_multitenancy" {
 | <a name="input_dis_vault_environment"></a> [dis\_vault\_environment](#input\_dis\_vault\_environment) | Environment name passed to DIS Vault. | `string` | `""` | no |
 | <a name="input_dis_vault_location"></a> [dis\_vault\_location](#input\_dis\_vault\_location) | Azure location for DIS Vault resources. | `string` | `""` | no |
 | <a name="input_dis_vault_vpn_exit_node_subnet_id"></a> [dis\_vault\_vpn\_exit\_node\_subnet\_id](#input\_dis\_vault\_vpn\_exit\_node\_subnet\_id) | Optional VPN exit node subnet ID passed to DIS Vault. | `string` | `""` | no |
+| <a name="input_enable_dis_cache_operator"></a> [enable\_dis\_cache\_operator](#input\_enable\_dis\_cache\_operator) | Enable the dis-cache operator in the cluster. Needs enable\_valkey\_operator, because every cache runs on the Valkey operator. | `bool` | `false` | no |
 | <a name="input_enable_dis_pgsql_operator"></a> [enable\_dis\_pgsql\_operator](#input\_enable\_dis\_pgsql\_operator) | Enable the dis-pgsql operator in the cluster. | `bool` | `false` | no |
 | <a name="input_enable_dis_vault_operator"></a> [enable\_dis\_vault\_operator](#input\_enable\_dis\_vault\_operator) | Enable the dis-vault operator in the cluster. | `bool` | `false` | no |
 | <a name="input_enable_lets_encrypt_tls_issuer"></a> [enable\_lets\_encrypt\_tls\_issuer](#input\_enable\_lets\_encrypt\_tls\_issuer) | Enable Let's Encrypt cert-manager issuer for TLS certificates | `bool` | `true` | no |
