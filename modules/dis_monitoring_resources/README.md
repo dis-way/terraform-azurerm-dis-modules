@@ -28,7 +28,7 @@ module "dis_monitoring_resources" {
 ## Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 5.0.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.7.2 |
@@ -36,14 +36,14 @@ module "dis_monitoring_resources" {
 ## Providers
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 5.0.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.7.2 |
 
 ## Resources
 
 | Name | Type |
-| ---- | ---- |
+|------|------|
 | [azurerm_federated_identity_credential.lakmus](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
 | [azurerm_federated_identity_credential.otel_collector](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
 | [azurerm_key_vault.obs_kv](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault) | resource |
@@ -69,7 +69,7 @@ module "dis_monitoring_resources" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-| ---- | ----------- | ---- | ------- | :------: |
+|------|-------------|------|---------|:--------:|
 | <a name="input_app_insights_connection_string"></a> [app\_insights\_connection\_string](#input\_app\_insights\_connection\_string) | Connection string of an Application Insights where logs and traces are sendt. | `string` | n/a | yes |
 | <a name="input_azurerm_kubernetes_cluster_id"></a> [azurerm\_kubernetes\_cluster\_id](#input\_azurerm\_kubernetes\_cluster\_id) | AKS cluster resource id | `string` | n/a | yes |
 | <a name="input_azurerm_resource_group_obs_name"></a> [azurerm\_resource\_group\_obs\_name](#input\_azurerm\_resource\_group\_obs\_name) | Name of the observability resource group where all the resources will be placed. | `string` | n/a | yes |
@@ -92,7 +92,7 @@ module "dis_monitoring_resources" {
 ## Outputs
 
 | Name | Description |
-| ---- | ----------- |
+|------|-------------|
 | <a name="output_key_vault_uri"></a> [key\_vault\_uri](#output\_key\_vault\_uri) | n/a |
 | <a name="output_kubernetes_recording_rules_id"></a> [kubernetes\_recording\_rules\_id](#output\_kubernetes\_recording\_rules\_id) | ID of the Kubernetes Recording Rules rule group |
 | <a name="output_lakmus_client_id"></a> [lakmus\_client\_id](#output\_lakmus\_client\_id) | The client ID of the user assigned identity used by lakmus. |

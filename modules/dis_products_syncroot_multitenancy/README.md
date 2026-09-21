@@ -2,6 +2,12 @@
 
 Deploys a Flux OCI repository configuration for GitOps-based product syncroot deployment in a multi-tenant AKS cluster.
 
+The `product` name determines the Kubernetes namespace, Flux configuration, and RBAC scopes.
+By default, the OCI URL is `oci://altinncr.azurecr.io/<product>/syncroot`. Set the optional
+`syncroot_name` when the registry prefix differs: `product = "access-management"` and
+`syncroot_name = "accessmanagement"` use namespace `product-access-management` with
+`oci://altinncr.azurecr.io/accessmanagement/syncroot`. Environment tags and paths are unchanged.
+
 ## Usage
 
 ### Minimal usage example
@@ -28,6 +34,7 @@ module "dis_products_syncroot_multitenancy" {
   admin_group_id  = var.admin_group_id
   reader_group_id = var.reader_group_id
   prune_enabled   = true
+  syncroot_name   = var.syncroot_name
 
   # Flux postBuild variable substitution
   substitute = {
@@ -39,7 +46,7 @@ module "dis_products_syncroot_multitenancy" {
 ## Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 2.3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 5.0.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.6.1 |
@@ -47,7 +54,7 @@ module "dis_products_syncroot_multitenancy" {
 ## Providers
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="provider_azapi"></a> [azapi](#provider\_azapi) | >= 2.3.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 5.0.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.6.1 |
@@ -55,7 +62,7 @@ module "dis_products_syncroot_multitenancy" {
 ## Resources
 
 | Name | Type |
-| ---- | ---- |
+|------|------|
 | [azapi_resource.syncroot](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azurerm_role_assignment.cluster_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.get_credentials_admin_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
@@ -67,7 +74,7 @@ module "dis_products_syncroot_multitenancy" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-| ---- | ----------- | ---- | ------- | :------: |
+|------|-------------|------|---------|:--------:|
 | <a name="input_admin_group_id"></a> [admin\_group\_id](#input\_admin\_group\_id) | Object id of the EntraID group that should have admin on the product namespace and reader in the cluster | `string` | n/a | yes |
 | <a name="input_aks_cluster_id"></a> [aks\_cluster\_id](#input\_aks\_cluster\_id) | The ID of the AKS cluster where the Flux configuration will be applied | `string` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | Name of the environment | `string` | n/a | yes |
@@ -75,3 +82,4 @@ module "dis_products_syncroot_multitenancy" {
 | <a name="input_prune_enabled"></a> [prune\_enabled](#input\_prune\_enabled) | Control if the syncroot enables prune of resources | `bool` | `false` | no |
 | <a name="input_reader_group_id"></a> [reader\_group\_id](#input\_reader\_group\_id) | Object id of the EntraID group that should have reader permissions in the product namespace | `string` | n/a | yes |
 | <a name="input_substitute"></a> [substitute](#input\_substitute) | Key-value pairs for Flux postBuild variable substitution. Values are stored as plain text in the Flux configuration payload — do not use this for secrets. All values are treated as sensitive in Terraform output only. | `map(string)` | `{}` | no |
+| <a name="input_syncroot_name"></a> [syncroot\_name](#input\_syncroot\_name) | Registry prefix for the syncroot artifact. Defaults to the product name when unset. Does not change the product namespace or RBAC scopes. | `string` | `null` | no |

@@ -39,7 +39,7 @@ resource "azapi_resource" "syncroot" {
         }
         syncIntervalInSeconds = 300
         timeoutInSeconds      = 300
-        url                   = "oci://altinncr.azurecr.io/${var.product}/syncroot"
+        url                   = "oci://altinncr.azurecr.io/${coalesce(var.syncroot_name, var.product)}/syncroot"
         useWorkloadIdentity   = true
       }
       scope                      = "namespace"

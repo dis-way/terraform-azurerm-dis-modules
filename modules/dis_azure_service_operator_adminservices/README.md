@@ -32,21 +32,21 @@ module "dis_azure_service_operator" {
 ## Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 2.3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 5.0.0 |
 
 ## Providers
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="provider_azapi"></a> [azapi](#provider\_azapi) | >= 2.3.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 5.0.0 |
 
 ## Resources
 
 | Name | Type |
-| ---- | ---- |
+|------|------|
 | [azapi_resource.aso](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azurerm_federated_identity_credential.aso_fic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
 | [azurerm_resource_group.aso_rg](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
@@ -61,7 +61,7 @@ module "dis_azure_service_operator" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-| ---- | ----------- | ---- | ------- | :------: |
+|------|-------------|------|---------|:--------:|
 | <a name="input_aso_crd_pattern"></a> [aso\_crd\_pattern](#input\_aso\_crd\_pattern) | The pattern for the Azure Service Operator Custom Resource Definitions (CRDs). | `string` | `"managedidentity.azure.com/*;authorization.azure.com/*;dbforpostgresql.azure.com/*;network.azure.com/*;insights.azure.com/*;keyvault.azure.com/*"` | no |
 | <a name="input_aso_delegatable_role_definition_ids"></a> [aso\_delegatable\_role\_definition\_ids](#input\_aso\_delegatable\_role\_definition\_ids) | Built-in Azure role definition GUIDs the ASO identity may assign/remove via a constrained Role Based Access Control Administrator grant. Used by dis-pgsql to grant debug-level Reader on Flexible Servers without the identity gaining general role-assignment power. Set to [] to disable the delegation. | `list(string)` | <pre>[<br/>  "acdd72a7-3385-48ef-bd42-f606fba81ae7"<br/>]</pre> | no |
 | <a name="input_aso_namespace"></a> [aso\_namespace](#input\_aso\_namespace) | The namespace where the Azure Service Operator will be deployed. | `string` | `"azureserviceoperator-system"` | no |
@@ -82,5 +82,5 @@ module "dis_azure_service_operator" {
 ## Outputs
 
 | Name | Description |
-| ---- | ----------- |
+|------|-------------|
 | <a name="output_azurerm_user_assigned_identity_principal_id"></a> [azurerm\_user\_assigned\_identity\_principal\_id](#output\_azurerm\_user\_assigned\_identity\_principal\_id) | The principal ID of the Azure Service Operator User Assigned Managed Identity. |

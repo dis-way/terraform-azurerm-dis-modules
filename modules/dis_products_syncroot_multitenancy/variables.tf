@@ -3,6 +3,12 @@ variable "product" {
   description = "Name of the product"
 }
 
+variable "syncroot_name" {
+  type        = string
+  default     = null
+  description = "Registry prefix for the syncroot artifact. Defaults to the product name when unset. Does not change the product namespace or RBAC scopes."
+}
+
 variable "environment" {
   type        = string
   description = "Name of the environment"
