@@ -25,7 +25,7 @@ module "dis_system_kv" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.11.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 5.0.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.5 |
@@ -33,14 +33,14 @@ module "dis_system_kv" {
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 5.0.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.5 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azurerm_federated_identity_credential.dis_sync_fic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
 | [azurerm_key_vault.dis_system_kv](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault) | resource |
 | [azurerm_key_vault_secret.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
@@ -52,7 +52,7 @@ module "dis_system_kv" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_azurerm_kubernetes_cluster_oidc_issuer_url"></a> [azurerm\_kubernetes\_cluster\_oidc\_issuer\_url](#input\_azurerm\_kubernetes\_cluster\_oidc\_issuer\_url) | The OIDC issuer URL of the AKS cluster. | `string` | n/a | yes |
 | <a name="input_ci_service_principal_object_id"></a> [ci\_service\_principal\_object\_id](#input\_ci\_service\_principal\_object\_id) | Object ID of the CI service principal used for role assignments. | `string` | n/a | yes |
 | <a name="input_dis_system_kv_namespace"></a> [dis\_system\_kv\_namespace](#input\_dis\_system\_kv\_namespace) | Name of the namespace where dis-system kv sync components are deployed | `string` | `"platform-system"` | no |
@@ -71,6 +71,6 @@ module "dis_system_kv" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_dis_system_kv_reader_client_id"></a> [dis\_system\_kv\_reader\_client\_id](#output\_dis\_system\_kv\_reader\_client\_id) | n/a |
 | <a name="output_dis_system_kv_uri"></a> [dis\_system\_kv\_uri](#output\_dis\_system\_kv\_uri) | n/a |

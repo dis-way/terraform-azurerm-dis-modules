@@ -46,7 +46,7 @@ module "dis_products_syncroot_multitenancy" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 2.3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 5.0.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.6.1 |
@@ -54,7 +54,7 @@ module "dis_products_syncroot_multitenancy" {
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_azapi"></a> [azapi](#provider\_azapi) | >= 2.3.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 5.0.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.6.1 |
@@ -62,7 +62,7 @@ module "dis_products_syncroot_multitenancy" {
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azapi_resource.syncroot](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azurerm_role_assignment.cluster_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.get_credentials_admin_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
@@ -74,7 +74,7 @@ module "dis_products_syncroot_multitenancy" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_admin_group_id"></a> [admin\_group\_id](#input\_admin\_group\_id) | Object id of the EntraID group that should have admin on the product namespace and reader in the cluster | `string` | n/a | yes |
 | <a name="input_aks_cluster_id"></a> [aks\_cluster\_id](#input\_aks\_cluster\_id) | The ID of the AKS cluster where the Flux configuration will be applied | `string` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | Name of the environment | `string` | n/a | yes |
