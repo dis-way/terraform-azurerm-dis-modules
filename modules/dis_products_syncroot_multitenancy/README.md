@@ -42,7 +42,6 @@ module "dis_products_syncroot_multitenancy" {
 | ---- | ------- |
 | <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 2.3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 5.0.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.6.1 |
 
 ## Providers
 
@@ -50,7 +49,6 @@ module "dis_products_syncroot_multitenancy" {
 | ---- | ------- |
 | <a name="provider_azapi"></a> [azapi](#provider\_azapi) | >= 2.3.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 5.0.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | >= 3.6.1 |
 
 ## Resources
 
@@ -62,7 +60,6 @@ module "dis_products_syncroot_multitenancy" {
 | [azurerm_role_assignment.get_credentials_reader_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.namespace_admin](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.namespace_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
-| [random_string.random_postfix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 
 ## Inputs
 
