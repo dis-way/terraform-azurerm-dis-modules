@@ -22,3 +22,27 @@ variable "pip6_ip_address" {
   type        = string
   description = "AKS ipv6 public ip"
 }
+
+variable "traefik_internal_enabled" {
+  type        = bool
+  description = "Create an internal (private) Load Balancer Service for the Traefik https-internal entrypoint"
+  default     = false
+}
+
+variable "traefik_internal_subnet_name" {
+  type        = string
+  description = "Subnet name for the internal Load Balancer frontend (must be in the AKS VNet)"
+  default     = ""
+}
+
+variable "traefik_internal_ipv4" {
+  type        = string
+  description = "Static private IPv4 address for the internal Load Balancer"
+  default     = ""
+}
+
+variable "traefik_internal_ipv6" {
+  type        = string
+  description = "Static private IPv6 address for the internal Load Balancer"
+  default     = ""
+}

@@ -16,6 +16,10 @@ resource "azapi_resource" "traefik" {
               AKS_NODE_RG : "${var.aks_node_resource_group}"
               PUBLIC_IP_V4 : "${var.pip4_ip_address}"
               PUBLIC_IP_V6 : "${var.pip6_ip_address}"
+              TRAEFIK_INTERNAL_ENABLED : tostring(var.traefik_internal_enabled)
+              TRAEFIK_INTERNAL_SUBNET : var.traefik_internal_subnet_name
+              TRAEFIK_INTERNAL_IP_V4 : var.traefik_internal_ipv4
+              TRAEFIK_INTERNAL_IP_V6 : var.traefik_internal_ipv6
             }
           }
           prune                  = false
