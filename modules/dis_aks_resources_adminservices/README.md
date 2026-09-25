@@ -103,3 +103,7 @@ module "dis_aks_resources_adminservices" {
 | <a name="input_tls_cert_manager_zone_name"></a> [tls\_cert\_manager\_zone\_name](#input\_tls\_cert\_manager\_zone\_name) | Azure DNS zone name for TLS certificates | `string` | `""` | no |
 | <a name="input_tls_cert_manager_zone_rg_name"></a> [tls\_cert\_manager\_zone\_rg\_name](#input\_tls\_cert\_manager\_zone\_rg\_name) | Azure DNS zone resource group name for TLS certificates | `string` | `""` | no |
 | <a name="input_token_grafana_operator"></a> [token\_grafana\_operator](#input\_token\_grafana\_operator) | Authentication token for Grafana operator to manage Grafana resources | `string` | `""` | no |
+| <a name="input_traefik_internal_enabled"></a> [traefik\_internal\_enabled](#input\_traefik\_internal\_enabled) | Create an internal (private) Load Balancer Service for the Traefik https-internal entrypoint | `bool` | `false` | no |
+| <a name="input_traefik_internal_ipv4"></a> [traefik\_internal\_ipv4](#input\_traefik\_internal\_ipv4) | Static private IPv4 address for the internal Load Balancer | `string` | `""` | no |
+| <a name="input_traefik_internal_ipv6"></a> [traefik\_internal\_ipv6](#input\_traefik\_internal\_ipv6) | Static private IPv6 address for the internal Load Balancer | `string` | `""` | no |
+| <a name="input_traefik_internal_subnet_name"></a> [traefik\_internal\_subnet\_name](#input\_traefik\_internal\_subnet\_name) | Subnet name for the internal Load Balancer frontend (must be in the AKS VNet) | `string` | `""` | no |
