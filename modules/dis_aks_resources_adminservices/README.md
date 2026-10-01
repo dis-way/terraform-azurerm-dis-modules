@@ -27,8 +27,8 @@ module "dis_aks_resources_adminservices" {
 
   lakmus_client_id = module.dis_monitoring_resources.lakmus_client_id
 
-  # Optional: deploys the dis-system-store SecretStore in flux-system. The dis_system_kv
-  # module must set dis_system_kv_namespace = "flux-system" to match.
+  # The dis_system_kv module must set dis_system_kv_namespace = "flux-system" so its
+  # federated credential matches the dis-system-store SecretStore's ServiceAccount.
   tenant_id               = var.tenant_id
   dis_system_kv_client_id = module.dis_system_kv.dis_system_kv_reader_client_id
   dis_system_kv_uri       = module.dis_system_kv.dis_system_kv_uri
@@ -80,8 +80,8 @@ module "dis_aks_resources_adminservices" {
 | <a name="input_developer_entra_id_group"></a> [developer\_entra\_id\_group](#input\_developer\_entra\_id\_group) | EntraID group that should have access to grafana and kubernetes cluster | `string` | n/a | yes |
 | <a name="input_dis_identity_target_tenant_id"></a> [dis\_identity\_target\_tenant\_id](#input\_dis\_identity\_target\_tenant\_id) | Tenant ID where dis-identity ApplicationIdentity will be created | `string` | `""` | no |
 | <a name="input_dis_resource_group_name"></a> [dis\_resource\_group\_name](#input\_dis\_resource\_group\_name) | Name of the DIS resource group where DIS Vault key vaults are created. Required when enable\_dis\_vault\_operator is true. | `string` | `""` | no |
-| <a name="input_dis_system_kv_client_id"></a> [dis\_system\_kv\_client\_id](#input\_dis\_system\_kv\_client\_id) | Client ID of the dis-system Key Vault reader identity (dis\_system\_kv\_reader\_client\_id output of the dis\_system\_kv module). When set together with dis\_system\_kv\_uri, the ESO post-deploy layer creating the dis-system-store SecretStore in flux-system is deployed. | `string` | `""` | no |
-| <a name="input_dis_system_kv_uri"></a> [dis\_system\_kv\_uri](#input\_dis\_system\_kv\_uri) | Vault URI of the dis-system Key Vault (dis\_system\_kv\_uri output of the dis\_system\_kv module). | `string` | `""` | no |
+| <a name="input_dis_system_kv_client_id"></a> [dis\_system\_kv\_client\_id](#input\_dis\_system\_kv\_client\_id) | Client ID of the dis-system Key Vault reader identity (dis\_system\_kv\_reader\_client\_id output of the dis\_system\_kv module). Used by the dis-system-store SecretStore in flux-system. | `string` | n/a | yes |
+| <a name="input_dis_system_kv_uri"></a> [dis\_system\_kv\_uri](#input\_dis\_system\_kv\_uri) | Vault URI of the dis-system Key Vault (dis\_system\_kv\_uri output of the dis\_system\_kv module). | `string` | n/a | yes |
 | <a name="input_dis_vault_aks_subnet_ids"></a> [dis\_vault\_aks\_subnet\_ids](#input\_dis\_vault\_aks\_subnet\_ids) | Comma-separated AKS subnet IDs allowed to reach DIS Vault key vaults. | `string` | `""` | no |
 | <a name="input_dis_vault_environment"></a> [dis\_vault\_environment](#input\_dis\_vault\_environment) | Environment name passed to DIS Vault. | `string` | `""` | no |
 | <a name="input_dis_vault_location"></a> [dis\_vault\_location](#input\_dis\_vault\_location) | Azure location for DIS Vault resources. | `string` | `""` | no |
@@ -106,7 +106,7 @@ module "dis_aks_resources_adminservices" {
 | <a name="input_pip6_ip_address"></a> [pip6\_ip\_address](#input\_pip6\_ip\_address) | AKS ipv6 public ip | `string` | n/a | yes |
 | <a name="input_subscription_id"></a> [subscription\_id](#input\_subscription\_id) | Subscription id where aks cluster and other resources are deployed | `string` | n/a | yes |
 | <a name="input_syncroot_namespace"></a> [syncroot\_namespace](#input\_syncroot\_namespace) | The namespace to use for the syncroot. This is the containing 'folder' in altinncr repo and the namespace in the cluster. If empty, syncroot will not be deployed. | `string` | `""` | no |
-| <a name="input_tenant_id"></a> [tenant\_id](#input\_tenant\_id) | Azure tenant ID passed to DIS Vault and the ESO dis-system workload identity. Required when enable\_dis\_vault\_operator is true or dis\_system\_kv\_uri is set. | `string` | `""` | no |
+| <a name="input_tenant_id"></a> [tenant\_id](#input\_tenant\_id) | Azure tenant ID passed to DIS Vault and the ESO dis-system workload identity. | `string` | n/a | yes |
 | <a name="input_tls_cert_manager_workload_identity_client_id"></a> [tls\_cert\_manager\_workload\_identity\_client\_id](#input\_tls\_cert\_manager\_workload\_identity\_client\_id) | Client id for cert-manager workload identity | `string` | `""` | no |
 | <a name="input_tls_cert_manager_zone_name"></a> [tls\_cert\_manager\_zone\_name](#input\_tls\_cert\_manager\_zone\_name) | Azure DNS zone name for TLS certificates | `string` | `""` | no |
 | <a name="input_tls_cert_manager_zone_rg_name"></a> [tls\_cert\_manager\_zone\_rg\_name](#input\_tls\_cert\_manager\_zone\_rg\_name) | Azure DNS zone resource group name for TLS certificates | `string` | `""` | no |

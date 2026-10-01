@@ -52,10 +52,9 @@ variable "dis_resource_group_name" {
 
 variable "tenant_id" {
   type        = string
-  description = "Azure tenant ID passed to DIS Vault and the ESO dis-system workload identity. Required when enable_dis_vault_operator is true or dis_system_kv_uri is set."
-  default     = ""
+  description = "Azure tenant ID passed to DIS Vault and the ESO dis-system workload identity."
   validation {
-    condition     = var.enable_dis_vault_operator == false || (var.enable_dis_vault_operator == true && length(trimspace(var.tenant_id)) > 0)
-    error_message = "You must provide a value for tenant_id when enable_dis_vault_operator is true."
+    condition     = length(trimspace(var.tenant_id)) > 0
+    error_message = "You must provide a value for tenant_id."
   }
 }
