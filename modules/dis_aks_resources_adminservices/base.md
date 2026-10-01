@@ -26,5 +26,11 @@ module "dis_aks_resources_adminservices" {
   obs_tenant_id          = var.tenant_id
 
   lakmus_client_id = module.dis_monitoring_resources.lakmus_client_id
+
+  # The dis_system_kv module must set dis_system_kv_namespace = "flux-system" so its
+  # federated credential matches the dis-system-store SecretStore's ServiceAccount.
+  tenant_id               = var.tenant_id
+  dis_system_kv_client_id = module.dis_system_kv.dis_system_kv_reader_client_id
+  dis_system_kv_uri       = module.dis_system_kv.dis_system_kv_uri
 }
 ```

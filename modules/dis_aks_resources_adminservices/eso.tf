@@ -14,6 +14,23 @@ resource "azapi_resource" "eso" {
           timeoutInSeconds       = 300
           wait                   = true
         }
+        external-secrets-operator-post-deploy = {
+          dependsOn = ["external-secrets-operator"]
+          force     = false
+          path      = "./adminservices/post-deploy/"
+          postBuild = {
+            substitute = {
+              DIS_SYSTEM_KV_ESO_CLIENT_ID = "${var.dis_system_kv_client_id}"
+              DIS_SYSTEM_KV_URL           = "${var.dis_system_kv_uri}"
+              TENANT_ID                   = "${var.tenant_id}"
+            }
+          }
+          prune                  = false
+          retryIntervalInSeconds = 300
+          syncIntervalInSeconds  = 300
+          timeoutInSeconds       = 300
+          wait                   = false
+        }
       }
       ociRepository = {
         insecure = false
