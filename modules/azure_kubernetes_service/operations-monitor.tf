@@ -37,3 +37,20 @@ resource "azurerm_storage_account" "aks_log" {
 
   tags = var.tags
 }
+
+resource "azurerm_storage_management_policy" "aks_log" {
+  storage_account_id = azurerm_storage_account.aks_log.id
+
+  rule {
+    name    = "audit-logs-retention"
+    enabled = true
+    filters {
+      blob_types = ["appendBlob"]
+    }
+    actions {
+      base_blob {
+        delete_after_days_since_modification_greater_than = 90
+      }
+    }
+  }
+}
