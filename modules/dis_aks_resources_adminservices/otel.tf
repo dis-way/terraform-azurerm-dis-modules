@@ -1,7 +1,8 @@
 resource "azapi_resource" "otel_operator" {
-  type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
-  name      = "otel-operator"
-  parent_id = var.azurerm_kubernetes_cluster_id
+  depends_on = [azapi_resource.cert_manager]
+  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
+  name       = "otel-operator"
+  parent_id  = var.azurerm_kubernetes_cluster_id
   body = {
     properties = {
       kustomizations = {
@@ -34,9 +35,10 @@ resource "azapi_resource" "otel_operator" {
 }
 
 resource "azapi_resource" "otel_collector" {
-  type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
-  name      = "otel-collector"
-  parent_id = var.azurerm_kubernetes_cluster_id
+  depends_on = [azapi_resource.otel_operator]
+  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
+  name       = "otel-collector"
+  parent_id  = var.azurerm_kubernetes_cluster_id
   body = {
     properties = {
       kustomizations = {
