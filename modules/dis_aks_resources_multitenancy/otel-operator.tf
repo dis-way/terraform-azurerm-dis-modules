@@ -1,13 +1,20 @@
 resource "azapi_resource" "otel_operator" {
-  type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
-  name      = "otel-operator"
-  parent_id = var.azurerm_kubernetes_cluster_id
+  depends_on = [azapi_resource.cert_manager]
+  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
+  name       = "otel-operator"
+  parent_id  = var.azurerm_kubernetes_cluster_id
   body = {
     properties = {
       kustomizations = {
         otel-operator = {
-          force                  = false
-          path                   = "./multitenancy"
+          force = false
+          path  = "./multitenancy"
+          postBuild = {
+            substitute = {
+              AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
+              AKS_VNET_IPV6_CIDR : "${var.aks_vnet_ipv6_cidr}"
+            }
+          }
           prune                  = false
           retryIntervalInSeconds = 300
           syncIntervalInSeconds  = 300
