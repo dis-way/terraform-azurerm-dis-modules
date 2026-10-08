@@ -55,6 +55,12 @@ variable "enable_flux" {
   description = "Enable flux gitops extension in azure kubernetes service. (Via azure extension)"
 }
 
+variable "flux_ring" {
+  type        = string
+  default     = null
+  description = "Value of the flux-ring tag on the AKS cluster. The tag is omitted when null."
+}
+
 variable "enable_multi_tenancy" {
   type        = bool
   default     = false
