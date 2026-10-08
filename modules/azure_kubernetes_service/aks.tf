@@ -130,7 +130,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     utc_offset  = "+00:00"
   }
 
-  tags = var.tags
+  tags = merge(var.tags, var.flux_ring == null ? {} : { "flux-ring" = var.flux_ring })
 }
 
 resource "azurerm_monitor_diagnostic_setting" "aks" {
