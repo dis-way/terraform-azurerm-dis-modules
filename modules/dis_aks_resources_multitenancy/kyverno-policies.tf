@@ -9,9 +9,9 @@ resource "azapi_resource" "kyverno_policies" {
         kyverno-policies = {
           force                  = false
           path                   = "./multitenancy/"
-          prune                  = false
+          prune                  = true
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 300
           wait                   = true
         }
