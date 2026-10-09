@@ -10,7 +10,7 @@ resource "azapi_resource" "gateway_api" {
           path                   = "./base/"
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 300
           wait                   = true
         }
