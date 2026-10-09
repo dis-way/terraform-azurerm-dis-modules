@@ -1,6 +1,6 @@
 resource "azapi_resource" "kyverno_policies" {
   depends_on = [azapi_resource.kyverno]
-  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
+  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2025-04-01"
   name       = "kyverno-policies"
   parent_id  = var.azurerm_kubernetes_cluster_id
   body = {
