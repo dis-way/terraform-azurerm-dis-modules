@@ -8,7 +8,9 @@ resource "azapi_resource" "traefik" {
       kustomizations = {
         traefik = {
           force = false
-          path  = "./multitenancy/"
+          # ./multitenancy-flux-webhook/ is ./multitenancy/ plus the flux-webhook entrypoint,
+          # listener and LoadBalancer Service on port 9443 (RFC 0017).
+          path = var.enable_flux_webhook_receiver ? "./multitenancy-flux-webhook/" : "./multitenancy/"
           postBuild = {
             substitute = {
               AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
