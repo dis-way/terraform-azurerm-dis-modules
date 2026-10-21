@@ -10,7 +10,7 @@ resource "azapi_resource" "kube_state_metrics" {
           path                   = "./"
           prune                  = true
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 300
           wait                   = false
         }

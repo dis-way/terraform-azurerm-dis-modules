@@ -11,7 +11,7 @@ resource "azapi_resource" "otel_operator" {
           path                   = "./base/"
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 300
           wait                   = true
         }
@@ -55,7 +55,7 @@ resource "azapi_resource" "otel_collector" {
           }
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 300
           wait                   = true
         }

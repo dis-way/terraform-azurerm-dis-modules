@@ -10,7 +10,7 @@ resource "azapi_resource" "container_runtime_aks_config" {
           path                   = "./ama/"
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 300
           wait                   = true
         },
@@ -19,7 +19,7 @@ resource "azapi_resource" "container_runtime_aks_config" {
           path                   = "./metrics-server/"
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 300
           wait                   = true
         }
@@ -33,7 +33,7 @@ resource "azapi_resource" "container_runtime_aks_config" {
           }
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 300
           wait                   = true
         }

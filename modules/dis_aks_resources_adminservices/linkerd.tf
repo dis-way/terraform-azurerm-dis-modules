@@ -17,7 +17,7 @@ resource "azapi_resource" "linkerd" {
           }
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 600
           wait                   = true
         },

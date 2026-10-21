@@ -11,7 +11,7 @@ resource "azapi_resource" "flux_syncroot" {
           path                   = "./${var.environment}"
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 600
           wait                   = true
         }
