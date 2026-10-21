@@ -5,7 +5,7 @@ locals {
 }
 
 resource "azapi_resource" "container_runtime_aks_config" {
-  type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
+  type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2025-04-01"
   name      = "container-runtime-aks-config"
   parent_id = var.azurerm_kubernetes_cluster_id
   body = {
@@ -16,7 +16,7 @@ resource "azapi_resource" "container_runtime_aks_config" {
           path                   = "./ama/"
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 300
           wait                   = true
         },
@@ -25,7 +25,7 @@ resource "azapi_resource" "container_runtime_aks_config" {
           path                   = "./metrics-server/"
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 300
           wait                   = true
         }
@@ -37,7 +37,7 @@ resource "azapi_resource" "container_runtime_aks_config" {
           }
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 300
           wait                   = true
         }

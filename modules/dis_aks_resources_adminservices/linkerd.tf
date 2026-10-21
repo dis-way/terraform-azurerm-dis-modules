@@ -7,7 +7,7 @@ locals {
 
 resource "azapi_resource" "linkerd" {
   depends_on = [azapi_resource.cert_manager, azapi_resource.gateway_api]
-  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
+  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2025-04-01"
   name       = "linkerd"
   parent_id  = var.azurerm_kubernetes_cluster_id
   body = {
@@ -21,7 +21,7 @@ resource "azapi_resource" "linkerd" {
           }
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 600
           wait                   = true
         },

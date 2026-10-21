@@ -6,7 +6,7 @@ locals {
 }
 
 resource "azapi_resource" "lakmus" {
-  type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
+  type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2025-04-01"
   name      = "lakmus"
   parent_id = var.azurerm_kubernetes_cluster_id
   body = {
@@ -20,7 +20,7 @@ resource "azapi_resource" "lakmus" {
           }
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 300
           wait                   = true
         }

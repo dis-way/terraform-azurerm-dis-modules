@@ -14,7 +14,7 @@ locals {
 resource "azapi_resource" "dis_vault_operator" {
   depends_on = [azapi_resource.cert_manager]
   count      = var.enable_dis_vault_operator ? 1 : 0
-  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
+  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2025-04-01"
   name       = "dis-vault"
   parent_id  = var.azurerm_kubernetes_cluster_id
   body = {
@@ -28,7 +28,7 @@ resource "azapi_resource" "dis_vault_operator" {
           }
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 300
           wait                   = true
         }

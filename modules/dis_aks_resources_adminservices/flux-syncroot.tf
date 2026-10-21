@@ -1,6 +1,6 @@
 resource "azapi_resource" "flux_syncroot" {
   count     = var.syncroot_namespace == "" ? 0 : 1
-  type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
+  type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2025-04-01"
   name      = "syncroot-${var.syncroot_namespace}-${var.environment}"
   parent_id = var.azurerm_kubernetes_cluster_id
   body = {
@@ -11,7 +11,7 @@ resource "azapi_resource" "flux_syncroot" {
           path                   = "./${var.environment}"
           prune                  = false
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 600
           wait                   = true
         }
