@@ -1,3 +1,17 @@
+locals {
+  traefik_substitute = {
+    AKS_VNET_IPV4_CIDR       = var.aks_vnet_ipv4_cidr
+    AKS_VNET_IPV6_CIDR       = var.aks_vnet_ipv6_cidr
+    AKS_NODE_RG              = var.aks_node_resource_group
+    PUBLIC_IP_V4             = var.pip4_ip_address
+    PUBLIC_IP_V6             = var.pip6_ip_address
+    TRAEFIK_INTERNAL_ENABLED = tostring(var.traefik_internal_enabled)
+    TRAEFIK_INTERNAL_SUBNET  = var.traefik_internal_subnet_name
+    TRAEFIK_INTERNAL_IP_V4   = var.traefik_internal_ipv4
+    TRAEFIK_INTERNAL_IP_V6   = var.traefik_internal_ipv6
+  }
+}
+
 resource "azapi_resource" "traefik" {
   depends_on = [azapi_resource.linkerd, azapi_resource.gateway_api]
   type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
@@ -10,17 +24,7 @@ resource "azapi_resource" "traefik" {
           force = false
           path  = "./adminservices/"
           postBuild = {
-            substitute = {
-              AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
-              AKS_VNET_IPV6_CIDR : "${var.aks_vnet_ipv6_cidr}"
-              AKS_NODE_RG : "${var.aks_node_resource_group}"
-              PUBLIC_IP_V4 : "${var.pip4_ip_address}"
-              PUBLIC_IP_V6 : "${var.pip6_ip_address}"
-              TRAEFIK_INTERNAL_ENABLED : tostring(var.traefik_internal_enabled)
-              TRAEFIK_INTERNAL_SUBNET : var.traefik_internal_subnet_name
-              TRAEFIK_INTERNAL_IP_V4 : var.traefik_internal_ipv4
-              TRAEFIK_INTERNAL_IP_V6 : var.traefik_internal_ipv6
-            }
+            substitute = local.traefik_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300

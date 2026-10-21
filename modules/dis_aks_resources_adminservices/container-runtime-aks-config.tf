@@ -1,3 +1,9 @@
+locals {
+  container_runtime_aks_config_teams_rbac_substitute = {
+    AKS_READ_EVERYTHING_AND_RESTART_GROUP_ID = var.developer_entra_id_group
+  }
+}
+
 resource "azapi_resource" "container_runtime_aks_config" {
   type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
   name      = "container-runtime-aks-config"
@@ -27,9 +33,7 @@ resource "azapi_resource" "container_runtime_aks_config" {
           force = false
           path  = "./rbac/"
           postBuild = {
-            substitute = {
-              AKS_READ_EVERYTHING_AND_RESTART_GROUP_ID = "${var.developer_entra_id_group}"
-            }
+            substitute = local.container_runtime_aks_config_teams_rbac_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300

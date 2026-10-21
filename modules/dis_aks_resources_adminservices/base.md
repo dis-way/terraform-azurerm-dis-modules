@@ -31,6 +31,7 @@ module "dis_aks_resources_adminservices" {
   # federated credential matches the dis-system-store SecretStore's ServiceAccount.
   tenant_id               = var.tenant_id
   dis_system_kv_client_id = module.dis_system_kv.dis_system_kv_reader_client_id
+  dis_system_kv_id        = module.dis_system_kv.dis_system_kv_id
   dis_system_kv_uri       = module.dis_system_kv.dis_system_kv_uri
 }
 ```

@@ -1,3 +1,10 @@
+locals {
+  lakmus_substitute = {
+    AZURE_SUBSCRIPTION_ID              = var.subscription_id
+    LAKMUS_WORKLOAD_IDENTITY_CLIENT_ID = var.lakmus_client_id
+  }
+}
+
 resource "azapi_resource" "lakmus" {
   type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
   name      = "lakmus"
@@ -9,10 +16,7 @@ resource "azapi_resource" "lakmus" {
           force = false
           path  = "./"
           postBuild = {
-            substitute = {
-              AZURE_SUBSCRIPTION_ID              = "${var.subscription_id}"
-              LAKMUS_WORKLOAD_IDENTITY_CLIENT_ID = "${var.lakmus_client_id}"
-            }
+            substitute = local.lakmus_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300

@@ -1,3 +1,19 @@
+locals {
+  grafana_operator_substitute = {
+    GRAFANA_ADMIN_APIKEY = var.token_grafana_operator
+  }
+  grafana_operator_post_deploy_substitute = {
+    EXTERNAL_GRAFANA_URL = var.grafana_endpoint
+  }
+  grafana_redirect_substitute = {
+    EXTERNAL_GRAFANA_URL = var.grafana_endpoint
+    K8S_DNS_NAME         = var.grafana_redirect_dns
+  }
+  grafana_manifests_substitute = {
+    RELEASE_BRANCH = var.grafana_dashboard_release_branch
+  }
+}
+
 resource "azapi_resource" "grafana_operator" {
   count      = var.enable_grafana_operator ? 1 : 0
   depends_on = [azapi_resource.linkerd]
@@ -11,9 +27,7 @@ resource "azapi_resource" "grafana_operator" {
           force = false
           path  = "./"
           postBuild = {
-            substitute = {
-              GRAFANA_ADMIN_APIKEY : "${var.token_grafana_operator}"
-            }
+            substitute = local.grafana_operator_substitute
           }
           prune                  = true
           retryIntervalInSeconds = 300
@@ -28,9 +42,7 @@ resource "azapi_resource" "grafana_operator" {
           force = false
           path  = "./post-deploy/"
           postBuild = {
-            substitute = {
-              EXTERNAL_GRAFANA_URL : "${var.grafana_endpoint}"
-            }
+            substitute = local.grafana_operator_post_deploy_substitute
           }
           prune                  = true
           retryIntervalInSeconds = 300
@@ -42,10 +54,7 @@ resource "azapi_resource" "grafana_operator" {
           force = false
           path  = "./grafana-redirect/"
           postBuild = {
-            substitute = {
-              EXTERNAL_GRAFANA_URL = "${var.grafana_endpoint}"
-              K8S_DNS_NAME         = "${var.grafana_redirect_dns}"
-            }
+            substitute = local.grafana_redirect_substitute
           }
           prune                  = true
           retryIntervalInSeconds = 300
@@ -60,9 +69,7 @@ resource "azapi_resource" "grafana_operator" {
           force = false
           path  = "./grafana-manifests/base/"
           postBuild = {
-            substitute = {
-              RELEASE_BRANCH = "${var.grafana_dashboard_release_branch}"
-            }
+            substitute = local.grafana_manifests_substitute
           }
           prune                  = true
           retryIntervalInSeconds = 300

@@ -31,6 +31,7 @@ module "dis_aks_resources_adminservices" {
   # federated credential matches the dis-system-store SecretStore's ServiceAccount.
   tenant_id               = var.tenant_id
   dis_system_kv_client_id = module.dis_system_kv.dis_system_kv_reader_client_id
+  dis_system_kv_id        = module.dis_system_kv.dis_system_kv_id
   dis_system_kv_uri       = module.dis_system_kv.dis_system_kv_uri
 }
 ```## Requirements
@@ -45,6 +46,7 @@ module "dis_aks_resources_adminservices" {
 | Name | Version |
 | ---- | ------- |
 | <a name="provider_azapi"></a> [azapi](#provider\_azapi) | >= 2.3.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 5.0.0 |
 
 ## Resources
 
@@ -65,6 +67,7 @@ module "dis_aks_resources_adminservices" {
 | [azapi_resource.otel_collector](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.otel_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.traefik](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azurerm_key_vault_secret.flux_substitute](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
 
 ## Inputs
 
@@ -81,6 +84,7 @@ module "dis_aks_resources_adminservices" {
 | <a name="input_dis_identity_target_tenant_id"></a> [dis\_identity\_target\_tenant\_id](#input\_dis\_identity\_target\_tenant\_id) | Tenant ID where dis-identity ApplicationIdentity will be created | `string` | `""` | no |
 | <a name="input_dis_resource_group_name"></a> [dis\_resource\_group\_name](#input\_dis\_resource\_group\_name) | Name of the DIS resource group where DIS Vault key vaults are created. Required when enable\_dis\_vault\_operator is true. | `string` | `""` | no |
 | <a name="input_dis_system_kv_client_id"></a> [dis\_system\_kv\_client\_id](#input\_dis\_system\_kv\_client\_id) | Client ID of the dis-system Key Vault reader identity (dis\_system\_kv\_reader\_client\_id output of the dis\_system\_kv module). Used by the dis-system-store SecretStore in flux-system. | `string` | n/a | yes |
+| <a name="input_dis_system_kv_id"></a> [dis\_system\_kv\_id](#input\_dis\_system\_kv\_id) | Resource ID of the dis-system Key Vault (dis\_system\_kv\_id output of the dis\_system\_kv module). Every postBuild.substitute variable of the flux configurations is written to it as a secret, see flux-substitute-secrets.tf. | `string` | n/a | yes |
 | <a name="input_dis_system_kv_uri"></a> [dis\_system\_kv\_uri](#input\_dis\_system\_kv\_uri) | Vault URI of the dis-system Key Vault (dis\_system\_kv\_uri output of the dis\_system\_kv module). | `string` | n/a | yes |
 | <a name="input_dis_vault_aks_subnet_ids"></a> [dis\_vault\_aks\_subnet\_ids](#input\_dis\_vault\_aks\_subnet\_ids) | Comma-separated AKS subnet IDs allowed to reach DIS Vault key vaults. | `string` | `""` | no |
 | <a name="input_dis_vault_environment"></a> [dis\_vault\_environment](#input\_dis\_vault\_environment) | Environment name passed to DIS Vault. | `string` | `""` | no |

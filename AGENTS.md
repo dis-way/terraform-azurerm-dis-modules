@@ -15,3 +15,12 @@ These instructions apply to this repository.
 
 ## Validation
 - For edited Terraform files, run `terraform fmt` on changed files.
+
+## Flux configurations
+- When adding or changing a flux configuration (`azapi_resource` of type
+  `Microsoft.KubernetesConfiguration/fluxConfigurations`), set each kustomization's
+  `syncIntervalInSeconds = 3600`. Keep `ociRepository.syncIntervalInSeconds = 300`
+  and `retryIntervalInSeconds = 300`: a new artifact triggers a reconcile through
+  the source, so the kustomization interval only controls drift correction.
+- Leave intervals that are deliberately different as they are, e.g. the one-year
+  linkerd `post-deploy` interval.
