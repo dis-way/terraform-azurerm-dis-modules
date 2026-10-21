@@ -1,5 +1,5 @@
 resource "azapi_resource" "container_runtime_aks_config" {
-  type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
+  type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2025-04-01"
   name      = "container-runtime-aks-config"
   parent_id = var.azurerm_kubernetes_cluster_id
   body = {

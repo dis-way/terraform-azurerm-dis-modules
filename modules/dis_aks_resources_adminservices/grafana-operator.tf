@@ -1,7 +1,7 @@
 resource "azapi_resource" "grafana_operator" {
   count      = var.enable_grafana_operator ? 1 : 0
   depends_on = [azapi_resource.linkerd]
-  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
+  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2025-04-01"
   name       = "grafana-operator"
   parent_id  = var.azurerm_kubernetes_cluster_id
   body = {
