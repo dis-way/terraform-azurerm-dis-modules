@@ -34,6 +34,15 @@ resource "azapi_resource" "otel_operator" {
   }
 }
 
+locals {
+  otel_collector_substitute = {
+    KV_URI             = var.obs_kv_uri
+    CLIENT_ID          = var.obs_client_id
+    TENANT_ID          = var.obs_tenant_id
+    AMW_WRITE_ENDPOINT = var.obs_amw_write_endpoint
+  }
+}
+
 resource "azapi_resource" "otel_collector" {
   depends_on = [azapi_resource.otel_operator]
   type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
@@ -46,12 +55,7 @@ resource "azapi_resource" "otel_collector" {
           force = false
           path  = "./adminservices/"
           postBuild = {
-            substitute = {
-              KV_URI : "${var.obs_kv_uri}"
-              CLIENT_ID : "${var.obs_client_id}"
-              TENANT_ID : "${var.obs_tenant_id}"
-              AMW_WRITE_ENDPOINT : "${var.obs_amw_write_endpoint}"
-            }
+            substitute = local.otel_collector_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300

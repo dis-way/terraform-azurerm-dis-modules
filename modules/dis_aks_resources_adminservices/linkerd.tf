@@ -1,3 +1,10 @@
+locals {
+  linkerd_substitute = {
+    DISABLE_IPV6           = var.linkerd_disable_ipv6
+    DEFAULT_INBOUND_POLICY = var.linkerd_default_inbound_policy
+  }
+}
+
 resource "azapi_resource" "linkerd" {
   depends_on = [azapi_resource.cert_manager, azapi_resource.gateway_api]
   type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
@@ -10,10 +17,7 @@ resource "azapi_resource" "linkerd" {
           force = false
           path  = "./base/"
           postBuild = {
-            substitute = {
-              DISABLE_IPV6 : "${var.linkerd_disable_ipv6}"
-              DEFAULT_INBOUND_POLICY : "${var.linkerd_default_inbound_policy}"
-            }
+            substitute = local.linkerd_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300

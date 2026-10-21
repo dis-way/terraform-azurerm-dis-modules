@@ -72,5 +72,6 @@ module "dis_system_kv" {
 
 | Name | Description |
 | ---- | ----------- |
+| <a name="output_dis_system_kv_id"></a> [dis\_system\_kv\_id](#output\_dis\_system\_kv\_id) | n/a |
 | <a name="output_dis_system_kv_reader_client_id"></a> [dis\_system\_kv\_reader\_client\_id](#output\_dis\_system\_kv\_reader\_client\_id) | n/a |
 | <a name="output_dis_system_kv_uri"></a> [dis\_system\_kv\_uri](#output\_dis\_system\_kv\_uri) | n/a |

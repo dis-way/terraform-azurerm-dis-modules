@@ -1,3 +1,12 @@
+locals {
+  tls_issuer_substitute = {
+    AZURE_DNS_ZONE_NAME   = var.tls_cert_manager_zone_name
+    AZURE_RESOURCE_GROUP  = var.tls_cert_manager_zone_rg_name
+    AZURE_SUBSCRIPTION_ID = var.subscription_id
+    IDENTITY_CLIENT_ID    = var.tls_cert_manager_workload_identity_client_id
+  }
+}
+
 resource "azapi_resource" "cert_manager_issuer" {
   count      = var.enable_cert_manager_tls_issuer ? 1 : 0
   depends_on = [azapi_resource.cert_manager]
@@ -11,12 +20,7 @@ resource "azapi_resource" "cert_manager_issuer" {
           force = false
           path  = "./base/"
           postBuild = {
-            substitute = {
-              AZURE_DNS_ZONE_NAME   = "${var.tls_cert_manager_zone_name}"
-              AZURE_RESOURCE_GROUP  = "${var.tls_cert_manager_zone_rg_name}"
-              AZURE_SUBSCRIPTION_ID = "${var.subscription_id}"
-              IDENTITY_CLIENT_ID    = "${var.tls_cert_manager_workload_identity_client_id}"
-            }
+            substitute = local.tls_issuer_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300
