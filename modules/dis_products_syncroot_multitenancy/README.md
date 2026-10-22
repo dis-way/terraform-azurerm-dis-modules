@@ -2,6 +2,8 @@
 
 Deploys a Flux OCI repository configuration for GitOps-based product syncroot deployment in a multi-tenant AKS cluster.
 
+The admin group gets AKS RBAC Admin and the reader group AKS RBAC Reader on the `product-<product>` namespace. Cluster-scoped access (RBAC Reader for admin groups, Cluster User Role for both) is granted once per group by [dis_products_cluster_access_multitenancy](../dis_products_cluster_access_multitenancy), so several products can share groups. Pass it this module's `admin_group_id` and `reader_group_id` outputs.
+
 ## Usage
 
 ### Minimal usage example
@@ -36,6 +38,28 @@ module "dis_products_syncroot_multitenancy" {
   }
 }
 ```
+
+### Migrating from versions that created cluster-scoped assignments
+Earlier versions created `cluster_reader`, `get_credentials_admin_group` and `get_credentials_reader_group` in this module. Before upgrading, add `dis_products_cluster_access_multitenancy` and move the existing assignments into it from the caller's root module, or they are destroyed and recreated (and access is lost in between). Give each group exactly one `moved` block: from one product that uses it.
+
+```hcl
+moved {
+  from = module.product_core.azurerm_role_assignment.cluster_reader
+  to   = module.product_cluster_access.azurerm_role_assignment.cluster_reader["<admin-group-oid>"]
+}
+
+moved {
+  from = module.product_core.azurerm_role_assignment.get_credentials_admin_group
+  to   = module.product_cluster_access.azurerm_role_assignment.cluster_user["<admin-group-oid>"]
+}
+
+moved {
+  from = module.product_core.azurerm_role_assignment.get_credentials_reader_group
+  to   = module.product_cluster_access.azurerm_role_assignment.cluster_user["<reader-group-oid>"]
+}
+```
+
+Check that the plan shows the role assignments as moved and none as created or destroyed.
 ## Requirements
 
 | Name | Version |
@@ -55,9 +79,6 @@ module "dis_products_syncroot_multitenancy" {
 | Name | Type |
 | ---- | ---- |
 | [azapi_resource.syncroot](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
-| [azurerm_role_assignment.cluster_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
-| [azurerm_role_assignment.get_credentials_admin_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
-| [azurerm_role_assignment.get_credentials_reader_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.namespace_admin](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.namespace_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 
@@ -65,10 +86,17 @@ module "dis_products_syncroot_multitenancy" {
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
-| <a name="input_admin_group_id"></a> [admin\_group\_id](#input\_admin\_group\_id) | Object id of the EntraID group that should have admin on the product namespace and reader in the cluster | `string` | n/a | yes |
+| <a name="input_admin_group_id"></a> [admin\_group\_id](#input\_admin\_group\_id) | Object id of the EntraID group that should have admin on the product namespace | `string` | n/a | yes |
 | <a name="input_aks_cluster_id"></a> [aks\_cluster\_id](#input\_aks\_cluster\_id) | The ID of the AKS cluster where the Flux configuration will be applied | `string` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | Name of the environment | `string` | n/a | yes |
 | <a name="input_product"></a> [product](#input\_product) | Name of the product | `string` | n/a | yes |
 | <a name="input_prune_enabled"></a> [prune\_enabled](#input\_prune\_enabled) | Control if the syncroot enables prune of resources | `bool` | `false` | no |
 | <a name="input_reader_group_id"></a> [reader\_group\_id](#input\_reader\_group\_id) | Object id of the EntraID group that should have reader permissions in the product namespace | `string` | n/a | yes |
 | <a name="input_substitute"></a> [substitute](#input\_substitute) | Key-value pairs for Flux postBuild variable substitution. Values are stored as plain text in the Flux configuration payload — do not use this for secrets. All values are treated as sensitive in Terraform output only. | `map(string)` | `{}` | no |
+
+## Outputs
+
+| Name | Description |
+| ---- | ----------- |
+| <a name="output_admin_group_id"></a> [admin\_group\_id](#output\_admin\_group\_id) | Object id of the product's admin group, for dis\_products\_cluster\_access\_multitenancy |
+| <a name="output_reader_group_id"></a> [reader\_group\_id](#output\_reader\_group\_id) | Object id of the product's reader group, for dis\_products\_cluster\_access\_multitenancy |

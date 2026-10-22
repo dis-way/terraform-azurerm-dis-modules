@@ -25,7 +25,7 @@ variable "aks_cluster_id" {
 
 variable "admin_group_id" {
   type        = string
-  description = "Object id of the EntraID group that should have admin on the product namespace and reader in the cluster"
+  description = "Object id of the EntraID group that should have admin on the product namespace"
 }
 
 variable "reader_group_id" {

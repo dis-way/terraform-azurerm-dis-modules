@@ -2,6 +2,8 @@
 
 Deploys a Flux OCI repository configuration for GitOps-based product syncroot deployment in a multi-tenant AKS cluster.
 
+The admin group gets AKS RBAC Admin and the reader group AKS RBAC Reader on the `product-<product>` namespace. Cluster-scoped access (RBAC Reader for admin groups, Cluster User Role for both) is granted once per group by [dis_products_cluster_access_multitenancy](../dis_products_cluster_access_multitenancy), so several products can share groups. Pass it this module's `admin_group_id` and `reader_group_id` outputs.
+
 ## Usage
 
 ### Minimal usage example
@@ -36,3 +38,25 @@ module "dis_products_syncroot_multitenancy" {
   }
 }
 ```
+
+### Migrating from versions that created cluster-scoped assignments
+Earlier versions created `cluster_reader`, `get_credentials_admin_group` and `get_credentials_reader_group` in this module. Before upgrading, add `dis_products_cluster_access_multitenancy` and move the existing assignments into it from the caller's root module, or they are destroyed and recreated (and access is lost in between). Give each group exactly one `moved` block: from one product that uses it.
+
+```hcl
+moved {
+  from = module.product_core.azurerm_role_assignment.cluster_reader
+  to   = module.product_cluster_access.azurerm_role_assignment.cluster_reader["<admin-group-oid>"]
+}
+
+moved {
+  from = module.product_core.azurerm_role_assignment.get_credentials_admin_group
+  to   = module.product_cluster_access.azurerm_role_assignment.cluster_user["<admin-group-oid>"]
+}
+
+moved {
+  from = module.product_core.azurerm_role_assignment.get_credentials_reader_group
+  to   = module.product_cluster_access.azurerm_role_assignment.cluster_user["<reader-group-oid>"]
+}
+```
+
+Check that the plan shows the role assignments as moved and none as created or destroyed.
