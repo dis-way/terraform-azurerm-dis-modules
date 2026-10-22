@@ -1,10 +1,7 @@
-# Routes https://flux-webhook.<default_gateway_hostname>/hook/... from the flux-webhook listener
-# to the Flux notification-controller, so a publishing workflow can ask Flux, through the DIS
-# edge, to reconcile a Receiver right after it pushes an artifact (RFC 0017).
 resource "azapi_resource" "flux_webhook_receiver" {
   depends_on = [azapi_resource.traefik]
   count      = var.enable_flux_webhook_receiver ? 1 : 0
-  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2025-04-01"
+  type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
   name       = "flux-webhook-receiver"
   parent_id  = var.azurerm_kubernetes_cluster_id
   body = {

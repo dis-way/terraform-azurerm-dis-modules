@@ -1,10 +1,9 @@
 variable "enable_flux_webhook_receiver" {
   type        = bool
   default     = false
-  description = "Enable on-demand Flux reconcile requests from the DIS edge (RFC 0017). Selects the Traefik layer ./multitenancy-flux-webhook/, which adds a dedicated LoadBalancer Service on port 9443 of the shared public addresses that admits only lb_source_range_dis_edge and lb_source_range_dis_edge_ipv6, and deploys the flux-webhook-receiver package. Needs both edge ranges set to the dis-edge outbound ranges, and a release of both packages with these layers on the flux_release_tag ring."
+  description = "Enable on-demand Flux reconcile through the DIS edge by deploying the webhook receiver and dedicated Traefik listener."
 
-  # AKS writes a deny-all rule for the whole shared public address when a Service on it has a
-  # source range that is not valid, so the edge ranges are checked before deployment.
+  # Invalid edge CIDRs can make AKS deny traffic to the entire shared public IP.
   validation {
     condition = var.enable_flux_webhook_receiver == false || try(
       !strcontains(var.lb_source_range_dis_edge, ":") && cidrsubnet(var.lb_source_range_dis_edge, 0, 0) == var.lb_source_range_dis_edge,
