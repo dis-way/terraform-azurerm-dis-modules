@@ -31,7 +31,7 @@ resource "azapi_resource" "syncroot" {
       }
       scope                      = "namespace"
       reconciliationWaitDuration = "PT5M"
-      waitForReconciliation      = true
+      waitForReconciliation      = var.wait_for_reconciliation
       sourceKind                 = "OCIRepository"
     }
   }

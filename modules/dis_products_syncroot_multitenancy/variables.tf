@@ -18,6 +18,12 @@ variable "prune_enabled" {
   description = "Control if the syncroot enables prune of resources"
 }
 
+variable "wait_for_reconciliation" {
+  type        = bool
+  default     = false
+  description = "Make create and update wait (up to 5 minutes) until the syncroot and everything it applies are reconciled, and fail otherwise. Off by default so a product's broken artifact or manifests do not fail the environment's apply; Flux keeps retrying either way."
+}
+
 variable "aks_cluster_id" {
   type        = string
   description = "The ID of the AKS cluster where the Flux configuration will be applied"
