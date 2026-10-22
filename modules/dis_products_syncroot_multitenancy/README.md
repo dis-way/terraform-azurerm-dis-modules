@@ -29,6 +29,10 @@ module "dis_products_syncroot_multitenancy" {
   reader_group_id = var.reader_group_id
   prune_enabled   = true
 
+  # Set to false when another product on the same cluster already uses these
+  # groups; the cluster-scoped role assignments can only exist once per group.
+  create_cluster_role_assignments = false
+
   # Flux postBuild variable substitution
   substitute = {
     DATABASE_URL = "jdbc:sqlserver://myapp-prod-server.database.windows.net;databaseName=mydb"
@@ -67,6 +71,7 @@ module "dis_products_syncroot_multitenancy" {
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_admin_group_id"></a> [admin\_group\_id](#input\_admin\_group\_id) | Object id of the EntraID group that should have admin on the product namespace and reader in the cluster | `string` | n/a | yes |
 | <a name="input_aks_cluster_id"></a> [aks\_cluster\_id](#input\_aks\_cluster\_id) | The ID of the AKS cluster where the Flux configuration will be applied | `string` | n/a | yes |
+| <a name="input_create_cluster_role_assignments"></a> [create\_cluster\_role\_assignments](#input\_create\_cluster\_role\_assignments) | Create the cluster-scoped role assignments (RBAC Reader for the admin group, Cluster User Role for both groups). Set to false when another product on the same cluster uses the same groups and already creates them; Azure allows only one assignment per group, role and scope. | `bool` | `true` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Name of the environment | `string` | n/a | yes |
 | <a name="input_product"></a> [product](#input\_product) | Name of the product | `string` | n/a | yes |
 | <a name="input_prune_enabled"></a> [prune\_enabled](#input\_prune\_enabled) | Control if the syncroot enables prune of resources | `bool` | `false` | no |

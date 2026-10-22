@@ -33,6 +33,12 @@ variable "reader_group_id" {
   description = "Object id of the EntraID group that should have reader permissions in the product namespace"
 }
 
+variable "create_cluster_role_assignments" {
+  type        = bool
+  default     = true
+  description = "Create the cluster-scoped role assignments (RBAC Reader for the admin group, Cluster User Role for both groups). Set to false when another product on the same cluster uses the same groups and already creates them; Azure allows only one assignment per group, role and scope."
+}
+
 variable "substitute" {
   type        = map(string)
   sensitive   = true

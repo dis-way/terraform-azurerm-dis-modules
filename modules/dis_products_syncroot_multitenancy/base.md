@@ -29,6 +29,10 @@ module "dis_products_syncroot_multitenancy" {
   reader_group_id = var.reader_group_id
   prune_enabled   = true
 
+  # Set to false when another product on the same cluster already uses these
+  # groups; the cluster-scoped role assignments can only exist once per group.
+  create_cluster_role_assignments = false
+
   # Flux postBuild variable substitution
   substitute = {
     DATABASE_URL = "jdbc:sqlserver://myapp-prod-server.database.windows.net;databaseName=mydb"
