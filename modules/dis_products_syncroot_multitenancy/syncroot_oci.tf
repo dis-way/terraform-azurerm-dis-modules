@@ -10,7 +10,7 @@ resource "azapi_resource" "syncroot" {
           path                   = "./${var.environment}"
           prune                  = var.prune_enabled
           retryIntervalInSeconds = 300
-          syncIntervalInSeconds  = 300
+          syncIntervalInSeconds  = 3600
           timeoutInSeconds       = 300
           wait                   = true
           postBuild = {
@@ -31,7 +31,7 @@ resource "azapi_resource" "syncroot" {
       }
       scope                      = "namespace"
       reconciliationWaitDuration = "PT5M"
-      waitForReconciliation      = true
+      waitForReconciliation      = var.wait_for_reconciliation
       sourceKind                 = "OCIRepository"
     }
   }
