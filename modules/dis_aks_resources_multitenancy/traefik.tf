@@ -8,7 +8,7 @@ resource "azapi_resource" "traefik" {
       kustomizations = {
         traefik = {
           force = false
-          path  = "./multitenancy/"
+          path  = var.enable_flux_webhook_receiver ? "./multitenancy-flux-webhook/" : "./multitenancy/"
           postBuild = {
             substitute = {
               AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"

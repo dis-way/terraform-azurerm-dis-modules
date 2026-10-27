@@ -30,6 +30,12 @@ module "dis_aks_resources_multitenancy" {
   otel_tenant_id          = var.tenant_id
 }
 ```
+
+## Flux webhook receiver
+
+Set `enable_flux_webhook_receiver = true` to deploy the webhook receiver and select Traefik's `multitenancy-flux-webhook` layer ([RFC 0017](https://github.com/Altinn/altinn-platform/blob/main/rfcs/0017-on-demand-flux-reconcile.md)). It defaults to `false`; disabling it restores the standard Traefik layer and prunes the receiver resources.
+
+Before enabling, release both packages to the `flux_release_tag` ring, set `lb_source_range_dis_edge` and `lb_source_range_dis_edge_ipv6` to the edge cluster's canonical outbound CIDRs (no loopback or `/0`), and provide a non-empty `default_gateway_hostname`. Product receivers using `generic-oidc` require Flux 2.9 or later.
 ## Requirements
 
 | Name | Version |
@@ -54,6 +60,7 @@ module "dis_aks_resources_multitenancy" {
 | [azapi_resource.dis_pgsql_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.dis_vault_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.external_secrets_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.flux_webhook_receiver](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.gateway_api](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.kro](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.kube_state_metrics](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
@@ -98,6 +105,7 @@ module "dis_aks_resources_multitenancy" {
 | <a name="input_enable_dis_cache_operator"></a> [enable\_dis\_cache\_operator](#input\_enable\_dis\_cache\_operator) | Enable the dis-cache operator in the cluster. Needs enable\_valkey\_operator, because every cache runs on the Valkey operator. | `bool` | `false` | no |
 | <a name="input_enable_dis_pgsql_operator"></a> [enable\_dis\_pgsql\_operator](#input\_enable\_dis\_pgsql\_operator) | Enable the dis-pgsql operator in the cluster. | `bool` | `false` | no |
 | <a name="input_enable_dis_vault_operator"></a> [enable\_dis\_vault\_operator](#input\_enable\_dis\_vault\_operator) | Enable the dis-vault operator in the cluster. | `bool` | `false` | no |
+| <a name="input_enable_flux_webhook_receiver"></a> [enable\_flux\_webhook\_receiver](#input\_enable\_flux\_webhook\_receiver) | Enable on-demand Flux reconcile through the DIS edge by deploying the webhook receiver and dedicated Traefik listener. | `bool` | `false` | no |
 | <a name="input_enable_lets_encrypt_tls_issuer"></a> [enable\_lets\_encrypt\_tls\_issuer](#input\_enable\_lets\_encrypt\_tls\_issuer) | Enable Let's Encrypt cert-manager issuer for TLS certificates | `bool` | `true` | no |
 | <a name="input_enable_opencost"></a> [enable\_opencost](#input\_enable\_opencost) | Enable opencost | `bool` | `false` | no |
 | <a name="input_enable_valkey_operator"></a> [enable\_valkey\_operator](#input\_enable\_valkey\_operator) | Enable the Valkey operator in the cluster. | `bool` | `false` | no |
