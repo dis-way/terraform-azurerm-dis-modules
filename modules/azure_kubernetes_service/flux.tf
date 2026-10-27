@@ -13,4 +13,13 @@ resource "azurerm_kubernetes_cluster_extension" "flux" {
     "autoUpgradeMinorVersion" = "true"
     "multiTenancy.enforce"    = var.enable_multi_tenancy
   }
+
+  # Azure upgrades the extension, because no version is set here. An operator can
+  # pin a version with `az k8s-extension update --version`, for example to get a
+  # release before it reaches the region. In azurerm, a change to version or
+  # release_train forces a new extension, which reinstalls Flux on the cluster.
+  # Terraform therefore ignores both.
+  lifecycle {
+    ignore_changes = [version, release_train]
+  }
 }
