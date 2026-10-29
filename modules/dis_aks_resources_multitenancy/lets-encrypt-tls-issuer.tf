@@ -1,3 +1,12 @@
+locals {
+  tls_issuer_substitute = {
+    AZURE_DNS_ZONE_NAME   = var.tls_lets_encrypt_zone_name
+    AZURE_RESOURCE_GROUP  = var.tls_lets_encrypt_zone_rg_name
+    AZURE_SUBSCRIPTION_ID = var.subscription_id
+    IDENTITY_CLIENT_ID    = var.tls_lets_encrypt_workload_identity_client_id
+  }
+}
+
 resource "azapi_resource" "lets_encrypt_tls_issuer" {
   count      = var.enable_lets_encrypt_tls_issuer ? 1 : 0
   depends_on = [azapi_resource.cert_manager]
@@ -11,12 +20,7 @@ resource "azapi_resource" "lets_encrypt_tls_issuer" {
           force = false
           path  = "./multitenancy/"
           postBuild = {
-            substitute = {
-              AZURE_DNS_ZONE_NAME   = "${var.tls_lets_encrypt_zone_name}"
-              AZURE_RESOURCE_GROUP  = "${var.tls_lets_encrypt_zone_rg_name}"
-              AZURE_SUBSCRIPTION_ID = "${var.subscription_id}"
-              IDENTITY_CLIENT_ID    = "${var.tls_lets_encrypt_workload_identity_client_id}"
-            }
+            substitute = local.tls_issuer_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300

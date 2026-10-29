@@ -28,6 +28,14 @@ module "dis_aks_resources_multitenancy" {
   otel_client_id          = module.dis_monitoring_resources.otel_client_id
   otel_kv_uri             = module.dis_monitoring_resources.kv_uri
   otel_tenant_id          = var.tenant_id
+
+  # dis-system Key Vault, read through the dis-system-store SecretStore in platform-system.
+  # The dis_system_kv module's defaults (namespace platform-system, service account
+  # dis-secret-sync-sa) match the ServiceAccount the ESO multitenancy/post-deploy layer creates.
+  tenant_id               = var.tenant_id
+  dis_system_kv_client_id = module.dis_system_kv.dis_system_kv_reader_client_id
+  dis_system_kv_id        = module.dis_system_kv.dis_system_kv_id
+  dis_system_kv_uri       = module.dis_system_kv.dis_system_kv_uri
 }
 ```
 

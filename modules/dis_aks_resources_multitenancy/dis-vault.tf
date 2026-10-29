@@ -1,3 +1,16 @@
+locals {
+  dis_vault_substitute = {
+    DISVAULT_AZURE_SUBSCRIPTION_ID   = var.subscription_id
+    DISVAULT_RESOURCE_GROUP          = var.dis_resource_group_name
+    DISVAULT_AZURE_TENANT_ID         = var.tenant_id
+    DISVAULT_LOCATION                = var.dis_vault_location
+    DISVAULT_ENV                     = var.dis_vault_environment
+    DISVAULT_AKS_SUBNET_IDS          = var.dis_vault_aks_subnet_ids
+    DISVAULT_VPN_EXIT_NODE_SUBNET_ID = var.dis_vault_vpn_exit_node_subnet_id
+    DISVAULT_BASE_TAGS               = jsonencode(var.base_tags)
+  }
+}
+
 resource "azapi_resource" "dis_vault_operator" {
   depends_on = [azapi_resource.cert_manager]
   count      = var.enable_dis_vault_operator ? 1 : 0
@@ -11,16 +24,7 @@ resource "azapi_resource" "dis_vault_operator" {
           force = false
           path  = "./multitenancy/"
           postBuild = {
-            substitute = {
-              DISVAULT_AZURE_SUBSCRIPTION_ID   = "${var.subscription_id}"
-              DISVAULT_RESOURCE_GROUP          = "${var.dis_resource_group_name}"
-              DISVAULT_AZURE_TENANT_ID         = "${var.tenant_id}"
-              DISVAULT_LOCATION                = "${var.dis_vault_location}"
-              DISVAULT_ENV                     = "${var.dis_vault_environment}"
-              DISVAULT_AKS_SUBNET_IDS          = "${var.dis_vault_aks_subnet_ids}"
-              DISVAULT_VPN_EXIT_NODE_SUBNET_ID = "${var.dis_vault_vpn_exit_node_subnet_id}"
-              DISVAULT_BASE_TAGS               = jsonencode(var.base_tags)
-            }
+            substitute = local.dis_vault_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300

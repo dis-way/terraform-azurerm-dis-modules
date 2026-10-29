@@ -1,3 +1,9 @@
+locals {
+  flux_webhook_receiver_substitute = {
+    DEFAULT_GATEWAY_HOSTNAME = var.default_gateway_hostname
+  }
+}
+
 resource "azapi_resource" "flux_webhook_receiver" {
   depends_on = [azapi_resource.traefik]
   count      = var.enable_flux_webhook_receiver ? 1 : 0
@@ -11,9 +17,7 @@ resource "azapi_resource" "flux_webhook_receiver" {
           force = false
           path  = "./multitenancy/"
           postBuild = {
-            substitute = {
-              DEFAULT_GATEWAY_HOSTNAME : "${var.default_gateway_hostname}"
-            }
+            substitute = local.flux_webhook_receiver_substitute
           }
           prune                  = true
           retryIntervalInSeconds = 300

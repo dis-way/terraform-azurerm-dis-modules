@@ -1,3 +1,12 @@
+locals {
+  otel_collector_substitute = {
+    KV_URI             = var.otel_kv_uri
+    CLIENT_ID          = var.otel_client_id
+    TENANT_ID          = var.otel_tenant_id
+    AMW_WRITE_ENDPOINT = var.otel_amw_write_endpoint
+  }
+}
+
 resource "azapi_resource" "otel_collector" {
   depends_on = [azapi_resource.external_secrets_operator, azapi_resource.otel_operator]
   type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
@@ -10,12 +19,7 @@ resource "azapi_resource" "otel_collector" {
           force = false
           path  = "./multitenancy"
           postBuild = {
-            substitute = {
-              KV_URI : "${var.otel_kv_uri}"
-              CLIENT_ID : "${var.otel_client_id}"
-              TENANT_ID : "${var.otel_tenant_id}"
-              AMW_WRITE_ENDPOINT : "${var.otel_amw_write_endpoint}"
-            }
+            substitute = local.otel_collector_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300

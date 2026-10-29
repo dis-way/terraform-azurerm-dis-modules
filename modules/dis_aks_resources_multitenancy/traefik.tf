@@ -1,3 +1,19 @@
+locals {
+  traefik_substitute = {
+    AKS_VNET_IPV4_CIDR            = var.aks_vnet_ipv4_cidr
+    AKS_VNET_IPV6_CIDR            = var.aks_vnet_ipv6_cidr
+    DEFAULT_GATEWAY_HOSTNAME      = var.default_gateway_hostname
+    AKS_NODE_RG                   = var.aks_node_resource_group
+    PUBLIC_IP_V4                  = var.aks_public_ipv4_address
+    PUBLIC_IP_V6                  = var.aks_public_ipv6_address
+    LB_SOURCE_RANGE_APIM          = var.lb_source_range_apim
+    LB_SOURCE_RANGE_APIM_IPV6     = var.lb_source_range_apim_ipv6
+    LB_SOURCE_RANGE_DIS_EDGE      = var.lb_source_range_dis_edge
+    LB_SOURCE_RANGE_DIS_EDGE_IPV6 = var.lb_source_range_dis_edge_ipv6
+    # EXTERNAL_TRAFFIC_POLICY: Cluster (Local is default in traefik oci)
+  }
+}
+
 resource "azapi_resource" "traefik" {
   depends_on = [azapi_resource.linkerd, azapi_resource.gateway_api]
   type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
@@ -10,19 +26,7 @@ resource "azapi_resource" "traefik" {
           force = false
           path  = var.enable_flux_webhook_receiver ? "./multitenancy-flux-webhook/" : "./multitenancy/"
           postBuild = {
-            substitute = {
-              AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
-              AKS_VNET_IPV6_CIDR : "${var.aks_vnet_ipv6_cidr}"
-              DEFAULT_GATEWAY_HOSTNAME : "${var.default_gateway_hostname}"
-              AKS_NODE_RG : "${var.aks_node_resource_group}"
-              PUBLIC_IP_V4 : "${var.aks_public_ipv4_address}"
-              PUBLIC_IP_V6 : "${var.aks_public_ipv6_address}"
-              LB_SOURCE_RANGE_APIM : "${var.lb_source_range_apim}"
-              LB_SOURCE_RANGE_APIM_IPV6 : "${var.lb_source_range_apim_ipv6}"
-              LB_SOURCE_RANGE_DIS_EDGE : "${var.lb_source_range_dis_edge}"
-              LB_SOURCE_RANGE_DIS_EDGE_IPV6 : "${var.lb_source_range_dis_edge_ipv6}"
-              # EXTERNAL_TRAFFIC_POLICY: Cluster (Local is default in traefik oci)
-            }
+            substitute = local.traefik_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300

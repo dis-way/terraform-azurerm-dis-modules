@@ -1,3 +1,12 @@
+locals {
+  dis_identity_substitute = {
+    DISID_ISSUER_URL            = var.azurerm_kubernetes_cluster_oidc_issuer_url
+    DISID_TARGET_RESOURCE_GROUP = var.azurerm_dis_identity_resource_group_id
+    DISID_TARGET_TENANT_ID      = var.tenant_id
+    DISID_BASE_TAGS             = jsonencode(var.base_tags)
+  }
+}
+
 resource "azapi_resource" "dis_identity_operator" {
   depends_on = [azapi_resource.cert_manager]
   type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
@@ -10,12 +19,7 @@ resource "azapi_resource" "dis_identity_operator" {
           force = false
           path  = "./multitenancy/"
           postBuild = {
-            substitute = {
-              DISID_ISSUER_URL            = "${var.azurerm_kubernetes_cluster_oidc_issuer_url}"
-              DISID_TARGET_RESOURCE_GROUP = "${var.azurerm_dis_identity_resource_group_id}"
-              DISID_TARGET_TENANT_ID      = "${var.tenant_id}"
-              DISID_BASE_TAGS             = jsonencode(var.base_tags)
-            }
+            substitute = local.dis_identity_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300

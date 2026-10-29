@@ -28,6 +28,14 @@ module "dis_aks_resources_multitenancy" {
   otel_client_id          = module.dis_monitoring_resources.otel_client_id
   otel_kv_uri             = module.dis_monitoring_resources.kv_uri
   otel_tenant_id          = var.tenant_id
+
+  # dis-system Key Vault, read through the dis-system-store SecretStore in platform-system.
+  # The dis_system_kv module's defaults (namespace platform-system, service account
+  # dis-secret-sync-sa) match the ServiceAccount the ESO multitenancy/post-deploy layer creates.
+  tenant_id               = var.tenant_id
+  dis_system_kv_client_id = module.dis_system_kv.dis_system_kv_reader_client_id
+  dis_system_kv_id        = module.dis_system_kv.dis_system_kv_id
+  dis_system_kv_uri       = module.dis_system_kv.dis_system_kv_uri
 }
 ```
 
@@ -74,6 +82,7 @@ Before enabling, release both packages to the `flux_release_tag` ring, set `lb_s
 | [azapi_resource.traefik](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.valkey_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azurerm_federated_identity_credential.opencost_metrics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
+| [azurerm_key_vault_secret.flux_substitute](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
 | [azurerm_role_assignment.opencost_metrics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_definition.opencost_rate_card_query_role](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) | resource |
 | [azurerm_user_assigned_identity.opencost_metrics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
@@ -98,6 +107,9 @@ Before enabling, release both packages to the `flux_release_tag` ring, set `lb_s
 | <a name="input_dis_db_vnet_name"></a> [dis\_db\_vnet\_name](#input\_dis\_db\_vnet\_name) | Name of the VNet hosting DIS database resources. | `string` | `""` | no |
 | <a name="input_dis_pgsql_uami_client_id"></a> [dis\_pgsql\_uami\_client\_id](#input\_dis\_pgsql\_uami\_client\_id) | Client id for the dis-pgsql workload identity. | `string` | `""` | no |
 | <a name="input_dis_resource_group_name"></a> [dis\_resource\_group\_name](#input\_dis\_resource\_group\_name) | Name of the resource group where DIS operators create their resources. | `string` | `""` | no |
+| <a name="input_dis_system_kv_client_id"></a> [dis\_system\_kv\_client\_id](#input\_dis\_system\_kv\_client\_id) | Client ID of the dis-system Key Vault reader identity (dis\_system\_kv\_reader\_client\_id output of the dis\_system\_kv module). Used by the dis-system-store SecretStore in platform-system. | `string` | n/a | yes |
+| <a name="input_dis_system_kv_id"></a> [dis\_system\_kv\_id](#input\_dis\_system\_kv\_id) | Resource ID of the dis-system Key Vault (dis\_system\_kv\_id output of the dis\_system\_kv module). Every postBuild.substitute variable of the flux configurations is written to it as a secret, see flux-substitute-secrets.tf. | `string` | n/a | yes |
+| <a name="input_dis_system_kv_uri"></a> [dis\_system\_kv\_uri](#input\_dis\_system\_kv\_uri) | Vault URI of the dis-system Key Vault (dis\_system\_kv\_uri output of the dis\_system\_kv module). | `string` | n/a | yes |
 | <a name="input_dis_vault_aks_subnet_ids"></a> [dis\_vault\_aks\_subnet\_ids](#input\_dis\_vault\_aks\_subnet\_ids) | AKS subnet IDs passed to DIS Vault. | `string` | `""` | no |
 | <a name="input_dis_vault_environment"></a> [dis\_vault\_environment](#input\_dis\_vault\_environment) | Environment name passed to DIS Vault. | `string` | `""` | no |
 | <a name="input_dis_vault_location"></a> [dis\_vault\_location](#input\_dis\_vault\_location) | Azure location for DIS Vault resources. | `string` | `""` | no |
