@@ -15,8 +15,8 @@ resource "azurerm_kubernetes_cluster_extension" "flux" {
   }
 
   # Azure upgrades the extension, because no version is set here. An operator can
-  # pin a version with `az k8s-extension update --version`, for example to get a
-  # release before it reaches the region. In azurerm, a change to version or
+  # pin a version with `az k8s-extension update --version`, for example to hold
+  # back an upgrade. In azurerm, a change to version or
   # release_train forces a new extension, which reinstalls Flux on the cluster.
   # Terraform therefore ignores both.
   lifecycle {
