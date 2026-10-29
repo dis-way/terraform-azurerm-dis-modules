@@ -1,7 +1,19 @@
 resource "azurerm_kubernetes_cluster_node_pool" "pools" {
   for_each = var.node_pool_configs
 
+  lifecycle {
+    precondition {
+      condition     = !each.value.capacity_reservation_enabled || contains(local.capacity_reservation_vm_sizes, lower(each.value.vm_size))
+      error_message = "Node pool ${each.key} has capacity_reservation_enabled but its vm_size ${each.value.vm_size} has no entry in capacity_reservations."
+    }
+  }
 
+  # The reservations and the identity's role must exist before a pool joins the group. On
+  # destroy this also removes the pool before the reservations under it.
+  depends_on = [
+    azurerm_capacity_reservation.aks,
+    azurerm_role_assignment.capacity_reservation_contributor,
+  ]
 
   name                        = each.key
   kubernetes_cluster_id       = azurerm_kubernetes_cluster.aks.id
@@ -20,6 +32,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "pools" {
   os_disk_type                = each.value.ephemeral_os_disk ? "Ephemeral" : "Managed"
   os_disk_size_gb             = each.value.ephemeral_os_disk ? (can(regex("Standard_[DE]2[a-z]*s_v[0-9]+", each.value.vm_size)) ? 110 : null) : 128
   temporary_name_for_rotation = "${each.key}99"
+  # ForceNew: opting an existing pool in or out deletes and recreates it.
+  capacity_reservation_group_id = each.value.capacity_reservation_enabled ? azurerm_capacity_reservation_group.aks[0].id : null
 
   upgrade_settings {
     max_surge                 = "10%"
