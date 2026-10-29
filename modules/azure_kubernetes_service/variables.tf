@@ -141,6 +141,8 @@ variable "node_pool_configs" {
     node_labels          = optional(map(string), {})
     node_taints          = optional(list(string), [])
     ephemeral_os_disk    = optional(bool, false)
+    # Joins the capacity reservation group; vm_size must be in var.capacity_reservations.
+    capacity_reservation_enabled = optional(bool, false)
   }))
   default     = {}
   description = "Configuration for additional node pools. Each key becomes the node pool name (max 10 chars, lowercase alphanumeric). Set ephemeral_os_disk=true for VMs with sufficient cache/NVMe storage. When auto_scaling_enabled=true, node_count is optional (initial count), and min_count/max_count are required. When auto_scaling_enabled=false, node_count is required."
@@ -206,6 +208,25 @@ variable "node_pool_subnet_prefixes" {
   type        = map(list(string))
   default     = {}
   description = "Map of node pool names to their subnet address prefixes. Keys must match node_pool_configs keys."
+}
+
+variable "capacity_reservations" {
+  type        = map(map(number))
+  default     = {}
+  description = "On-demand capacity reservations, keyed by VM size and then availability zone, e.g. { Standard_D8ads_v6 = { \"1\" = 3, \"2\" = 3, \"3\" = 3 } }. Empty (the default) creates nothing. When set, a capacity reservation group with a reservation per size and zone is created, and the control-plane identity gets Contributor on it. Node pools join with capacity_reservation_enabled in node_pool_configs; that is ForceNew, so set it only on a new or drained pool. The system pool cannot join (on default_node_pool it recreates the cluster). Reserved capacity is billed whether nodes use it or not. A node pool spreads its nodes over its zones, so reserve the same amount in every zone: ceil(peak nodes / 3) each."
+
+  validation {
+    condition = alltrue(flatten([
+      for vm_size, capacity_by_zone in var.capacity_reservations : [
+        for zone, capacity in capacity_by_zone : contains(["1", "2", "3"], zone) && capacity >= 0 && floor(capacity) == capacity
+      ]
+    ]))
+    error_message = "capacity_reservations zones must be \"1\", \"2\" or \"3\", and each capacity a whole number of at least 0."
+  }
+  validation {
+    condition     = length(distinct([for vm_size in keys(var.capacity_reservations) : lower(vm_size)])) == length(var.capacity_reservations)
+    error_message = "capacity_reservations must not list the same VM size twice with different casing."
+  }
 }
 
 variable "load_balancer_outbound_ports_allocated" {
