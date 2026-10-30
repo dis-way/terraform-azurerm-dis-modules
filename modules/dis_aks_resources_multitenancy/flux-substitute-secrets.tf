@@ -21,9 +21,9 @@
 # dis-system-store itself.
 #
 # The set of secrets depends only on which flux configurations exist and on the optional
-# inputs below, never on values that can be unknown at plan time. azurerm does not accept
-# "" as a secret value, so optional inputs left empty are skipped; Flux substitutes an
-# unset variable with "" as well.
+# inputs below, never on substitute values, which can be unknown at plan time. azurerm
+# does not accept "" as a secret value, so optional inputs left empty are skipped; Flux
+# substitutes an unset variable with "" as well. Those inputs must be known at plan time.
 locals {
   flux_substitutes = merge(
     {
@@ -42,10 +42,10 @@ locals {
     var.enable_valkey_operator ? { "valkey-operator" = local.valkey_operator_substitute } : {},
   )
 
-  flux_substitute_optional = [
-    "dis-vault-disvault-vpn-exit-node-subnet-id",
-    "traefik-default-gateway-hostname",
-  ]
+  flux_substitute_skipped = compact([
+    var.dis_vault_vpn_exit_node_subnet_id == "" ? "dis-vault-disvault-vpn-exit-node-subnet-id" : "",
+    var.default_gateway_hostname == "" ? "traefik-default-gateway-hostname" : "",
+  ])
 
   flux_substitute_secrets = {
     for name, value in merge([
@@ -53,7 +53,7 @@ locals {
         for variable, value in vars : "${config}-${lower(replace(variable, "_", "-"))}" => value
       }
     ]...) : name => value
-    if !contains(local.flux_substitute_optional, name) || value != ""
+    if !contains(local.flux_substitute_skipped, name)
   }
 }
 
