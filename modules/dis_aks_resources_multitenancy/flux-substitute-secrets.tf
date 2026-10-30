@@ -20,10 +20,10 @@
 # external-secrets-operator is not included: its post-deploy substitutes create
 # dis-system-store itself.
 #
-# The set of secrets depends only on which flux configurations exist and on the optional
-# inputs below, never on substitute values, which can be unknown at plan time. azurerm
-# does not accept "" as a secret value, so optional inputs left empty are skipped; Flux
-# substitutes an unset variable with "" as well. Those inputs must be known at plan time.
+# The set of secrets depends only on the enable flags, never on substitute values, which
+# can be unknown at plan time. azurerm does not accept "" as a secret value, so the optional
+# inputs below are skipped when their flag is false; Flux substitutes an unset variable
+# with "" as well. Validations on the inputs keep each flag in line with its value.
 locals {
   flux_substitutes = merge(
     {
@@ -43,8 +43,8 @@ locals {
   )
 
   flux_substitute_skipped = compact([
-    var.dis_vault_vpn_exit_node_subnet_id == "" ? "dis-vault-disvault-vpn-exit-node-subnet-id" : "",
-    var.default_gateway_hostname == "" ? "traefik-default-gateway-hostname" : "",
+    var.enable_dis_vault_vpn_exit_node_subnet ? "" : "dis-vault-disvault-vpn-exit-node-subnet-id",
+    var.enable_default_gateway_hostname ? "" : "traefik-default-gateway-hostname",
   ])
 
   flux_substitute_secrets = {
