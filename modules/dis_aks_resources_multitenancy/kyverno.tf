@@ -1,3 +1,9 @@
+locals {
+  kyverno_substitute = {
+    OTEL_PORT = "4317"
+  }
+}
+
 resource "azapi_resource" "kyverno" {
   type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2025-04-01"
   name      = "kyverno"
@@ -9,9 +15,7 @@ resource "azapi_resource" "kyverno" {
           force = false
           path  = "./multitenancy/"
           postBuild = {
-            substitute = {
-              OTEL_PORT : "4317"
-            }
+            substitute = local.kyverno_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300

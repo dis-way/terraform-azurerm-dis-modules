@@ -45,7 +45,17 @@ variable "aks_public_ipv6_address" {
 
 variable "default_gateway_hostname" {
   type        = string
-  description = "The default gateway hostname of the AKS cluster. This will be the Hostname in the default gateway https://gateway-api.sigs.k8s.io/reference/spec/#hostname"
+  description = "The default gateway hostname of the AKS cluster. This will be the Hostname in the default gateway https://gateway-api.sigs.k8s.io/reference/spec/#hostname. Leave empty only with enable_default_gateway_hostname = false."
+  validation {
+    condition     = var.enable_default_gateway_hostname == (length(var.default_gateway_hostname) > 0)
+    error_message = "Set enable_default_gateway_hostname = true exactly when default_gateway_hostname is non-empty."
+  }
+}
+
+variable "enable_default_gateway_hostname" {
+  type        = bool
+  default     = true
+  description = "Set to false when default_gateway_hostname is empty. A plan-time flag, so the hostname may be unknown until apply; it decides whether the traefik-default-gateway-hostname secret is written to the dis-system Key Vault."
 }
 
 variable "lb_source_range_apim" {

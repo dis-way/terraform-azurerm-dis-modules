@@ -34,8 +34,18 @@ variable "dis_vault_aks_subnet_ids" {
   }
 }
 
+variable "enable_dis_vault_vpn_exit_node_subnet" {
+  type        = bool
+  default     = false
+  description = "Set to true when dis_vault_vpn_exit_node_subnet_id is provided. A plan-time flag, so the subnet ID may come from a subnet created in the same apply; it decides whether the dis-vault-disvault-vpn-exit-node-subnet-id secret is written to the dis-system Key Vault."
+}
+
 variable "dis_vault_vpn_exit_node_subnet_id" {
   type        = string
-  description = "Optional VPN exit node subnet ID passed to DIS Vault."
+  description = "Optional VPN exit node subnet ID passed to DIS Vault. Requires enable_dis_vault_vpn_exit_node_subnet = true."
   default     = ""
+  validation {
+    condition     = var.enable_dis_vault_vpn_exit_node_subnet == (length(var.dis_vault_vpn_exit_node_subnet_id) > 0)
+    error_message = "Set enable_dis_vault_vpn_exit_node_subnet = true exactly when dis_vault_vpn_exit_node_subnet_id is non-empty."
+  }
 }

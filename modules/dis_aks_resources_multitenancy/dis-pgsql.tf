@@ -1,3 +1,17 @@
+locals {
+  dis_pgsql_substitute = {
+    DISPG_AZURE_SUBSCRIPTION_ID       = var.subscription_id
+    DISPG_AZURE_TENANT_ID             = var.obs_tenant_id
+    DISPG_DB_RESOURCE_GROUP           = var.dis_resource_group_name
+    DISPG_DB_VNET_NAME                = var.dis_db_vnet_name
+    DISPG_AKS_VNET_NAME               = var.aks_workpool_vnet_name
+    DISPG_AKS_RESOURCE_GROUP          = var.aks_resource_group
+    DISPG_WORKLOAD_IDENTITY_CLIENT_ID = var.dis_pgsql_uami_client_id
+    DISPG_CLUSTER_ID                  = var.cluster_id
+    DISPG_BASE_TAGS                   = jsonencode(var.base_tags)
+  }
+}
+
 resource "azapi_resource" "dis_pgsql_operator" {
   depends_on = [azapi_resource.cert_manager]
   count      = var.enable_dis_pgsql_operator ? 1 : 0
@@ -11,17 +25,7 @@ resource "azapi_resource" "dis_pgsql_operator" {
           force = false
           path  = "./multitenancy/"
           postBuild = {
-            substitute = {
-              DISPG_AZURE_SUBSCRIPTION_ID       = "${var.subscription_id}"
-              DISPG_AZURE_TENANT_ID             = "${var.obs_tenant_id}"
-              DISPG_DB_RESOURCE_GROUP           = "${var.dis_resource_group_name}"
-              DISPG_DB_VNET_NAME                = "${var.dis_db_vnet_name}"
-              DISPG_AKS_VNET_NAME               = "${var.aks_workpool_vnet_name}"
-              DISPG_AKS_RESOURCE_GROUP          = "${var.aks_resource_group}"
-              DISPG_WORKLOAD_IDENTITY_CLIENT_ID = "${var.dis_pgsql_uami_client_id}"
-              DISPG_CLUSTER_ID                  = "${var.cluster_id}"
-              DISPG_BASE_TAGS                   = jsonencode(var.base_tags)
-            }
+            substitute = local.dis_pgsql_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300

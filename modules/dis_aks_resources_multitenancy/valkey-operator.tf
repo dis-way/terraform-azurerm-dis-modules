@@ -1,3 +1,10 @@
+locals {
+  valkey_operator_substitute = {
+    AKS_VNET_IPV4_CIDR = var.aks_vnet_ipv4_cidr
+    AKS_VNET_IPV6_CIDR = var.aks_vnet_ipv6_cidr
+  }
+}
+
 resource "azapi_resource" "valkey_operator" {
   count     = var.enable_valkey_operator ? 1 : 0
   type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
@@ -10,10 +17,7 @@ resource "azapi_resource" "valkey_operator" {
           force = false
           path  = "./multitenancy/"
           postBuild = {
-            substitute = {
-              AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
-              AKS_VNET_IPV6_CIDR : "${var.aks_vnet_ipv6_cidr}"
-            }
+            substitute = local.valkey_operator_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300

@@ -28,6 +28,14 @@ module "dis_aks_resources_multitenancy" {
   otel_client_id          = module.dis_monitoring_resources.otel_client_id
   otel_kv_uri             = module.dis_monitoring_resources.kv_uri
   otel_tenant_id          = var.tenant_id
+
+  # dis-system Key Vault, read through the dis-system-store SecretStore in platform-system.
+  # The dis_system_kv module's defaults (namespace platform-system, service account
+  # dis-secret-sync-sa) match the ServiceAccount the ESO multitenancy/post-deploy layer creates.
+  tenant_id               = var.tenant_id
+  dis_system_kv_client_id = module.dis_system_kv.dis_system_kv_reader_client_id
+  dis_system_kv_id        = module.dis_system_kv.dis_system_kv_id
+  dis_system_kv_uri       = module.dis_system_kv.dis_system_kv_uri
 }
 ```
 
@@ -74,6 +82,7 @@ Before enabling, release both packages to the `flux_release_tag` ring, set `lb_s
 | [azapi_resource.traefik](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.valkey_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azurerm_federated_identity_credential.opencost_metrics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
+| [azurerm_key_vault_secret.flux_substitute](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
 | [azurerm_role_assignment.opencost_metrics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_definition.opencost_rate_card_query_role](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) | resource |
 | [azurerm_user_assigned_identity.opencost_metrics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
@@ -94,17 +103,22 @@ Before enabling, release both packages to the `flux_release_tag` ring, set `lb_s
 | <a name="input_azurerm_kubernetes_cluster_oidc_issuer_url"></a> [azurerm\_kubernetes\_cluster\_oidc\_issuer\_url](#input\_azurerm\_kubernetes\_cluster\_oidc\_issuer\_url) | The OIDC issuer URL of the AKS cluster. | `string` | n/a | yes |
 | <a name="input_base_tags"></a> [base\_tags](#input\_base\_tags) | Platform base tags (the RFC 0007 finops tag set) passed to the DIS operators, which apply them to every Azure resource they create. Empty disables operator platform tagging. | `map(string)` | `{}` | no |
 | <a name="input_cluster_id"></a> [cluster\_id](#input\_cluster\_id) | Deterministic, human-readable identifier of the cluster. dis-pgsql appends it to new Azure PostgreSQL Flexible Server names ("<db>-<cluster\_id>") to keep them globally unique across clusters, so it must be unique and stable per cluster. | `string` | `""` | no |
-| <a name="input_default_gateway_hostname"></a> [default\_gateway\_hostname](#input\_default\_gateway\_hostname) | The default gateway hostname of the AKS cluster. This will be the Hostname in the default gateway https://gateway-api.sigs.k8s.io/reference/spec/#hostname | `string` | n/a | yes |
+| <a name="input_default_gateway_hostname"></a> [default\_gateway\_hostname](#input\_default\_gateway\_hostname) | The default gateway hostname of the AKS cluster. This will be the Hostname in the default gateway https://gateway-api.sigs.k8s.io/reference/spec/#hostname. Leave empty only with enable\_default\_gateway\_hostname = false. | `string` | n/a | yes |
 | <a name="input_dis_db_vnet_name"></a> [dis\_db\_vnet\_name](#input\_dis\_db\_vnet\_name) | Name of the VNet hosting DIS database resources. | `string` | `""` | no |
 | <a name="input_dis_pgsql_uami_client_id"></a> [dis\_pgsql\_uami\_client\_id](#input\_dis\_pgsql\_uami\_client\_id) | Client id for the dis-pgsql workload identity. | `string` | `""` | no |
 | <a name="input_dis_resource_group_name"></a> [dis\_resource\_group\_name](#input\_dis\_resource\_group\_name) | Name of the resource group where DIS operators create their resources. | `string` | `""` | no |
+| <a name="input_dis_system_kv_client_id"></a> [dis\_system\_kv\_client\_id](#input\_dis\_system\_kv\_client\_id) | Client ID of the dis-system Key Vault reader identity (dis\_system\_kv\_reader\_client\_id output of the dis\_system\_kv module). Used by the dis-system-store SecretStore in platform-system. | `string` | n/a | yes |
+| <a name="input_dis_system_kv_id"></a> [dis\_system\_kv\_id](#input\_dis\_system\_kv\_id) | Resource ID of the dis-system Key Vault (dis\_system\_kv\_id output of the dis\_system\_kv module). Every postBuild.substitute variable of the flux configurations is written to it as a secret, see flux-substitute-secrets.tf. | `string` | n/a | yes |
+| <a name="input_dis_system_kv_uri"></a> [dis\_system\_kv\_uri](#input\_dis\_system\_kv\_uri) | Vault URI of the dis-system Key Vault (dis\_system\_kv\_uri output of the dis\_system\_kv module). | `string` | n/a | yes |
 | <a name="input_dis_vault_aks_subnet_ids"></a> [dis\_vault\_aks\_subnet\_ids](#input\_dis\_vault\_aks\_subnet\_ids) | AKS subnet IDs passed to DIS Vault. | `string` | `""` | no |
 | <a name="input_dis_vault_environment"></a> [dis\_vault\_environment](#input\_dis\_vault\_environment) | Environment name passed to DIS Vault. | `string` | `""` | no |
 | <a name="input_dis_vault_location"></a> [dis\_vault\_location](#input\_dis\_vault\_location) | Azure location for DIS Vault resources. | `string` | `""` | no |
-| <a name="input_dis_vault_vpn_exit_node_subnet_id"></a> [dis\_vault\_vpn\_exit\_node\_subnet\_id](#input\_dis\_vault\_vpn\_exit\_node\_subnet\_id) | Optional VPN exit node subnet ID passed to DIS Vault. | `string` | `""` | no |
+| <a name="input_dis_vault_vpn_exit_node_subnet_id"></a> [dis\_vault\_vpn\_exit\_node\_subnet\_id](#input\_dis\_vault\_vpn\_exit\_node\_subnet\_id) | Optional VPN exit node subnet ID passed to DIS Vault. Requires enable\_dis\_vault\_vpn\_exit\_node\_subnet = true. | `string` | `""` | no |
+| <a name="input_enable_default_gateway_hostname"></a> [enable\_default\_gateway\_hostname](#input\_enable\_default\_gateway\_hostname) | Set to false when default\_gateway\_hostname is empty. A plan-time flag, so the hostname may be unknown until apply; it decides whether the traefik-default-gateway-hostname secret is written to the dis-system Key Vault. | `bool` | `true` | no |
 | <a name="input_enable_dis_cache_operator"></a> [enable\_dis\_cache\_operator](#input\_enable\_dis\_cache\_operator) | Enable the dis-cache operator in the cluster. Needs enable\_valkey\_operator, because every cache runs on the Valkey operator. | `bool` | `false` | no |
 | <a name="input_enable_dis_pgsql_operator"></a> [enable\_dis\_pgsql\_operator](#input\_enable\_dis\_pgsql\_operator) | Enable the dis-pgsql operator in the cluster. | `bool` | `false` | no |
 | <a name="input_enable_dis_vault_operator"></a> [enable\_dis\_vault\_operator](#input\_enable\_dis\_vault\_operator) | Enable the dis-vault operator in the cluster. | `bool` | `false` | no |
+| <a name="input_enable_dis_vault_vpn_exit_node_subnet"></a> [enable\_dis\_vault\_vpn\_exit\_node\_subnet](#input\_enable\_dis\_vault\_vpn\_exit\_node\_subnet) | Set to true when dis\_vault\_vpn\_exit\_node\_subnet\_id is provided. A plan-time flag, so the subnet ID may come from a subnet created in the same apply; it decides whether the dis-vault-disvault-vpn-exit-node-subnet-id secret is written to the dis-system Key Vault. | `bool` | `false` | no |
 | <a name="input_enable_flux_webhook_receiver"></a> [enable\_flux\_webhook\_receiver](#input\_enable\_flux\_webhook\_receiver) | Enable on-demand Flux reconcile through the DIS edge by deploying the webhook receiver and dedicated Traefik listener. | `bool` | `false` | no |
 | <a name="input_enable_lets_encrypt_tls_issuer"></a> [enable\_lets\_encrypt\_tls\_issuer](#input\_enable\_lets\_encrypt\_tls\_issuer) | Enable Let's Encrypt cert-manager issuer for TLS certificates | `bool` | `true` | no |
 | <a name="input_enable_opencost"></a> [enable\_opencost](#input\_enable\_opencost) | Enable opencost | `bool` | `false` | no |

@@ -1,3 +1,14 @@
+locals {
+  linkerd_substitute = {
+    DISABLE_IPV6           = var.linkerd_disable_ipv6
+    DEFAULT_INBOUND_POLICY = var.linkerd_default_inbound_policy
+  }
+  linkerd_policies_substitute = {
+    AKS_VNET_IPV4_CIDR = var.aks_vnet_ipv4_cidr
+    AKS_VNET_IPV6_CIDR = var.aks_vnet_ipv6_cidr
+  }
+}
+
 resource "azapi_resource" "linkerd" {
   depends_on = [azapi_resource.cert_manager, azapi_resource.gateway_api]
   type       = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
@@ -10,10 +21,7 @@ resource "azapi_resource" "linkerd" {
           force = false
           path  = "./multitenancy/"
           postBuild = {
-            substitute = {
-              DISABLE_IPV6 : "${var.linkerd_disable_ipv6}"
-              DEFAULT_INBOUND_POLICY : "${var.linkerd_default_inbound_policy}"
-            }
+            substitute = local.linkerd_substitute
           }
           prune                  = false
           retryIntervalInSeconds = 300
@@ -28,10 +36,7 @@ resource "azapi_resource" "linkerd" {
           force = false
           path  = "./policies/"
           postBuild = {
-            substitute = {
-              AKS_VNET_IPV4_CIDR : "${var.aks_vnet_ipv4_cidr}"
-              AKS_VNET_IPV6_CIDR : "${var.aks_vnet_ipv6_cidr}"
-            }
+            substitute = local.linkerd_policies_substitute
           }
           prune                  = true
           retryIntervalInSeconds = 300
