@@ -181,6 +181,7 @@ module "aks" {
 | <a name="output_azurerm_kubernetes_cluster_id"></a> [azurerm\_kubernetes\_cluster\_id](#output\_azurerm\_kubernetes\_cluster\_id) | Resource id of aks cluster |
 | <a name="output_dis_resource_group_id"></a> [dis\_resource\_group\_id](#output\_dis\_resource\_group\_id) | ID of the resource group where the DIS operators creates their resources |
 | <a name="output_dis_resource_group_name"></a> [dis\_resource\_group\_name](#output\_dis\_resource\_group\_name) | Name of the resource group where the DIS operators creates their resources |
+| <a name="output_egress_ipv4_prefix"></a> [egress\_ipv4\_prefix](#output\_egress\_ipv4\_prefix) | IPv4 prefix (CIDR) used by the AKS load balancer for outbound traffic |
 | <a name="output_kube_admin_config"></a> [kube\_admin\_config](#output\_kube\_admin\_config) | Base64 encoded cert/key/user/pass used by clients to authenticate to the Kubernetes cluster |
 | <a name="output_kube_config"></a> [kube\_config](#output\_kube\_config) | Base64 encoded Kubernetes configuration for accessing the cluster |
 | <a name="output_pip4_ip_address"></a> [pip4\_ip\_address](#output\_pip4\_ip\_address) | The IPv4 address value that was allocated |
