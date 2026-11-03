@@ -58,6 +58,9 @@ resource "azapi_resource" "external_secrets_operator" {
   parent_id = var.azurerm_kubernetes_cluster_id
   body = {
     properties = {
+      # The central access token kustomizations are filtered with a for expression, not
+      # a conditional: both results of a conditional must have the same object type, and
+      # {} lacks their attributes.
       kustomizations = merge({
         external-secrets-operator = {
           force = false
@@ -91,7 +94,10 @@ resource "azapi_resource" "external_secrets_operator" {
           timeoutInSeconds       = 300
           wait                   = false
         }
-      }, var.enable_central_accesstoken ? local.external_secrets_operator_central_accesstoken_kustomizations : {})
+        }, {
+        for name, kustomization in local.external_secrets_operator_central_accesstoken_kustomizations :
+        name => kustomization if var.enable_central_accesstoken
+      })
       ociRepository = {
         insecure = false
         repositoryRef = {
