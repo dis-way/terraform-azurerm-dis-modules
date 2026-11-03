@@ -44,3 +44,11 @@ module "dis_aks_resources_multitenancy" {
 Set `enable_flux_webhook_receiver = true` to deploy the webhook receiver and select Traefik's `multitenancy-flux-webhook` layer ([RFC 0017](https://github.com/Altinn/altinn-platform/blob/main/rfcs/0017-on-demand-flux-reconcile.md)). It defaults to `false`; disabling it restores the standard Traefik layer and prunes the receiver resources.
 
 Before enabling, release both packages to the `flux_release_tag` ring, set `lb_source_range_dis_edge` and `lb_source_range_dis_edge_ipv6` to the edge cluster's canonical outbound CIDRs (no loopback or `/0`), and provide a non-empty `default_gateway_hostname`. Product receivers using `generic-oidc` require Flux 2.9 or later.
+
+## Central access token
+
+Set `enable_central_accesstoken = true` and `central_accesstoken_kv_uri` to add the `multitenancy/secrets` and `multitenancy/central-accesstoken` layers of external-secrets-operator (oci-external-secrets-operator v1.13.0 or later). The module writes `central_accesstoken_kv_uri` to the dis-system Key Vault as `external-secrets-operator-central-accesstoken-kv-url`; `multitenancy/secrets` copies it into the `external-secrets-operator-vars` Secret, which `multitenancy/central-accesstoken` reads through `postBuild.substituteFrom`. The layers run in the order `multitenancy` → `post-deploy` → `secrets` → `central-accesstoken`.
+
+`central-accesstoken` creates the `ApplicationIdentity` `platform-system/central-accesstoken-eso` and the `ClusterSecretStore` `central-accesstoken-store`, usable only from namespaces labeled `accesstoken.dis.altinn.cloud/enabled: "true"`. The store reports NotReady until the managed identity dis-identity-operator creates for `central-accesstoken-eso` has Key Vault Secrets User on the token secret. Grant it on that secret only, not on the shared vault.
+
+Disabling the flag removes the kustomizations, but leaves the identity and store in the cluster: both are annotated `kustomize.toolkit.fluxcd.io/prune: disabled`, and removing them is a manual step.
