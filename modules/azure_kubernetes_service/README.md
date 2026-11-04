@@ -182,8 +182,10 @@ module "aks" {
 | <a name="output_dis_resource_group_id"></a> [dis\_resource\_group\_id](#output\_dis\_resource\_group\_id) | ID of the resource group where the DIS operators creates their resources |
 | <a name="output_dis_resource_group_name"></a> [dis\_resource\_group\_name](#output\_dis\_resource\_group\_name) | Name of the resource group where the DIS operators creates their resources |
 | <a name="output_egress_ipv4_prefix"></a> [egress\_ipv4\_prefix](#output\_egress\_ipv4\_prefix) | IPv4 prefix (CIDR) used by the AKS load balancer for outbound traffic |
+| <a name="output_egress_ipv6_prefix"></a> [egress\_ipv6\_prefix](#output\_egress\_ipv6\_prefix) | IPv6 prefix (CIDR) used by the AKS load balancer for outbound traffic |
 | <a name="output_kube_admin_config"></a> [kube\_admin\_config](#output\_kube\_admin\_config) | Base64 encoded cert/key/user/pass used by clients to authenticate to the Kubernetes cluster |
 | <a name="output_kube_config"></a> [kube\_config](#output\_kube\_config) | Base64 encoded Kubernetes configuration for accessing the cluster |
+| <a name="output_node_pool_subnet_ids"></a> [node\_pool\_subnet\_ids](#output\_node\_pool\_subnet\_ids) | IDs of the user node pool subnets, keyed like node\_pool\_subnet\_prefixes |
 | <a name="output_pip4_ip_address"></a> [pip4\_ip\_address](#output\_pip4\_ip\_address) | The IPv4 address value that was allocated |
 | <a name="output_pip6_ip_address"></a> [pip6\_ip\_address](#output\_pip6\_ip\_address) | The IPv6 address value that was allocated |
 | <a name="output_private_endpoint_subnet_id"></a> [private\_endpoint\_subnet\_id](#output\_private\_endpoint\_subnet\_id) | ID of the private endpoints subnet, empty if not created |
@@ -193,3 +195,4 @@ module "aks" {
 | <a name="output_products_azure_monitor_workspace_read_endpoint"></a> [products\_azure\_monitor\_workspace\_read\_endpoint](#output\_products\_azure\_monitor\_workspace\_read\_endpoint) | The query endpoint for the Azure Monitor Workspace |
 | <a name="output_products_log_analytics_workspace_id"></a> [products\_log\_analytics\_workspace\_id](#output\_products\_log\_analytics\_workspace\_id) | ID of the log analytics workspace used by products. If enable\_products\_azure\_monitoring\_resources is false this will be an empty string |
 | <a name="output_products_monitor_resource_group_name"></a> [products\_monitor\_resource\_group\_name](#output\_products\_monitor\_resource\_group\_name) | Name of the resource group where monitoring resources are deployed |
+| <a name="output_system_pool_subnet_id"></a> [system\_pool\_subnet\_id](#output\_system\_pool\_subnet\_id) | ID of the system node pool subnet (aks\_syspool) |

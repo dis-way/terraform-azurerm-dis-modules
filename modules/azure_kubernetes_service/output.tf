@@ -120,3 +120,18 @@ output "egress_ipv4_prefix" {
   value       = azurerm_public_ip_prefix.prefix4.ip_prefix
   description = "IPv4 prefix (CIDR) used by the AKS load balancer for outbound traffic"
 }
+
+output "egress_ipv6_prefix" {
+  value       = azurerm_public_ip_prefix.prefix6.ip_prefix
+  description = "IPv6 prefix (CIDR) used by the AKS load balancer for outbound traffic"
+}
+
+output "system_pool_subnet_id" {
+  value       = azurerm_subnet.system_pool.id
+  description = "ID of the system node pool subnet (aks_syspool)"
+}
+
+output "node_pool_subnet_ids" {
+  value       = { for k, s in azurerm_subnet.node_pools : k => s.id }
+  description = "IDs of the user node pool subnets, keyed like node_pool_subnet_prefixes"
+}
