@@ -17,8 +17,9 @@
 # variable at a time and drop it from substitute once the package reads it from the Secret.
 # Reference: oci/grafana-public in gitops-manifests.
 #
-# The post-deploy substitutes of external-secrets-operator are not included: they create
-# dis-system-store itself. Only the variables its multitenancy/secrets layer reads are.
+# external-secrets-operator is not included: its post-deploy substitutes create
+# dis-system-store itself, and the variable its multitenancy/secrets layer reads is
+# written in external-secrets-operator.tf.
 #
 # The set of secrets depends only on the enable flags, never on substitute values, which
 # can be unknown at plan time. azurerm does not accept "" as a secret value, so the optional
@@ -34,7 +35,6 @@ locals {
       "otel-operator"     = local.otel_operator_substitute
       "traefik"           = local.traefik_substitute
     },
-    var.enable_central_accesstoken ? { "external-secrets-operator" = local.external_secrets_operator_substitute } : {},
     var.enable_dis_pgsql_operator ? { "dis-pgsql" = local.dis_pgsql_substitute } : {},
     var.enable_dis_vault_operator ? { "dis-vault" = local.dis_vault_substitute } : {},
     var.enable_flux_webhook_receiver ? { "flux-webhook-receiver" = local.flux_webhook_receiver_substitute } : {},

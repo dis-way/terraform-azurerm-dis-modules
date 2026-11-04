@@ -51,7 +51,7 @@ Set `enable_central_accesstoken = true` and `central_accesstoken_kv_uri` to add 
 
 `central-accesstoken` creates the `ApplicationIdentity` `platform-system/central-accesstoken-eso` and the `ClusterSecretStore` `central-accesstoken-store`, usable only from namespaces labeled `accesstoken.dis.altinn.cloud/enabled: "true"`. The store reports NotReady until the managed identity dis-identity-operator creates for `central-accesstoken-eso` has Key Vault Secrets User on the token secret. Grant it on that secret only, not on the shared vault.
 
-Disabling the flag removes the kustomizations, but leaves the identity and store in the cluster: both are annotated `kustomize.toolkit.fluxcd.io/prune: disabled`, and removing them is a manual step.
+Disabling the flag removes the kustomizations and the `external-secrets-operator-central-accesstoken-kv-url` Key Vault secret, but leaves the identity, the store and the `platform-system/external-secrets-operator-vars` ExternalSecret from `multitenancy/secrets` in the cluster: all three are annotated `kustomize.toolkit.fluxcd.io/prune: disabled`, and removing them is a manual step. The ExternalSecret uses the default `deletionPolicy: Retain`, so after the Key Vault secret is gone it keeps the `external-secrets-operator-vars` Secret and reports `SecretSyncedError` until it is deleted.
 ## Requirements
 
 | Name | Version |
@@ -90,6 +90,7 @@ Disabling the flag removes the kustomizations, but leaves the identity and store
 | [azapi_resource.traefik](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azapi_resource.valkey_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
 | [azurerm_federated_identity_credential.opencost_metrics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
+| [azurerm_key_vault_secret.central_accesstoken_kv_url](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
 | [azurerm_key_vault_secret.flux_substitute](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
 | [azurerm_role_assignment.opencost_metrics_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_definition.opencost_rate_card_query_role](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) | resource |

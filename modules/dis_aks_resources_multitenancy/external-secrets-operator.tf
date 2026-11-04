@@ -1,11 +1,15 @@
-locals {
-  # Read by the package's multitenancy/secrets layer from the dis-system Key Vault, see
-  # flux-substitute-secrets.tf, and substituted into multitenancy/central-accesstoken
-  # through substituteFrom.
-  external_secrets_operator_substitute = {
-    CENTRAL_ACCESSTOKEN_KV_URL = var.central_accesstoken_kv_uri
-  }
+# Read by the package's multitenancy/secrets layer from the dis-system Key Vault into
+# CENTRAL_ACCESSTOKEN_KV_URL, which multitenancy/central-accesstoken reads through
+# substituteFrom. Its own resource, not part of flux-substitute-secrets.tf, so
+# external_secrets_operator depends on this secret only.
+resource "azurerm_key_vault_secret" "central_accesstoken_kv_url" {
+  count        = var.enable_central_accesstoken ? 1 : 0
+  name         = "external-secrets-operator-central-accesstoken-kv-url"
+  value        = var.central_accesstoken_kv_uri
+  key_vault_id = var.dis_system_kv_id
+}
 
+locals {
   external_secrets_operator_central_accesstoken_kustomizations = {
     # Writes the external-secrets-operator-vars Secret in platform-system from
     # dis-system-store. wait = true keeps central-accesstoken from applying before the
@@ -50,8 +54,8 @@ resource "azapi_resource" "external_secrets_operator" {
     azapi_resource.linkerd,
     # ApplicationIdentity in multitenancy/central-accesstoken.
     azapi_resource.dis_identity_operator,
-    # external-secrets-operator-central-accesstoken-kv-url read by multitenancy/secrets.
-    azurerm_key_vault_secret.flux_substitute,
+    # Read by multitenancy/secrets.
+    azurerm_key_vault_secret.central_accesstoken_kv_url,
   ]
   type      = "Microsoft.KubernetesConfiguration/fluxConfigurations@2024-11-01"
   name      = "external-secrets-operator"
