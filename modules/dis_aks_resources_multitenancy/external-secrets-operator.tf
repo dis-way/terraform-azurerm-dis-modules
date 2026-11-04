@@ -10,11 +10,13 @@ resource "azurerm_key_vault_secret" "central_accesstoken_kv_url" {
 }
 
 locals {
+  # Short keys: AKS names each Kustomization <configuration>-<key>, and the two together
+  # may be at most 62 characters, leaving 37 after "external-secrets-operator".
   external_secrets_operator_central_accesstoken_kustomizations = {
     # Writes the external-secrets-operator-vars Secret in platform-system from
     # dis-system-store. wait = true keeps central-accesstoken from applying before the
     # Secret exists.
-    external-secrets-operator-secrets = {
+    secrets = {
       dependsOn              = ["external-secrets-operator-post-deploy"]
       force                  = false
       path                   = "./multitenancy/secrets/"
@@ -27,8 +29,8 @@ locals {
     # ApplicationIdentity central-accesstoken-eso and the central-accesstoken-store
     # ClusterSecretStore. wait = false: the store stays NotReady until the identity is
     # granted read access to the token secret, which happens outside this module.
-    external-secrets-operator-central-accesstoken = {
-      dependsOn = ["external-secrets-operator-secrets"]
+    central-accesstoken = {
+      dependsOn = ["secrets"]
       force     = false
       path      = "./multitenancy/central-accesstoken/"
       postBuild = {
