@@ -116,3 +116,7 @@ output "products_azure_monitor_workspace_read_endpoint" {
   description = "The query endpoint for the Azure Monitor Workspace"
 }
 
+output "egress_ipv4_prefix" {
+  value       = azurerm_public_ip_prefix.prefix4.ip_prefix
+  description = "IPv4 prefix (CIDR) used by the AKS load balancer for outbound traffic"
+}

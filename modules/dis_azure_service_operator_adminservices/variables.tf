@@ -62,7 +62,7 @@ variable "aso_service_account_name" {
 variable "aso_crd_pattern" {
   description = "The pattern for the Azure Service Operator Custom Resource Definitions (CRDs)."
   type        = string
-  default     = "managedidentity.azure.com/*;authorization.azure.com/*;dbforpostgresql.azure.com/*;network.azure.com/*;insights.azure.com/*;keyvault.azure.com/*"
+  default     = "managedidentity.azure.com/*;authorization.azure.com/*;dbforpostgresql.azure.com/*;network.azure.com/*;insights.azure.com/*;keyvault.azure.com/*;servicebus.azure.com/*"
 }
 
 variable "tags" {
@@ -88,9 +88,13 @@ variable "dis_resource_group_id" {
 }
 
 variable "aso_delegatable_role_definition_ids" {
-  description = "Built-in Azure role definition GUIDs the ASO identity may assign/remove via a constrained Role Based Access Control Administrator grant. Used by dis-pgsql to grant debug-level Reader on Flexible Servers without the identity gaining general role-assignment power. Set to [] to disable the delegation."
+  description = "Built-in Azure role definition GUIDs the ASO identity may assign/remove via a constrained Role Based Access Control Administrator grant. Used by dis-pgsql to grant debug-level Reader on Flexible Servers, and by dis-messaging to grant Data Sender and Data Receiver on queues, without the identity gaining general role-assignment power. Set to [] to disable the delegation."
   type        = list(string)
-  default     = ["acdd72a7-3385-48ef-bd42-f606fba81ae7"] # Reader
+  default = [
+    "acdd72a7-3385-48ef-bd42-f606fba81ae7", # Reader
+    "69a216fc-b8fb-44d8-bc22-1f3c2cd27a39", # Azure Service Bus Data Sender
+    "4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0", # Azure Service Bus Data Receiver
+  ]
 
   validation {
     condition = alltrue([

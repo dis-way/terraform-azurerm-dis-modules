@@ -61,6 +61,10 @@ resource "azurerm_role_definition" "user_assigned_identity_role_dis_rg" {
       "Microsoft.KeyVault/vaults/read",
       "Microsoft.KeyVault/vaults/write",
       "Microsoft.KeyVault/vaults/delete",
+      "Microsoft.ServiceBus/namespaces/read",
+      "Microsoft.ServiceBus/namespaces/queues/read",
+      "Microsoft.ServiceBus/namespaces/queues/write",
+      "Microsoft.ServiceBus/namespaces/queues/delete",
       "Microsoft.Authorization/*/read",
     ]
     not_actions = []
