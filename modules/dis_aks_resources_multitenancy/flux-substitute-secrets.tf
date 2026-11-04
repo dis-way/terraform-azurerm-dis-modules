@@ -18,7 +18,8 @@
 # Reference: oci/grafana-public in gitops-manifests.
 #
 # external-secrets-operator is not included: its post-deploy substitutes create
-# dis-system-store itself.
+# dis-system-store itself, and the variable its multitenancy/secrets layer reads is
+# written in external-secrets-operator.tf.
 #
 # The set of secrets depends only on the enable flags, never on substitute values, which
 # can be unknown at plan time. azurerm does not accept "" as a secret value, so the optional
