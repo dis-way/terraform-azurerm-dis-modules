@@ -4,7 +4,7 @@ variable "prefix" {
 }
 
 variable "environment" {
-  description = "The environment for which the dis-messaging resources are created."
+  description = "The environment for which the dis-messaging resources are created. The module passes it to the operator as DISMSG_ENV."
   type        = string
 }
 
@@ -68,4 +68,31 @@ variable "user_assigned_identity_name" {
   description = "Optional override for the user-assigned identity name of dis-messaging-operator."
   type        = string
   default     = ""
+}
+
+variable "kubernetes_cluster_id" {
+  description = "Resource ID of the AKS cluster. The module creates the Flux configuration of dis-messaging-operator on this cluster."
+  type        = string
+  validation {
+    condition     = length(trimspace(var.kubernetes_cluster_id)) > 0
+    error_message = "You must provide a value for kubernetes_cluster_id."
+  }
+}
+
+variable "tenant_id" {
+  description = "ID of the Entra ID tenant of the Azure Service Bus namespace (DISMSG_AZURE_TENANT_ID of the operator)."
+  type        = string
+  validation {
+    condition     = can(regex("^[0-9a-fA-F-]{36}$", var.tenant_id))
+    error_message = "tenant_id must be a UUID."
+  }
+}
+
+variable "flux_release_tag" {
+  description = "Tag of the dis-messaging OCI artifact that Flux reconciles, for example at_ring1. Use the ring tag of the other DIS operators of the cluster."
+  type        = string
+  validation {
+    condition     = length(trimspace(var.flux_release_tag)) > 0
+    error_message = "You must provide a value for flux_release_tag."
+  }
 }
