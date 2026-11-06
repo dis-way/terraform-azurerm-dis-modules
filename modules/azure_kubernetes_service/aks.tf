@@ -34,8 +34,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
   workload_identity_enabled = true
   local_account_disabled    = var.aks_local_account_disabled
 
-  workload_autoscaler_profile {
-    keda_enabled = var.enable_keda
+  # Only written when KEDA is on. With every autoscaler off, AKS returns no
+  # workloadAutoScalerProfile, so a static block with keda_enabled = false plans an
+  # in-place update on every run (hashicorp/terraform-provider-azurerm#22360, unfixed).
+  dynamic "workload_autoscaler_profile" {
+    for_each = var.enable_keda ? [1] : []
+    content {
+      keda_enabled = true
+    }
   }
 
   node_provisioning_profile {
