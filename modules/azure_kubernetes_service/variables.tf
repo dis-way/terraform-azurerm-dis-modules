@@ -108,8 +108,12 @@ variable "system_pool_config" {
     max_count            = optional(number)
     ephemeral_os_disk    = optional(bool, false)
     zones                = optional(list(string), ["1", "2", "3"])
+
+    # Joins the capacity reservation group; vm_size must be in var.capacity_reservations.
+    # ForceNew on the cluster: attach an existing system pool with the CLI first.
+    capacity_reservation_enabled = optional(bool, false)
   })
-  description = "Configuration for the system node pool. Set ephemeral_os_disk=true for VMs with sufficient cache/NVMe storage. When auto_scaling_enabled=true, node_count is optional (initial count), and min_count/max_count are required. When auto_scaling_enabled=false, node_count is required. zones defaults to all three Norway East availability zones; changing it on an existing cluster cycles the system node pool."
+  description = "Configuration for the system node pool. Set ephemeral_os_disk=true for VMs with sufficient cache/NVMe storage. When auto_scaling_enabled=true, node_count is optional (initial count), and min_count/max_count are required. When auto_scaling_enabled=false, node_count is required. zones defaults to all three Norway East availability zones; changing it on an existing cluster cycles the system node pool. capacity_reservation_enabled puts the system pool in the capacity reservation group; on default_node_pool that is ForceNew on the whole cluster, so on an existing cluster attach the pool first with `az aks nodepool update -n syspool --crg-id <group id>` (aks-preview) and only then set it, checking that the plan shows no change for the cluster."
   validation {
     condition     = var.system_pool_config.auto_scaling_enabled || var.system_pool_config.node_count != null
     error_message = "node_count is required when auto_scaling_enabled is false."
@@ -213,7 +217,7 @@ variable "node_pool_subnet_prefixes" {
 variable "capacity_reservations" {
   type        = map(map(number))
   default     = {}
-  description = "On-demand capacity reservations, keyed by VM size and then availability zone, e.g. { Standard_D8ads_v6 = { \"1\" = 3, \"2\" = 3, \"3\" = 3 } }. Empty (the default) creates nothing. When set, a capacity reservation group with a reservation per size and zone is created, and the control-plane identity gets Contributor on it. Node pools join with capacity_reservation_enabled in node_pool_configs; that is ForceNew, so set it only on a new or drained pool. The system pool cannot join (on default_node_pool it recreates the cluster). Reserved capacity is billed whether nodes use it or not. A node pool spreads its nodes over its zones, so reserve the same amount in every zone: ceil(peak nodes / 3) each."
+  description = "On-demand capacity reservations, keyed by VM size and then availability zone, e.g. { Standard_D8ads_v6 = { \"1\" = 3, \"2\" = 3, \"3\" = 3 } }. Empty (the default) creates nothing. When set, a capacity reservation group with a reservation per size and zone is created, and the control-plane identity gets Contributor on it. Node pools join with capacity_reservation_enabled in node_pool_configs; that is ForceNew, so set it only on a new or drained pool. The system pool joins with capacity_reservation_enabled in system_pool_config; on default_node_pool that is ForceNew on the whole cluster, so attach an existing system pool with the CLI first (see system_pool_config). Reserved capacity is billed whether nodes use it or not. A node pool spreads its nodes over its zones, so reserve the same amount in every zone: ceil(peak nodes / 3) each."
 
   validation {
     condition = alltrue(flatten([
