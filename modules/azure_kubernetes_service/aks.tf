@@ -11,8 +11,17 @@ resource "azurerm_kubernetes_cluster" "aks" {
       windows_profile,
       microsoft_defender,
     ]
+    precondition {
+      condition     = !var.system_pool_config.capacity_reservation_enabled || contains(local.capacity_reservation_vm_sizes, lower(var.system_pool_config.vm_size))
+      error_message = "system_pool_config has capacity_reservation_enabled but its vm_size ${var.system_pool_config.vm_size} has no entry in capacity_reservations."
+    }
   }
-  depends_on                = [azurerm_role_assignment.network_contributor]
+  # The reservations and the identity's role must exist before the system pool joins the group.
+  depends_on = [
+    azurerm_role_assignment.network_contributor,
+    azurerm_capacity_reservation.aks,
+    azurerm_role_assignment.capacity_reservation_contributor,
+  ]
   name                      = var.azurerm_kubernetes_cluster_aks_name != "" ? var.azurerm_kubernetes_cluster_aks_name : "${var.prefix}-${var.environment}-aks"
   location                  = azurerm_resource_group.aks.location
   resource_group_name       = azurerm_resource_group.aks.name
@@ -40,15 +49,17 @@ resource "azurerm_kubernetes_cluster" "aks" {
     only_critical_addons_enabled = true
     temporary_name_for_rotation  = "syspool99"
     max_pods                     = 200
-    auto_scaling_enabled         = var.system_pool_config.auto_scaling_enabled
-    node_count                   = var.system_pool_config.auto_scaling_enabled ? null : var.system_pool_config.node_count
-    vm_size                      = var.system_pool_config.vm_size
-    min_count                    = var.system_pool_config.auto_scaling_enabled ? var.system_pool_config.min_count : null
-    max_count                    = var.system_pool_config.auto_scaling_enabled ? var.system_pool_config.max_count : null
-    zones                        = var.system_pool_config.zones
-    orchestrator_version         = var.kubernetes_version
-    os_disk_type                 = var.system_pool_config.ephemeral_os_disk ? "Ephemeral" : "Managed"
-    os_disk_size_gb              = var.system_pool_config.ephemeral_os_disk ? (can(regex("Standard_[DE]2[a-z]*s_v[0-9]+", var.system_pool_config.vm_size)) ? 110 : null) : 128
+    # ForceNew on the whole cluster: on an existing cluster attach the pool with the CLI first.
+    capacity_reservation_group_id = var.system_pool_config.capacity_reservation_enabled ? azurerm_capacity_reservation_group.aks[0].id : null
+    auto_scaling_enabled          = var.system_pool_config.auto_scaling_enabled
+    node_count                    = var.system_pool_config.auto_scaling_enabled ? null : var.system_pool_config.node_count
+    vm_size                       = var.system_pool_config.vm_size
+    min_count                     = var.system_pool_config.auto_scaling_enabled ? var.system_pool_config.min_count : null
+    max_count                     = var.system_pool_config.auto_scaling_enabled ? var.system_pool_config.max_count : null
+    zones                         = var.system_pool_config.zones
+    orchestrator_version          = var.kubernetes_version
+    os_disk_type                  = var.system_pool_config.ephemeral_os_disk ? "Ephemeral" : "Managed"
+    os_disk_size_gb               = var.system_pool_config.ephemeral_os_disk ? (can(regex("Standard_[DE]2[a-z]*s_v[0-9]+", var.system_pool_config.vm_size)) ? 110 : null) : 128
 
     upgrade_settings {
       max_surge                 = "10%"
