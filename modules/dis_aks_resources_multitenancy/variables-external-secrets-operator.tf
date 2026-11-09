@@ -63,6 +63,12 @@ variable "flux_dispatch_tokens" {
     error_message = "Each flux_dispatch_tokens entry needs github_repository_name without the owner, e.g. dialogporten, and Kubernetes names in token_namespace and token_secret_name."
   }
 
+  # Entries that share a Secret would overwrite each other's token every minute.
+  validation {
+    condition     = length(distinct([for token in values(var.flux_dispatch_tokens) : "${token.token_namespace}/${token.token_secret_name}"])) == length(var.flux_dispatch_tokens)
+    error_message = "Each flux_dispatch_tokens entry needs its own token_secret_name in its token_namespace."
+  }
+
   validation {
     condition     = length(var.flux_dispatch_tokens) == 0 || (can(regex("^[0-9]+$", var.flux_dispatch_github_app_id)) && can(regex("^[0-9]+$", var.flux_dispatch_github_app_installation_id)))
     error_message = "flux_dispatch_tokens needs flux_dispatch_github_app_id and flux_dispatch_github_app_installation_id set to the numeric App and installation IDs."
