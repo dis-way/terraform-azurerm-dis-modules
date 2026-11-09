@@ -90,8 +90,32 @@ variable "secrets" {
   }
 }
 
+variable "ephemeral_secrets" {
+  description = "Like secrets, but accepts ephemeral values, e.g. from a root variable with ephemeral = true, which saved plans do not store. List the names in ephemeral_secret_names."
+  type        = map(string)
+  sensitive   = true
+  ephemeral   = true
+  default     = {}
+
+  validation {
+    condition     = toset(keys(var.ephemeral_secrets)) == var.ephemeral_secret_names
+    error_message = "ephemeral_secret_names must list exactly the keys of ephemeral_secrets."
+  }
+}
+
+variable "ephemeral_secret_names" {
+  description = "Names of the secrets in ephemeral_secrets. for_each cannot use ephemeral values, so the names are passed separately."
+  type        = set(string)
+  default     = []
+
+  validation {
+    condition     = alltrue([for name in var.ephemeral_secret_names : can(regex("^[0-9a-zA-Z-]{1,127}$", name))])
+    error_message = "Key Vault secret names may contain only letters, digits and dashes, and must be 1-127 characters long."
+  }
+}
+
 variable "secret_versions" {
-  description = "Non-sensitive version marker for each secret value. Increment the number when a secret value changes so Terraform updates the Key Vault secret without persisting the secret value in state."
+  description = "Non-sensitive version marker for each secret value in secrets or ephemeral_secrets. Increment the number when a secret value changes so Terraform updates the Key Vault secret without persisting the secret value in state."
   type        = map(number)
   default     = {}
 }
