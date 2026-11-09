@@ -62,6 +62,8 @@ The module writes the two IDs and each entry's values to the dis-system Key Vaul
 The first entry adds the `flux-dispatch-app` kustomization, and each entry adds `flux-dispatch-<name>-secrets` and `flux-dispatch-<name>`. They run in the order `post-deploy` → `flux-dispatch-app` and `flux-dispatch-<name>-secrets` → `flux-dispatch-<name>`. AKS limits kustomization names, so `<name>` is at most 15 characters.
 
 Add the repository to the App installation together with its entry, and remove it when the entry goes. Removing an entry deletes its token objects, including the destination Secret, and its Key Vault secrets. It leaves the `platform-system/flux-dispatch-<name>-vars` ExternalSecret, which is annotated `kustomize.toolkit.fluxcd.io/prune: disabled`; delete it by hand. Removing the last entry also leaves the `platform-system/flux-dispatch-github-app` ExternalSecret and its Secret, which holds the private key.
+
+Each entry needs its own Secret, so two entries cannot share a `token_namespace` and `token_secret_name`. Do not change an entry's `github_repository_name` and `token_namespace` at the same time: the token is renewed for the new repository only at the next refresh, up to 30 minutes later, and until then the new namespace gets a token for the old repository. Add an entry with a new name instead, then remove the old one.
 ## Requirements
 
 | Name | Version |
