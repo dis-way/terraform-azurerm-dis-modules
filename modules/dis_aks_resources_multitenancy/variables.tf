@@ -82,19 +82,35 @@ variable "lb_source_range_dis_edge_ipv6" {
   default     = "::1/128"
 }
 
-variable "lb_source_range_legacy_platform" {
+variable "lb_source_range_legacy_platform_01" {
   type        = string
-  description = "Additional IPv4 source range added to the load balancer alongside the hardcoded ranges in the Flux manifests, used to allow traffic from the legacy-platform cluster. IPv4 only. Defaults to loopback (127.0.0.1/32) meaning no additional source is granted. Override with the legacy-platform cluster's outbound IPv4 CIDR."
+  description = "Additional IPv4 source range added to the load balancer alongside the hardcoded ranges in the Flux manifests, used to allow traffic from legacy-platform cluster 01. IPv4 only. Defaults to loopback (127.0.0.1/32) meaning no additional source is granted. Override with legacy-platform cluster 01's outbound IPv4 CIDR."
   default     = "127.0.0.1/32"
 
   validation {
-    condition     = try(!strcontains(var.lb_source_range_legacy_platform, ":") && cidrsubnet(var.lb_source_range_legacy_platform, 0, 0) == var.lb_source_range_legacy_platform, false)
-    error_message = "lb_source_range_legacy_platform must be an IPv4 CIDR in canonical form: the network address with no host bits set, for example 192.0.2.0/28."
+    condition     = try(!strcontains(var.lb_source_range_legacy_platform_01, ":") && cidrsubnet(var.lb_source_range_legacy_platform_01, 0, 0) == var.lb_source_range_legacy_platform_01, false)
+    error_message = "lb_source_range_legacy_platform_01 must be an IPv4 CIDR in canonical form: the network address with no host bits set, for example 192.0.2.0/28."
   }
 
   validation {
-    condition     = try(tonumber(split("/", var.lb_source_range_legacy_platform)[1]) > 0, false)
-    error_message = "lb_source_range_legacy_platform does not accept an unrestricted range such as 0.0.0.0/0."
+    condition     = try(tonumber(split("/", var.lb_source_range_legacy_platform_01)[1]) > 0, false)
+    error_message = "lb_source_range_legacy_platform_01 does not accept an unrestricted range such as 0.0.0.0/0."
+  }
+}
+
+variable "lb_source_range_legacy_platform_02" {
+  type        = string
+  description = "Additional IPv4 source range added to the load balancer alongside the hardcoded ranges in the Flux manifests, used to allow traffic from legacy-platform cluster 02. IPv4 only. Defaults to loopback (127.0.0.1/32) meaning no additional source is granted. Override with legacy-platform cluster 02's outbound IPv4 CIDR."
+  default     = "127.0.0.1/32"
+
+  validation {
+    condition     = try(!strcontains(var.lb_source_range_legacy_platform_02, ":") && cidrsubnet(var.lb_source_range_legacy_platform_02, 0, 0) == var.lb_source_range_legacy_platform_02, false)
+    error_message = "lb_source_range_legacy_platform_02 must be an IPv4 CIDR in canonical form: the network address with no host bits set, for example 192.0.2.0/28."
+  }
+
+  validation {
+    condition     = try(tonumber(split("/", var.lb_source_range_legacy_platform_02)[1]) > 0, false)
+    error_message = "lb_source_range_legacy_platform_02 does not accept an unrestricted range such as 0.0.0.0/0."
   }
 }
 
