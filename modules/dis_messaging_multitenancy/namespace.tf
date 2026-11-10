@@ -20,7 +20,7 @@ resource "azurerm_servicebus_namespace" "messaging" {
 
   network_rule_set {
     default_action           = "Deny"
-    ip_rules                 = var.allowed_ipv4_prefixes
+    ip_rules                 = concat(var.allowed_ipv4_prefixes, var.allowed_ipv6_prefixes)
     trusted_services_allowed = local.premium # the bypass exists on the Premium tier only
   }
 
@@ -34,6 +34,26 @@ resource "azurerm_servicebus_namespace" "messaging" {
       # ends with a letter or digit, and must not end with -sb or -mgmt. Globally unique.
       condition     = can(regex("^[a-zA-Z][a-zA-Z0-9-]{4,48}[a-zA-Z0-9]$", local.namespace_name)) && !endswith(local.namespace_name, "-sb") && !endswith(local.namespace_name, "-mgmt")
       error_message = "Namespace name \"${local.namespace_name}\" breaks the Azure Service Bus naming rules."
+    }
+  }
+}
+
+# azurerm_servicebus_namespace does not expose ipAddressType, so azapi sets it. The resource_id
+# reference applies the firewall rules above before the flip: dual-stack clients prefer IPv6 as
+# soon as the AAAA record exists. azapi reads the live value, so a plan shows drift.
+resource "azapi_update_resource" "ip_address_type" {
+  type        = "Microsoft.ServiceBus/namespaces@2026-01-01"
+  resource_id = azurerm_servicebus_namespace.messaging.id
+  body = {
+    properties = {
+      ipAddressType = var.ip_address_type
+    }
+  }
+
+  lifecycle {
+    precondition {
+      condition     = var.ip_address_type == "IPv4" || length(var.allowed_ipv6_prefixes) > 0
+      error_message = "ip_address_type DualStack needs at least one entry in allowed_ipv6_prefixes, or the firewall denies the dual-stack clients of the cluster."
     }
   }
 }
