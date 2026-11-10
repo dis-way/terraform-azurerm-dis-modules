@@ -82,6 +82,22 @@ variable "lb_source_range_dis_edge_ipv6" {
   default     = "::1/128"
 }
 
+variable "lb_source_range_legacy_platform" {
+  type        = string
+  description = "Additional IPv4 source range added to the load balancer alongside the hardcoded ranges in the Flux manifests, used to allow traffic from the legacy-platform cluster. IPv4 only. Defaults to loopback (127.0.0.1/32) meaning no additional source is granted. Override with the legacy-platform cluster's outbound IPv4 CIDR."
+  default     = "127.0.0.1/32"
+
+  validation {
+    condition     = try(!strcontains(var.lb_source_range_legacy_platform, ":") && cidrsubnet(var.lb_source_range_legacy_platform, 0, 0) == var.lb_source_range_legacy_platform, false)
+    error_message = "lb_source_range_legacy_platform must be an IPv4 CIDR in canonical form: the network address with no host bits set, for example 192.0.2.0/28."
+  }
+
+  validation {
+    condition     = try(tonumber(split("/", var.lb_source_range_legacy_platform)[1]) > 0, false)
+    error_message = "lb_source_range_legacy_platform does not accept an unrestricted range such as 0.0.0.0/0."
+  }
+}
+
 variable "base_tags" {
   type        = map(string)
   description = "Platform base tags (the RFC 0007 finops tag set) passed to the DIS operators, which apply them to every Azure resource they create. Empty disables operator platform tagging."
