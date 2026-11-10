@@ -8,6 +8,8 @@ The namespace must be created in the DIS resource group of the cluster (`module.
 
 The firewall denies by default, so `allowed_ipv4_prefixes` must hold the AKS egress prefix (`module.aks.egress_ipv4_prefix`) and the public IPv4 address of the VPN exit node. The trusted-services bypass is set on the Premium tier only; the Standard tier does not have it.
 
+The public endpoint of the Azure Service Bus namespace is IPv4 only by default. Set `ip_address_type = "DualStack"` to add IPv6. `azurerm_servicebus_namespace` does not expose the property, so the module sets it with `azapi_update_resource`. Dual-stack clients prefer IPv6 as soon as the AAAA record exists. `allowed_ipv6_prefixes` must then hold the IPv6 egress prefix of the cluster (`module.aks.egress_ipv6_prefix`) and the IPv6 address of the VPN exit node. The module refuses DualStack with an empty `allowed_ipv6_prefixes`, and it applies the firewall rules before the flip. To go back, flip to IPv4 in one apply and remove the IPv6 prefixes in a later one.
+
 ## Usage
 
 ```hcl
@@ -20,6 +22,8 @@ module "dis_messaging_multitenancy" {
   oidc_issuer_url            = module.aks.aks_oidc_issuer_url
   sku                        = "Standard" # Premium in tt02 and prod
   allowed_ipv4_prefixes      = [module.aks.egress_ipv4_prefix, var.vpn_exit_node_ipv4]
+  ip_address_type            = "DualStack" # IPv4 is the default
+  allowed_ipv6_prefixes      = [module.aks.egress_ipv6_prefix, var.vpn_exit_node_ipv6]
   log_analytics_workspace_id = module.aks.products_log_analytics_workspace_id
   tags                       = local.tags
 
@@ -34,14 +38,14 @@ module "dis_messaging_multitenancy" {
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8.0 |
-| <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 2.3.0 |
+| <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 2.13.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 5.0.0 |
 
 ## Providers
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_azapi"></a> [azapi](#provider\_azapi) | >= 2.3.0 |
+| <a name="provider_azapi"></a> [azapi](#provider\_azapi) | >= 2.13.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 5.0.0 |
 
 ## Resources
@@ -49,6 +53,7 @@ module "dis_messaging_multitenancy" {
 | Name | Type |
 | ---- | ---- |
 | [azapi_resource.dis_messaging_operator](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_update_resource.ip_address_type](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/update_resource) | resource |
 | [azurerm_federated_identity_credential.dismessaging_fic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
 | [azurerm_monitor_autoscale_setting.messaging](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_autoscale_setting) | resource |
 | [azurerm_monitor_diagnostic_setting.messaging](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_diagnostic_setting) | resource |
@@ -60,9 +65,11 @@ module "dis_messaging_multitenancy" {
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
-| <a name="input_allowed_ipv4_prefixes"></a> [allowed\_ipv4\_prefixes](#input\_allowed\_ipv4\_prefixes) | IPv4 addresses or CIDR prefixes allowed through the namespace firewall, e.g. the AKS egress prefix and the VPN exit node. At least one is required: Azure does not enforce the Deny default action when the rule list is empty. Service Bus IP rules are IPv4 only. | `list(string)` | n/a | yes |
+| <a name="input_allowed_ipv4_prefixes"></a> [allowed\_ipv4\_prefixes](#input\_allowed\_ipv4\_prefixes) | IPv4 addresses or CIDR prefixes allowed through the firewall of the Azure Service Bus namespace, e.g. the AKS egress prefix and the VPN exit node. At least one is required: Azure does not enforce the Deny default action when the rule list is empty. | `list(string)` | n/a | yes |
+| <a name="input_allowed_ipv6_prefixes"></a> [allowed\_ipv6\_prefixes](#input\_allowed\_ipv6\_prefixes) | IPv6 addresses or CIDR prefixes, in lower case, allowed through the firewall of the Azure Service Bus namespace. Leave it empty when ip\_address\_type is IPv4. With DualStack it must hold the IPv6 egress prefix of the AKS cluster, and the IPv6 address of the VPN exit node belongs here too. | `list(string)` | `[]` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment for which the dis-messaging resources are created. The module passes it to the operator as DISMSG\_ENV. | `string` | n/a | yes |
 | <a name="input_flux_release_tag"></a> [flux\_release\_tag](#input\_flux\_release\_tag) | Tag of the dis-messaging OCI artifact that Flux reconciles, for example at\_ring1. Use the ring tag of the other DIS operators of the cluster. | `string` | n/a | yes |
+| <a name="input_ip_address_type"></a> [ip\_address\_type](#input\_ip\_address\_type) | Network protocol of the public endpoint of the Azure Service Bus namespace: IPv4 (the Azure default) or DualStack. DualStack adds IPv6 to the endpoint. Dual-stack clients then prefer IPv6, so allowed\_ipv6\_prefixes must hold the IPv6 egress prefix of the cluster, or the firewall denies those clients. | `string` | `"IPv4"` | no |
 | <a name="input_kubernetes_cluster_id"></a> [kubernetes\_cluster\_id](#input\_kubernetes\_cluster\_id) | Resource ID of the AKS cluster. The module creates the Flux configuration of dis-messaging-operator on this cluster. | `string` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | The Azure region where the resources will be created. | `string` | `"norwayeast"` | no |
 | <a name="input_log_analytics_workspace_id"></a> [log\_analytics\_workspace\_id](#input\_log\_analytics\_workspace\_id) | ID of the Log Analytics workspace that receives the namespace diagnostic logs. | `string` | n/a | yes |

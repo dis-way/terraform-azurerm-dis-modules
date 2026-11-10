@@ -39,11 +39,31 @@ variable "sku" {
 }
 
 variable "allowed_ipv4_prefixes" {
-  description = "IPv4 addresses or CIDR prefixes allowed through the namespace firewall, e.g. the AKS egress prefix and the VPN exit node. At least one is required: Azure does not enforce the Deny default action when the rule list is empty. Service Bus IP rules are IPv4 only."
+  description = "IPv4 addresses or CIDR prefixes allowed through the firewall of the Azure Service Bus namespace, e.g. the AKS egress prefix and the VPN exit node. At least one is required: Azure does not enforce the Deny default action when the rule list is empty."
   type        = list(string)
   validation {
     condition     = length(var.allowed_ipv4_prefixes) > 0 && alltrue([for p in var.allowed_ipv4_prefixes : can(cidrnetmask(strcontains(p, "/") ? p : "${p}/32"))])
     error_message = "allowed_ipv4_prefixes must hold at least one IPv4 address or CIDR prefix, e.g. 203.0.113.0/28."
+  }
+}
+
+variable "ip_address_type" {
+  description = "Network protocol of the public endpoint of the Azure Service Bus namespace: IPv4 (the Azure default) or DualStack. DualStack adds IPv6 to the endpoint. Dual-stack clients then prefer IPv6, so allowed_ipv6_prefixes must hold the IPv6 egress prefix of the cluster, or the firewall denies those clients."
+  type        = string
+  default     = "IPv4"
+  validation {
+    condition     = contains(["IPv4", "DualStack"], var.ip_address_type)
+    error_message = "ip_address_type must be IPv4 or DualStack."
+  }
+}
+
+variable "allowed_ipv6_prefixes" {
+  description = "IPv6 addresses or CIDR prefixes, in lower case, allowed through the firewall of the Azure Service Bus namespace. Leave it empty when ip_address_type is IPv4. With DualStack it must hold the IPv6 egress prefix of the AKS cluster, and the IPv6 address of the VPN exit node belongs here too."
+  type        = list(string)
+  default     = []
+  validation {
+    condition     = alltrue([for p in var.allowed_ipv6_prefixes : strcontains(p, ":") && p == lower(p) && can(cidrhost(strcontains(p, "/") ? p : "${p}/128", 0))])
+    error_message = "allowed_ipv6_prefixes must hold lower-case IPv6 addresses or CIDR prefixes only, e.g. 2001:db8::/64."
   }
 }
 
