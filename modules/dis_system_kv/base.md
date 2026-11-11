@@ -42,3 +42,12 @@ module "dis_system_kv" {
 ```
 
 Set the variable for `apply` as well as `plan`, also when applying a saved plan. To change the value, increase its number in `secret_versions`.
+
+To move an existing secret from `secrets` to `ephemeral_secrets`, add a `moved` block to the calling module. Without it, Terraform deletes and recreates the vault secret:
+
+```hcl
+moved {
+  from = module.dis_system_kv.azurerm_key_vault_secret.this["github-app-private-key"]
+  to   = module.dis_system_kv.azurerm_key_vault_secret.ephemeral["github-app-private-key"]
+}
+```

@@ -112,6 +112,14 @@ variable "ephemeral_secret_names" {
     condition     = alltrue([for name in var.ephemeral_secret_names : can(regex("^[0-9a-zA-Z-]{1,127}$", name))])
     error_message = "Key Vault secret names may contain only letters, digits and dashes, and must be 1-127 characters long."
   }
+
+  validation {
+    condition = length(setintersection(
+      toset([for name in var.ephemeral_secret_names : lower(name)]),
+      toset([for name in nonsensitive(keys(var.secrets)) : lower(name)]),
+    )) == 0
+    error_message = "A name in ephemeral_secret_names is also in secrets. Key Vault secret names are case-insensitive."
+  }
 }
 
 variable "secret_versions" {
