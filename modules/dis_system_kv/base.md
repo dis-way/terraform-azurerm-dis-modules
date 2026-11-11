@@ -22,3 +22,32 @@ module "dis_system_kv" {
   }
 }
 ```
+
+## Secrets from ephemeral variables
+
+`secrets` keeps values out of Terraform state, but a saved plan file stores the value of every root variable that is not ephemeral. A secret passed from a root variable therefore ends up in every saved plan, including plan artifacts in CI. Declare such a variable with `ephemeral = true` and pass it to `ephemeral_secrets`, with its name in `ephemeral_secret_names`:
+
+```hcl
+variable "github_app_private_key" {
+  type      = string
+  sensitive = true
+  ephemeral = true
+}
+
+module "dis_system_kv" {
+  # ...
+  ephemeral_secrets      = { "github-app-private-key" = var.github_app_private_key }
+  ephemeral_secret_names = ["github-app-private-key"]
+}
+```
+
+Set the variable for `apply` as well as `plan`, also when applying a saved plan. To change the value, increase its number in `secret_versions`.
+
+To move an existing secret from `secrets` to `ephemeral_secrets`, add a `moved` block to the calling module. Without it, Terraform deletes and recreates the vault secret:
+
+```hcl
+moved {
+  from = module.dis_system_kv.azurerm_key_vault_secret.this["github-app-private-key"]
+  to   = module.dis_system_kv.azurerm_key_vault_secret.ephemeral["github-app-private-key"]
+}
+```

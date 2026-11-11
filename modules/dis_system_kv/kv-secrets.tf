@@ -10,3 +10,14 @@ resource "azurerm_key_vault_secret" "this" {
   value_wo_version = try(var.secret_versions[each.value], 1)
   key_vault_id     = azurerm_key_vault.dis_system_kv.id
 }
+
+resource "azurerm_key_vault_secret" "ephemeral" {
+  # for_each cannot use ephemeral values, so the names come from a separate input.
+  for_each = var.ephemeral_secret_names
+
+  depends_on       = [azurerm_role_assignment.ci_kv_secrets_role]
+  name             = each.value
+  value_wo         = var.ephemeral_secrets[each.value]
+  value_wo_version = try(var.secret_versions[each.value], 1)
+  key_vault_id     = azurerm_key_vault.dis_system_kv.id
+}

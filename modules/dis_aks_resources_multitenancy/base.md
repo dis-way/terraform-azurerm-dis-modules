@@ -57,7 +57,7 @@ Disabling the flag removes the kustomizations and the `external-secrets-operator
 
 Add entries to `flux_dispatch_tokens` to give product namespaces GitHub tokens for Flux `githubdispatch` Providers ([RFC 0019](https://github.com/Altinn/altinn-platform/blob/main/rfcs/0019-flux-workflow-notifications.md)). Each token works for one repository only. Set `flux_dispatch_github_app_id` and `flux_dispatch_github_app_installation_id` to the shared GitHub App. They need the external-secrets-operator release with the `multitenancy/flux-dispatch-*` layers (dis-way/gitops-manifests#2424) in the `flux_release_tag` ring.
 
-The module writes the two IDs and each entry's values to the dis-system Key Vault. It does not write the App private key: pass the key to the `secrets` input of the `dis_system_kv` module as `flux-dispatch-github-app-private-key`, which keeps it out of Terraform state. Until the key is in the vault, the kustomizations apply but no token is generated.
+The module writes the two IDs and each entry's values to the dis-system Key Vault. It does not write the App private key: pass the key from an ephemeral variable to the `ephemeral_secrets` input of the `dis_system_kv` module as `flux-dispatch-github-app-private-key`, and list the name in `ephemeral_secret_names`. This keeps the key out of Terraform state and saved plans. Until the key is in the vault, the kustomizations apply but no token is generated.
 
 The first entry adds the `flux-dispatch-app` kustomization, and each entry adds `flux-dispatch-<name>-secrets` and `flux-dispatch-<name>`. They run in the order `post-deploy` → `flux-dispatch-app` and `flux-dispatch-<name>-secrets` → `flux-dispatch-<name>`. AKS limits kustomization names, so `<name>` is at most 15 characters.
 

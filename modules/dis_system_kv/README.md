@@ -22,6 +22,35 @@ module "dis_system_kv" {
   }
 }
 ```
+
+## Secrets from ephemeral variables
+
+`secrets` keeps values out of Terraform state, but a saved plan file stores the value of every root variable that is not ephemeral. A secret passed from a root variable therefore ends up in every saved plan, including plan artifacts in CI. Declare such a variable with `ephemeral = true` and pass it to `ephemeral_secrets`, with its name in `ephemeral_secret_names`:
+
+```hcl
+variable "github_app_private_key" {
+  type      = string
+  sensitive = true
+  ephemeral = true
+}
+
+module "dis_system_kv" {
+  # ...
+  ephemeral_secrets      = { "github-app-private-key" = var.github_app_private_key }
+  ephemeral_secret_names = ["github-app-private-key"]
+}
+```
+
+Set the variable for `apply` as well as `plan`, also when applying a saved plan. To change the value, increase its number in `secret_versions`.
+
+To move an existing secret from `secrets` to `ephemeral_secrets`, add a `moved` block to the calling module. Without it, Terraform deletes and recreates the vault secret:
+
+```hcl
+moved {
+  from = module.dis_system_kv.azurerm_key_vault_secret.this["github-app-private-key"]
+  to   = module.dis_system_kv.azurerm_key_vault_secret.ephemeral["github-app-private-key"]
+}
+```
 ## Requirements
 
 | Name | Version |
@@ -43,6 +72,7 @@ module "dis_system_kv" {
 | ---- | ---- |
 | [azurerm_federated_identity_credential.dis_sync_fic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential) | resource |
 | [azurerm_key_vault.dis_system_kv](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault) | resource |
+| [azurerm_key_vault_secret.ephemeral](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
 | [azurerm_key_vault_secret.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
 | [azurerm_role_assignment.ci_kv_secrets_role](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.dis_system_kv_reader](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
@@ -58,12 +88,14 @@ module "dis_system_kv" {
 | <a name="input_dis_system_kv_namespace"></a> [dis\_system\_kv\_namespace](#input\_dis\_system\_kv\_namespace) | Name of the namespace where dis-system kv sync components are deployed | `string` | `"platform-system"` | no |
 | <a name="input_dis_system_kv_service_account_name"></a> [dis\_system\_kv\_service\_account\_name](#input\_dis\_system\_kv\_service\_account\_name) | Name of service account used to sync configs from dis-system key vault | `string` | `"dis-secret-sync-sa"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment for which the dis-system-kv is being created. | `string` | n/a | yes |
+| <a name="input_ephemeral_secret_names"></a> [ephemeral\_secret\_names](#input\_ephemeral\_secret\_names) | Names of the secrets in ephemeral\_secrets. for\_each cannot use ephemeral values, so the names are passed separately. | `set(string)` | `[]` | no |
+| <a name="input_ephemeral_secrets"></a> [ephemeral\_secrets](#input\_ephemeral\_secrets) | Like secrets, but accepts ephemeral values, e.g. from a root variable with ephemeral = true, which saved plans do not store. List the names in ephemeral\_secret\_names. | `map(string)` | `{}` | no |
 | <a name="input_key_vault_name_random_suffix_length"></a> [key\_vault\_name\_random\_suffix\_length](#input\_key\_vault\_name\_random\_suffix\_length) | Number of random characters appended to the Key Vault name to keep it globally unique. | `number` | `6` | no |
 | <a name="input_location"></a> [location](#input\_location) | The Azure region where the resources will be created. | `string` | `"norwayeast"` | no |
 | <a name="input_override_user_assigned_identity_name"></a> [override\_user\_assigned\_identity\_name](#input\_override\_user\_assigned\_identity\_name) | Override the default name of the User Assigned Managed Identity. | `string` | `""` | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | A prefix to be used for naming resources. | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Name of the resource group where the resources are deployed. | `string` | n/a | yes |
-| <a name="input_secret_versions"></a> [secret\_versions](#input\_secret\_versions) | Non-sensitive version marker for each secret value. Increment the number when a secret value changes so Terraform updates the Key Vault secret without persisting the secret value in state. | `map(number)` | `{}` | no |
+| <a name="input_secret_versions"></a> [secret\_versions](#input\_secret\_versions) | Non-sensitive version marker for each secret value in secrets or ephemeral\_secrets. Increment the number when a secret value changes so Terraform updates the Key Vault secret without persisting the secret value in state. | `map(number)` | `{}` | no |
 | <a name="input_secrets"></a> [secrets](#input\_secrets) | Secrets to create in the dis-system Key Vault, keyed by Key Vault secret name. Values are sent via the write-only API so they are not persisted in Terraform state. | `map(string)` | `{}` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resources created. | `map(string)` | `{}` | no |
 | <a name="input_tenant_id"></a> [tenant\_id](#input\_tenant\_id) | Tenant id where everything is deployed | `string` | n/a | yes |
