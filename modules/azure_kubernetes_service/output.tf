@@ -28,6 +28,16 @@ output "aks_vnet_id" {
   description = "ID of the VNet where the AKS nodes are located"
 }
 
+output "aks_vnet_ipv4_cidr" {
+  value       = try([for cidr in var.vnet_address_space : cidr if !strcontains(cidr, ":")][0], "")
+  description = "First IPv4 CIDR of the AKS VNet address space, empty if there is none"
+}
+
+output "aks_vnet_ipv6_cidr" {
+  value       = try([for cidr in var.vnet_address_space : cidr if strcontains(cidr, ":")][0], "")
+  description = "First IPv6 CIDR of the AKS VNet address space, empty if there is none"
+}
+
 output "aks_vnet_name" {
   value       = azurerm_virtual_network.aks.name
   description = "Name of the VNet where the AKS nodes are located"
