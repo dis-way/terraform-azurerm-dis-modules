@@ -4,7 +4,8 @@ package_upgrade: true
 package_reboot_if_required: true
 
 packages:
-  - dnf-automatic
+  - dnf5-plugin-automatic
+  - git-core
   - ansible-core
   - python3-cryptography
 
@@ -91,7 +92,7 @@ write_files:
       reboot = when-needed
       reboot_command = "shutdown -r +5 'Rebooting for updates'"
 
-  - path: /etc/systemd/system/dnf-automatic.timer.d/override.conf
+  - path: /etc/systemd/system/dnf5-automatic.timer.d/override.conf
     content: |
       [Timer]
       OnCalendar=
@@ -114,8 +115,8 @@ write_files:
       RestartSec=30
 
 runcmd:
-  - mkdir -p /etc/systemd/system/dnf-automatic.timer.d
+  - mkdir -p /etc/systemd/system/dnf5-automatic.timer.d
   - systemctl daemon-reload
-  - systemctl enable --now dnf-automatic.timer
-  - ansible-galaxy collection install ansible.posix community.general
+  - systemctl enable --now dnf5-automatic.timer
+  - ansible-galaxy collection install ansible.posix 'community.general:>=13.0.0,<14.0.0'
   - systemctl start ansible-pull.service
